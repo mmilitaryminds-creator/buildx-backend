@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildX - تقرير تحليل السوق والذكاء الاصطناعي</title>
+    <title>BuildX - تقرير تحليل السوق المدقق</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -117,7 +117,6 @@
             color: var(--text-main);
         }
 
-        /* بطاقة التوصية الاستثمارية للذكاء الاصطناعي */
         .ai-verdict-card {
             background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             color: var(--white);
@@ -125,6 +124,10 @@
             border-radius: 20px;
             margin-bottom: 40px;
             box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
+        }
+
+        .ai-verdict-card.error-verdict {
+            background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
         }
 
         .ai-verdict-card h2 {
@@ -255,12 +258,12 @@
             <div class="project-meta-grid" id="projectMeta"></div>
         </div>
 
-        <!-- بطاقة تحليل الذكاء الاصطناعي الاستثماري -->
+        <!-- بطاقة تحليل الذكاء الاصطناعي مع كشف التناقض الجغرافي -->
         <div class="ai-verdict-card" id="aiVerdictCard">
-            <h2>🤖 التوصية الاستثمارية للذكاء الاصطناعي</h2>
+            <h2 id="verdictTitle">🤖 التوصية الاستثمارية للذكاء الاصطناعي</h2>
             <div class="verdict-content">
                 <div class="verdict-text">
-                    <p id="aiAdviceText">جاري تحليل الميزانية، المساحة، ومعطيات السوق الموثقة...</p>
+                    <p id="aiAdviceText">جاري التدقيق في صحة انتماء الدولة والمدينة وتحليل البيانات...</p>
                 </div>
                 <div class="verdict-score">
                     <span>مؤشر الجدوى</span>
@@ -269,24 +272,25 @@
             </div>
         </div>
 
-        <h2 class="section-title">مؤشرات وعوامل السوق (Data Sources Layer)</h2>
+        <h2 class="section-title">مؤشرات وعوامل السوق (حسب المعيار الموحد USD)</h2>
         
         <div class="indicators-grid" id="indicatorsContainer"></div>
     </main>
 
     <footer>
-        <span>&copy; 2026 BuildX Data Engine. All rights reserved. AI Evaluation Active.</span>
+        <span>&copy; 2026 BuildX Data Engine. All rights reserved. Cross-Validation Active.</span>
     </footer>
 
     <script src="buildx-engine.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', async () => {
+            const rawBudget = localStorage.getItem('project_budget');
             const userInput = {
                 country: localStorage.getItem('project_country'),
                 city: localStorage.getItem('project_city'),
                 area: localStorage.getItem('project_area'),
                 businessType: localStorage.getItem('project_business'),
-                budget: localStorage.getItem('project_budget')
+                budget: rawBudget
             };
 
             const metaContainer = document.getElementById('projectMeta');
@@ -295,14 +299,19 @@
                 <div class="meta-item"><span>المدينة</span><strong>${userInput.city || 'غير متوفر'}</strong></div>
                 <div class="meta-item"><span>المساحة</span><strong>${userInput.area ? userInput.area + ' م²' : 'غير متوفر'}</strong></div>
                 <div class="meta-item"><span>النشاط التجاري</span><strong>${userInput.businessType || 'غير متوفر'}</strong></div>
-                <div class="meta-item"><span>الميزانية</span><strong>${userInput.budget || 'غير متوفر'}</strong></div>
+                <div class="meta-item"><span>الميزانية</span><strong>${rawBudget ? '$' + parseFloat(rawBudget).toLocaleString() : 'غير متوفر'}</strong></div>
             `;
 
             const reportData = await window.buildXEngine.processMarketAnalysis(userInput);
             const indicators = reportData.indicators;
             const verdict = reportData.aiVerdict;
 
-            // تحديث بطاقة الذكاء الاصطناعي
+            const verdictCard = document.getElementById('aiVerdictCard');
+            if (reportData.mismatchError) {
+                verdictCard.classList.add('error-verdict');
+                document.getElementById('verdictTitle').innerHTML = '⚠️ تنبيه: خطأ في مطابقة الموقع الجغرافي';
+            }
+
             document.getElementById('aiAdviceText').innerText = `حالة الجدوى: (${verdict.feasibility}). ${verdict.advice}`;
             document.getElementById('aiScoreVal').innerText = verdict.score;
 
@@ -337,7 +346,7 @@
                 </div>
 
                 <div class="indicator-card">
-                    <h3>متوسط إيجار العقارات التجارية</h3>
+                    <h3>متوسط إيجار العقارات التجارية (USD)</h3>
                     <div class="indicator-value">${indicators.realEstate.value}</div>
                     <div class="indicator-meta">
                         <span class="badge ${indicators.realEstate.status}">${statusLabels[indicators.realEstate.status]}</span>
