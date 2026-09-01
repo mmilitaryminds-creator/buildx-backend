@@ -1,0 +1,150 @@
+<!DOCTYPE html>  <html lang="ar" dir="rtl">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>BuildX Data Engine</title>  
+  <style>  
+    body {  
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
+      background-color: #0f172a;  
+      color: #f8fafc;  
+      margin: 0;  
+      padding: 20px;  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      min-height: 100vh;  
+    }  
+    .container {  
+      background: #1e293b;  
+      padding: 30px;  
+      border-radius: 12px;  
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);  
+      width: 100%;  
+      max-width: 500px;  
+    }  
+    h2 {  
+      text-align: center;  
+      color: #38bdf8;  
+      margin-bottom: 25px;  
+    }  
+    .form-group {  
+      margin-bottom: 15px;  
+    }  
+    label {  
+      display: block;  
+      margin-bottom: 5px;  
+      font-size: 14px;  
+      color: #94a3b8;  
+    }  
+    input, select {  
+      width: 100%;  
+      padding: 10px;  
+      border: 1px solid #334155;  
+      background: #0f172a;  
+      color: #fff;  
+      border-radius: 6px;  
+      box-sizing: border-box;  
+    }  
+    button {  
+      width: 100%;  
+      padding: 12px;  
+      background-color: #2563eb;  
+      color: white;  
+      border: none;  
+      border-radius: 6px;  
+      font-size: 16px;  
+      font-weight: bold;  
+      cursor: pointer;  
+      margin-top: 10px;  
+      transition: background 0.3s;  
+    }  
+    button:hover {  
+      background-color: #1d4ed8;  
+    }  
+    #output {  
+      margin-top: 20px;  
+      background: #0f172a;  
+      padding: 15px;  
+      border-radius: 6px;  
+      border: 1px solid #334155;  
+      min-height: 80px;  
+    }  
+    #output h3 {  
+      margin-top: 0;  
+      color: #38bdf8;  
+      font-size: 16px;  
+    }  
+  </style>  
+</head>  
+<body>    <div class="container">  
+    <h2>BuildX Data Engine</h2>  <div class="form-group">  
+  <label>الدولة (Country):</label>  
+  <input type="text" id="country" value="الجزائر">  
+</div>  
+
+<div class="form-group">  
+  <label>المدينة (City):</label>  
+  <input type="text" id="city" value="الجزائر العاصمة">  
+</div>  
+
+<div class="form-group">  
+  <label>نوع النشاط (Business Type):</label>  
+  <input type="text" id="businessType" value="مقهى">  
+</div>  
+
+<div class="form-group">  
+  <label>الفئة المستهدفة (Target Audience):</label>  
+  <input type="text" id="targetAudience" value="العموم">  
+</div>  
+
+<div class="form-group">  
+  <label>الميزانية بالدولار الأمريكي (Budget - USD):</label>  
+  <input type="number" id="budget" value="10000">  
+</div>  
+
+<button onclick="runAnalysis()">تشغيل تحليل السوق</button>  
+
+<div id="output">  
+  <h3>⚠️ تنبيه</h3>  
+  <p>لم يتم جلب البيانات بعد، اضغط على الزر لبدء التحليل.</p>  
+</div>
+
+  </div>    <script>  
+    async function runAnalysis() {  
+      const output = document.getElementById('output');  
+      output.innerHTML = `<h3>⏳ جاري التحليل...</h3><p>يرجى الانتظار بينما يقوم الذكاء الاصطناعي بدراسة السوق...</p>`;  
+  
+      const payload = {  
+        country: document.getElementById('country').value,  
+        city: document.getElementById('city').value,  
+        businessType: document.getElementById('businessType').value,  
+        targetAudience: document.getElementById('targetAudience').value,  
+        budget: document.getElementById('budget').value  
+      };  
+  
+      try {  
+        const res = await fetch('/api/analyze', {  
+          method: 'POST',  
+          headers: { 'Content-Type': 'application/json' },  
+          body: JSON.stringify(payload)  
+        });  
+  
+        const data = await res.json();  
+  
+        if (res.ok && data.success) {  
+          output.innerHTML = `  
+            <h3>📊 تقرير تحليل المشروع</h3>  
+            <div style="white-space: pre-line; line-height: 1.8; color: #e2e8f0; font-size: 14px;">  
+              ${data.analysis}  
+            </div>  
+          `;  
+        } else {  
+          output.innerHTML = `<h3>⚠️ تنبيه</h3><p>${data.error || 'لم يتم جلب البيانات بنجاح، تحقق من المدخلات.'}</p>`;  
+        }  
+      } catch (err) {  
+        output.innerHTML = `<h3>❌ خطأ</h3><p>حدث خطأ في الاتصال بالسيرفر: ${err.message}</p>`;  
+      }  
+    }  
+  </script>  </body>  
+</html>
