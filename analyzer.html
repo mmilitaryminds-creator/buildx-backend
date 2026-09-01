@@ -1,150 +1,320 @@
-<!DOCTYPE html>  <html lang="ar" dir="rtl">  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>BuildX Data Engine</title>  
-  <style>  
-    body {  
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
-      background-color: #0f172a;  
-      color: #f8fafc;  
-      margin: 0;  
-      padding: 20px;  
-      display: flex;  
-      justify-content: center;  
-      align-items: center;  
-      min-height: 100vh;  
-    }  
-    .container {  
-      background: #1e293b;  
-      padding: 30px;  
-      border-radius: 12px;  
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);  
-      width: 100%;  
-      max-width: 500px;  
-    }  
-    h2 {  
-      text-align: center;  
-      color: #38bdf8;  
-      margin-bottom: 25px;  
-    }  
-    .form-group {  
-      margin-bottom: 15px;  
-    }  
-    label {  
-      display: block;  
-      margin-bottom: 5px;  
-      font-size: 14px;  
-      color: #94a3b8;  
-    }  
-    input, select {  
-      width: 100%;  
-      padding: 10px;  
-      border: 1px solid #334155;  
-      background: #0f172a;  
-      color: #fff;  
-      border-radius: 6px;  
-      box-sizing: border-box;  
-    }  
-    button {  
-      width: 100%;  
-      padding: 12px;  
-      background-color: #2563eb;  
-      color: white;  
-      border: none;  
-      border-radius: 6px;  
-      font-size: 16px;  
-      font-weight: bold;  
-      cursor: pointer;  
-      margin-top: 10px;  
-      transition: background 0.3s;  
-    }  
-    button:hover {  
-      background-color: #1d4ed8;  
-    }  
-    #output {  
-      margin-top: 20px;  
-      background: #0f172a;  
-      padding: 15px;  
-      border-radius: 6px;  
-      border: 1px solid #334155;  
-      min-height: 80px;  
-    }  
-    #output h3 {  
-      margin-top: 0;  
-      color: #38bdf8;  
-      font-size: 16px;  
-    }  
-  </style>  
-</head>  
-<body>    <div class="container">  
-    <h2>BuildX Data Engine</h2>  <div class="form-group">  
-  <label>الدولة (Country):</label>  
-  <input type="text" id="country" value="الجزائر">  
-</div>  
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليل السوق - BuildX Data Engine</title>
+    <!-- استيراد الخطوط العصرية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e3a8a; /* أزرق ملكي داكن */
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc; /* خلفية فاتحة نظيفة */
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --white: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
 
-<div class="form-group">  
-  <label>المدينة (City):</label>  
-  <input type="text" id="city" value="الجزائر العاصمة">  
-</div>  
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Inter', sans-serif;
+        }
 
-<div class="form-group">  
-  <label>نوع النشاط (Business Type):</label>  
-  <input type="text" id="businessType" value="مقهى">  
-</div>  
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-<div class="form-group">  
-  <label>الفئة المستهدفة (Target Audience):</label>  
-  <input type="text" id="targetAudience" value="العموم">  
-</div>  
+        /* شريط التنقل العلوي (مبسط) */
+        header {
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+        }
 
-<div class="form-group">  
-  <label>الميزانية بالدولار الأمريكي (Budget - USD):</label>  
-  <input type="number" id="budget" value="10000">  
-</div>  
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
 
-<button onclick="runAnalysis()">تشغيل تحليل السوق</button>  
+        .back-link {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: var(--primary-light);
+        }
 
-<div id="output">  
-  <h3>⚠️ تنبيه</h3>  
-  <p>لم يتم جلب البيانات بعد، اضغط على الزر لبدء التحليل.</p>  
-</div>
+        /* المحتوى الرئيسي */
+        .main-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
 
-  </div>    <script>  
-    async function runAnalysis() {  
-      const output = document.getElementById('output');  
-      output.innerHTML = `<h3>⏳ جاري التحليل...</h3><p>يرجى الانتظار بينما يقوم الذكاء الاصطناعي بدراسة السوق...</p>`;  
-  
-      const payload = {  
-        country: document.getElementById('country').value,  
-        city: document.getElementById('city').value,  
-        businessType: document.getElementById('businessType').value,  
-        targetAudience: document.getElementById('targetAudience').value,  
-        budget: document.getElementById('budget').value  
-      };  
-  
-      try {  
-        const res = await fetch('/api/analyze', {  
-          method: 'POST',  
-          headers: { 'Content-Type': 'application/json' },  
-          body: JSON.stringify(payload)  
-        });  
-  
-        const data = await res.json();  
-  
-        if (res.ok && data.success) {  
-          output.innerHTML = `  
-            <h3>📊 تقرير تحليل المشروع</h3>  
-            <div style="white-space: pre-line; line-height: 1.8; color: #e2e8f0; font-size: 14px;">  
-              ${data.analysis}  
-            </div>  
-          `;  
-        } else {  
-          output.innerHTML = `<h3>⚠️ تنبيه</h3><p>${data.error || 'لم يتم جلب البيانات بنجاح، تحقق من المدخلات.'}</p>`;  
-        }  
-      } catch (err) {  
-        output.innerHTML = `<h3>❌ خطأ</h3><p>حدث خطأ في الاتصال بالسيرفر: ${err.message}</p>`;  
-      }  
-    }  
-  </script>  </body>  
+        h1 {
+            font-size: 32px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        /* نموذج الإدخال */
+        .analysis-form {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* زر التحليل */
+        .analyze-btn {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 14px 20px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .analyze-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .analyze-btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* منطقة النتائج (مخفية حتى تظهر النتيجة) */
+        #result {
+            display: none; /* مخفي افتراضياً */
+            background: var(--white);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .result-header {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eff6ff;
+        }
+
+        .result-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-muted);
+            /* تنسيق النص القادم من الـ AI ليكون مقروءاً */
+            white-space: pre-wrap; 
+        }
+
+        /* حالة التحميل */
+        #loading {
+            display: none; /* مخفي افتراضياً */
+            text-align: center;
+            color: var(--text-muted);
+            margin: 20px 0;
+            font-size: 16px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid var(--primary-color); /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل العلوي -->
+    <header>
+        <a href="index.html" class="back-link">← العودة للرئيسية</a>
+        <a href="index.html" class="logo">BuildX</a>
+        <div></div> <!-- مسافة فارغة لموازنة التصميم -->
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-container">
+        <h1>تحليل ذكي لمشروعك</h1>
+        <p class="subtitle">أدخل بيانات مشروعك للحصول على رؤى السوق الاسترشادية</p>
+
+        <!-- نموذج الإدخال -->
+        <form id="analysisForm" class="analysis-form">
+            <div class="form-group">
+                <label for="country">الدولة:</label>
+                <input type="text" id="country" name="country" placeholder="مثال: الإمارات" required>
+            </div>
+            <div class="form-group">
+                <label for="city">المدينة:</label>
+                <input type="text" id="city" name="city" placeholder="مثال: دبي" required>
+            </div>
+            <div class="form-group">
+                <label for="activity">النشاط التجاري:</label>
+                <input type="text" id="activity" name="activity" placeholder="مثال: مطعم بيتزا" required>
+            </div>
+            <button type="submit" id="submitBtn" class="analyze-btn">تحليل المشروع</button>
+        </form>
+
+        <!-- منطقة التحميل -->
+        <div id="loading">
+            <div class="spinner"></div>
+            جاري تحليل البيانات وصياغة التقرير...
+        </div>
+
+        <!-- منطقة النتائج -->
+        <div id="result">
+            <div class="result-header">تقرير تحليل السوق</div>
+            <div id="resultContent" class="result-content">
+                <!-- هنا سيتم عرض النتيجة التي تأتي من API -->
+            </div>
+        </div>
+    </main>
+
+    <!-- جافا سكريبت للربط مع الـ API -->
+    <script>
+        const form = document.getElementById('analysisForm');
+        const countryInput = document.getElementById('country');
+        const cityInput = document.getElementById('city');
+        const activityInput = document.getElementById('activity');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingDiv = document.getElementById('loading');
+        const resultDiv = document.getElementById('result');
+        const resultContent = document.getElementById('resultContent');
+
+        // رابط الـ API الخلفي الذي برمجناه (تأكد أنه صحيح)
+        const API_URL = 'https://buildx-backend-1.onrender.com/analyze'; // استخدم الرابط الجديد
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // جمع البيانات من الحقول
+            const country = countryInput.value;
+            const city = cityInput.value;
+            const activity = activityInput.value;
+
+            // إظهار حالة التحميل وإخفاء النتائج
+            submitBtn.disabled = true;
+            loadingDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+            resultContent.innerHTML = '';
+
+            try {
+                // إرسال الطلب إلى الـ API
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ country, city, activity })
+                });
+
+                if (!response.ok) {
+                    throw new Error('حدث خطأ في الاتصال بالخادم');
+                }
+
+                // قراءة النتيجة
+                const data = await response.json();
+                
+                // عرض النتيجة بشكل جميل
+                resultContent.innerHTML = data.analysis || 'لم يتم العثور على بيانات تحليل.';
+                resultDiv.style.display = 'block';
+
+            } catch (error) {
+                // عرض رسالة خطأ
+                resultContent.innerHTML = 'عذراً، حدث خطأ أثناء تحليل البيانات. يرجى المحاولة لاحقاً.<br>الخطأ: ' + error.message;
+                resultDiv.style.display = 'block';
+                resultDiv.style.borderColor = '#fecaca'; // حدود حمراء في حالة الخطأ
+                resultDiv.style.backgroundColor = '#fef2f2';
+                resultContent.style.color = '#991b1b';
+            } finally {
+                // إعادة تفعيل الزر وإخفاء التحميل
+                submitBtn.disabled = false;
+                loadingDiv.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
 </html>
