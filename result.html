@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildX - تقرير تحليل السوق</title>
+    <title>BuildX - تقرير تحليل السوق الموحد</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -14,8 +14,12 @@
             --text-muted: #475569;
             --white: #ffffff;
             --border-color: #e2e8f0;
-            --success-bg: #eff6ff;
-            --success-color: #1e40af;
+            --badge-confirmed: #dcfce7;
+            --badge-confirmed-text: #166534;
+            --badge-estimated: #fef9c3;
+            --badge-estimated-text: #854d0e;
+            --badge-unavailable: #fee2e2;
+            --badge-unavailable-text: #991b1b;
         }
 
         * {
@@ -133,7 +137,6 @@
             border-radius: 16px;
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-            position: relative;
         }
 
         .indicator-card h3 {
@@ -156,19 +159,20 @@
             padding-top: 12px;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
         }
 
         .badge {
             display: inline-block;
-            padding: 2px 8px;
+            padding: 3px 10px;
             border-radius: 6px;
             font-size: 11px;
             font-weight: 700;
             width: fit-content;
-            background: var(--success-bg);
-            color: var(--success-color);
         }
+        .badge.confirmed { background: var(--badge-confirmed); color: var(--badge-confirmed-text); }
+        .badge.estimated { background: var(--badge-estimated); color: var(--badge-estimated-text); }
+        .badge.unavailable { background: var(--badge-unavailable); color: var(--badge-unavailable-text); }
 
         footer {
             text-align: center;
@@ -190,86 +194,98 @@
     <main>
         <div class="report-header">
             <h1>ملخص معطيات المشروع</h1>
-            <div class="project-meta-grid" id="projectMeta">
-                <!-- سيتم تعبئتها تلقائياً عبر الجافاسكريبت -->
-            </div>
+            <div class="project-meta-grid" id="projectMeta"></div>
         </div>
 
-        <h2 class="section-title">مؤشرات وعوامل السوق (Data Sources Layer)</h2>
+        <h2 class="section-title">طبقة توحيد والتحقق من البيانات (Unified Data Layer)</h2>
         
-        <div class="indicators-grid" id="indicatorsContainer">
-            <!-- المؤشرات المجلوبة من طبقة البيانات -->
-        </div>
+        <div class="indicators-grid" id="indicatorsContainer"></div>
     </main>
 
     <footer>
-        <span>&copy; 2026 BuildX Data Engine. All rights reserved. Strict Anti-Hallucination Enabled.</span>
+        <span>&copy; 2026 BuildX Data Engine. All rights reserved. Strict Validation Active.</span>
     </footer>
 
+    <!-- تحميل المحرك البرمجي الموحد -->
+    <script src="buildx-engine.js"></script>
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            // جلب البيانات المخزنة من form.html
-            const country = localStorage.getItem('project_country') || 'غير متوفر';
-            const city = localStorage.getItem('project_city') || 'غير متوفر';
-            const area = localStorage.getItem('project_area') || 'غير متوفر';
-            const business = localStorage.getItem('project_business') || 'غير متوفر';
-            const budget = localStorage.getItem('project_budget') || 'غير متوفر';
+        window.addEventListener('DOMContentLoaded', async () => {
+            // جلب مدخلات المستخدم المخزنة
+            const userInput = {
+                country: localStorage.getItem('project_country'),
+                city: localStorage.getItem('project_city'),
+                area: localStorage.getItem('project_area'),
+                businessType: localStorage.getItem('project_business'),
+                budget: localStorage.getItem('project_budget')
+            };
 
-            // عرض معطيات المشروع في الهيدر
+            // عرض معطيات المشروع
             const metaContainer = document.getElementById('projectMeta');
             metaContainer.innerHTML = `
-                <div class="meta-item"><span>الدولة</span><strong>${country}</strong></div>
-                <div class="meta-item"><span>المدينة</span><strong>${city}</strong></div>
-                <div class="meta-item"><span>المساحة</span><strong>${area} م²</strong></div>
-                <div class="meta-item"><span>النشاط التجاري</span><strong>${business}</strong></div>
-                <div class="meta-item"><span>الميزانية</span><strong>${budget}</strong></div>
+                <div class="meta-item"><span>الدولة</span><strong>${userInput.country || 'غير متوفر'}</strong></div>
+                <div class="meta-item"><span>المدينة</span><strong>${userInput.city || 'غير متوفر'}</strong></div>
+                <div class="meta-item"><span>المساحة</span><strong>${userInput.area ? userInput.area + ' م²' : 'غير متوفر'}</strong></div>
+                <div class="meta-item"><span>النشاط التجاري</span><strong>${userInput.businessType || 'غير متوفر'}</strong></div>
+                <div class="meta-item"><span>الميزانية</span><strong>${userInput.budget || 'غير متوفر'}</strong></div>
             `;
 
-            // محاكاة بيانات موثقة لمنع الهلوسة مع المصادر
-            const mockDataPoints = [
-                {
-                    title: "التعداد السكاني والكثافة",
-                    value: "850,000 نسمة",
-                    source: "الإحصائيات الوطنية الرسمية",
-                    date: "2026",
-                    status: "مؤكدة ورسمية"
-                },
-                {
-                    title: "المنافسون في نفس النطاق",
-                    value: "42 منافس نشط",
-                    source: "خريطة الشركات المفتوحة (OpenStreetMap)",
-                    date: "2026",
-                    status: "مؤكدة"
-                },
-                {
-                    title: "متوسط إيجار العقارات التجارية",
-                    value: "2,500 دج / م²",
-                    source: "مؤشر العقارات التجاري المحلي",
-                    date: "2026",
-                    status: "تقديري موثوق"
-                },
-                {
-                    title: "القوة الشرائية ومؤشر الدخل",
-                    value: "متوسط مرتفع",
-                    source: "تقارير البنك الدولي / بيانات اقتصادية",
-                    date: "2025",
-                    status: "رسمية"
-                }
-            ];
+            // تشغيل المحرك الموحد لمعالجة البيانات والتحقق منها
+            const reportData = await window.buildXEngine.processMarketAnalysis(userInput);
+            const indicators = reportData.indicators;
 
-            // عرض المؤشرات في البطاقات
+            // خريطة لتسميات حالات البيانات بالعربية
+            const statusLabels = {
+                confirmed: 'مؤكدة (Confirmed)',
+                estimated: 'تقديرية (Estimated)',
+                unavailable: 'غير متوفرة (Unavailable)'
+            };
+
             const indicatorsContainer = document.getElementById('indicatorsContainer');
-            indicatorsContainer.innerHTML = mockDataPoints.map(item => `
+            indicatorsContainer.innerHTML = `
                 <div class="indicator-card">
-                    <h3>${item.title}</h3>
-                    <div class="indicator-value">${item.value}</div>
+                    <h3>التعداد السكاني والكثافة</h3>
+                    <div class="indicator-value">${indicators.population.value}</div>
                     <div class="indicator-meta">
-                        <span class="badge">${item.status}</span>
-                        <span><strong>المصدر:</strong> ${item.source}</span>
-                        <span><strong>آخر تحديث:</strong> ${item.date}</span>
+                        <span class="badge ${indicators.population.status}">${statusLabels[indicators.population.status]}</span>
+                        <span><strong>المصدر:</strong> <a href="${indicators.population.sourceUrl}" target="_blank">${indicators.population.source}</a></span>
+                        <span><strong>آخر تحديث:</strong> ${indicators.population.lastUpdated}</span>
+                        <span><strong>درجة الثقة:</strong> ${indicators.population.confidence}</span>
                     </div>
                 </div>
-            `).join('');
+
+                <div class="indicator-card">
+                    <h3>المنافسون في نفس النطاق</h3>
+                    <div class="indicator-value">${indicators.competition.value}</div>
+                    <div class="indicator-meta">
+                        <span class="badge ${indicators.competition.status}">${statusLabels[indicators.competition.status]}</span>
+                        <span><strong>المصدر:</strong> <a href="${indicators.competition.sourceUrl}" target="_blank">${indicators.competition.source}</a></span>
+                        <span><strong>آخر تحديث:</strong> ${indicators.competition.lastUpdated}</span>
+                        <span><strong>درجة الثقة:</strong> ${indicators.competition.confidence}</span>
+                    </div>
+                </div>
+
+                <div class="indicator-card">
+                    <h3>متوسط إيجار العقارات التجارية</h3>
+                    <div class="indicator-value">${indicators.realEstate.value}</div>
+                    <div class="indicator-meta">
+                        <span class="badge ${indicators.realEstate.status}">${statusLabels[indicators.realEstate.status]}</span>
+                        <span><strong>المصدر:</strong> <a href="${indicators.realEstate.sourceUrl}" target="_blank">${indicators.realEstate.source}</a></span>
+                        <span><strong>آخر تحديث:</strong> ${indicators.realEstate.lastUpdated}</span>
+                        <span><strong>درجة الثقة:</strong> ${indicators.realEstate.confidence}</span>
+                    </div>
+                </div>
+
+                <div class="indicator-card">
+                    <h3>القوة الشرائية ومؤشر الدخل</h3>
+                    <div class="indicator-value">${indicators.economy.value}</div>
+                    <div class="indicator-meta">
+                        <span class="badge ${indicators.economy.status}">${statusLabels[indicators.economy.status]}</span>
+                        <span><strong>المصدر:</strong> <a href="${indicators.economy.sourceUrl}" target="_blank">${indicators.economy.source}</a></span>
+                        <span><strong>آخر تحديث:</strong> ${indicators.economy.lastUpdated}</span>
+                        <span><strong>درجة الثقة:</strong> ${indicators.economy.confidence}</span>
+                    </div>
+                </div>
+            `;
         });
     </script>
 </body>
