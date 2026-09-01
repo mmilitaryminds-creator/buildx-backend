@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحليل السوق - BuildX Data Engine</title>
-    <!-- استيراد الخطوط العصرية -->
+    <title>تحليل السوق المتقدم - BuildX Data Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1e3a8a; /* أزرق ملكي داكن */
+            --primary-color: #1e3a8a;
             --primary-hover: #1d4ed8;
-            --bg-color: #f8fafc; /* خلفية فاتحة نظيفة */
+            --bg-color: #f8fafc;
             --text-main: #0f172a;
             --text-muted: #475569;
             --white: #ffffff;
             --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --error-bg: #fef2f2;
+            --error-border: #fca5a5;
+            --error-text: #991b1b;
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
@@ -34,7 +35,6 @@
             flex-direction: column;
         }
 
-        /* شريط التنقل العلوي (مبسط) */
         header {
             width: 100%;
             padding: 15px 5%;
@@ -61,12 +61,11 @@
         }
         
         .back-link:hover {
-            color: var(--primary-light);
+            color: var(--primary-color);
         }
 
-        /* المحتوى الرئيسي */
         .main-container {
-            max-width: 700px;
+            max-width: 750px;
             margin: 40px auto;
             padding: 0 20px;
             width: 100%;
@@ -86,18 +85,27 @@
             font-size: 16px;
         }
 
-        /* نموذج الإدخال */
         .analysis-form {
             background: var(--white);
-            padding: 30px;
+            padding: 35px;
             border-radius: 16px;
             box-shadow: var(--shadow-md);
             border: 1px solid var(--border-color);
             margin-bottom: 30px;
         }
 
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
         .form-group {
             margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
         }
 
         label {
@@ -108,25 +116,43 @@
             margin-bottom: 8px;
         }
 
+        .optional-tag {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
         input[type="text"],
+        input[type="number"],
         select {
             width: 100%;
             padding: 12px 15px;
-            font-size: 16px;
+            font-size: 15px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             background-color: var(--bg-color);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        input[type="text"]:focus,
-        select:focus {
+        input:focus, select:focus {
             outline: none;
-            border-color: var(--primary-light);
+            border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        /* زر التحليل */
+        /* صندوق التنبيه الذكي للتناقضات */
+        #smartAlert {
+            display: none;
+            background-color: var(--error-bg);
+            border: 1px solid var(--error-border);
+            color: var(--error-text);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
         .analyze-btn {
             width: 100%;
             background-color: var(--primary-color);
@@ -138,13 +164,12 @@
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 4px 6px rgba(30, 58, 138, 0.2);
         }
 
         .analyze-btn:hover {
             background-color: var(--primary-hover);
             transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
         }
 
         .analyze-btn:disabled {
@@ -153,9 +178,31 @@
             transform: none;
         }
 
-        /* منطقة النتائج (مخفية حتى تظهر النتيجة) */
+        #loading {
+            display: none;
+            text-align: center;
+            color: var(--text-muted);
+            margin: 20px 0;
+            font-size: 16px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         #result {
-            display: none; /* مخفي افتراضياً */
+            display: none;
             background: var(--white);
             padding: 30px;
             border-radius: 16px;
@@ -177,144 +224,203 @@
             font-size: 16px;
             line-height: 1.8;
             color: var(--text-muted);
-            /* تنسيق النص القادم من الـ AI ليكون مقروءاً */
-            white-space: pre-wrap; 
+            white-space: pre-wrap;
         }
 
-        /* حالة التحميل */
-        #loading {
-            display: none; /* مخفي افتراضياً */
-            text-align: center;
-            color: var(--text-muted);
-            margin: 20px 0;
-            font-size: 16px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid var(--primary-color); /* Blue */
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- شريط التنقل العلوي -->
     <header>
         <a href="index.html" class="back-link">← العودة للرئيسية</a>
         <a href="index.html" class="logo">BuildX</a>
-        <div></div> <!-- مسافة فارغة لموازنة التصميم -->
+        <div></div>
     </header>
 
-    <!-- المحتوى الرئيسي -->
     <main class="main-container">
-        <h1>تحليل ذكي لمشروعك</h1>
-        <p class="subtitle">أدخل بيانات مشروعك للحصول على رؤى السوق الاسترشادية</p>
+        <h1>محرك تحليل السوق الذكي</h1>
+        <p class="subtitle">أدخل تفاصيل مشروع بدقة للحصول على تقييم استرشادي متقدم</p>
 
-        <!-- نموذج الإدخال -->
         <form id="analysisForm" class="analysis-form">
-            <div class="form-group">
-                <label for="country">الدولة:</label>
-                <input type="text" id="country" name="country" placeholder="مثال: الإمارات" required>
+            
+            <!-- تنبيه ذكي للأخطاء -->
+            <div id="smartAlert"></div>
+
+            <div class="form-grid">
+                <!-- الدولة -->
+                <div class="form-group">
+                    <label for="country">الدولة:</label>
+                    <input type="text" id="country" name="country" placeholder="مثال: الجزائر، الإمارات..." required>
+                </div>
+
+                <!-- المدينة -->
+                <div class="form-group">
+                    <label for="city">المدينة:</label>
+                    <input type="text" id="city" name="city" placeholder="مثال: الجزائر العاصمة، دبي..." required>
+                </div>
+
+                <!-- نوع المشروع (خيارات احترافية) -->
+                <div class="form-group full-width">
+                    <label for="activitySelect">نوع المشروع:</label>
+                    <select id="activitySelect" required>
+                        <option value="" disabled selected>اختر قطاع المشروع...</option>
+                        <option value="Café">☕ مقهى (Café)</option>
+                        <option value="Restaurant">🍔 مطعم (Restaurant)</option>
+                        <option value="Grocery Store">🏪 متجر مواد غذائية (Grocery Store)</option>
+                        <option value="Gym">🏋️ نادي رياضي (Gym)</option>
+                        <option value="Hotel">🏨 فندق أو إقامة (Hotel)</option>
+                        <option value="Retail Store">🛍️ متجر تجزئة (Retail Store)</option>
+                        <option value="Tech Business">💻 مشروع تقني/برمجيات (Tech Business)</option>
+                        <option value="Other">➕ نشاط آخر (Other)</option>
+                    </select>
+                </div>
+
+                <!-- خانة إضافية تظهر إذا اخترنا نشاط آخر -->
+                <div class="form-group full-width" id="customActivityGroup" style="display: none;">
+                    <label for="customActivity">حدد النشاط التجاري بدقة:</label>
+                    <input type="text" id="customActivity" placeholder="اكتب النشاط هنا...">
+                </div>
+
+                <!-- الميزانية -->
+                <div class="form-group">
+                    <label for="budget">الميزانية المتوقعة:</label>
+                    <input type="number" id="budget" name="budget" placeholder="مثال: 50000" required>
+                </div>
+
+                <!-- الموقع / العنوان (اختياري) -->
+                <div class="form-group">
+                    <label for="location">العنوان أو الحي <span class="optional-tag">(اختياري)</span>:</label>
+                    <input type="text" id="location" name="location" placeholder="مثال: شارع الرئيسي، حي البستان">
+                </div>
+
+                <!-- المساحة (اختياري) -->
+                <div class="form-group full-width">
+                    <label for="area">مساحة المشروع بالمتر المربع <span class="optional-tag">(اختياري)</span>:</label>
+                    <input type="number" id="area" name="area" placeholder="مثال: 120">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="city">المدينة:</label>
-                <input type="text" id="city" name="city" placeholder="مثال: دبي" required>
-            </div>
-            <div class="form-group">
-                <label for="activity">النشاط التجاري:</label>
-                <input type="text" id="activity" name="activity" placeholder="مثال: مطعم بيتزا" required>
-            </div>
-            <button type="submit" id="submitBtn" class="analyze-btn">تحليل المشروع</button>
+
+            <button type="submit" id="submitBtn" class="analyze-btn">Analyze Business</button>
         </form>
 
-        <!-- منطقة التحميل -->
         <div id="loading">
             <div class="spinner"></div>
-            جاري تحليل البيانات وصياغة التقرير...
+            جاري فحص المعطيات ومطابقة بيانات السوق بالذكاء الاصطناعي...
         </div>
 
-        <!-- منطقة النتائج -->
         <div id="result">
-            <div class="result-header">تقرير تحليل السوق</div>
-            <div id="resultContent" class="result-content">
-                <!-- هنا سيتم عرض النتيجة التي تأتي من API -->
-            </div>
+            <div class="result-header">تقرير تحليل الاستثمار</div>
+            <div id="resultContent" class="result-content"></div>
         </div>
     </main>
 
-    <!-- جافا سكريبت للربط مع الـ API -->
     <script>
         const form = document.getElementById('analysisForm');
-        const countryInput = document.getElementById('country');
-        const cityInput = document.getElementById('city');
-        const activityInput = document.getElementById('activity');
+        const activitySelect = document.getElementById('activitySelect');
+        const customActivityGroup = document.getElementById('customActivityGroup');
+        const customActivityInput = document.getElementById('customActivity');
+        const smartAlert = document.getElementById('smartAlert');
         const submitBtn = document.getElementById('submitBtn');
         const loadingDiv = document.getElementById('loading');
         const resultDiv = document.getElementById('result');
         const resultContent = document.getElementById('resultContent');
 
-        // رابط الـ API الخلفي الذي برمجناه (تأكد أنه صحيح)
-        const API_URL = 'https://buildx-backend-1.onrender.com/analyze'; // استخدم الرابط الجديد
+        const API_URL = 'https://buildx-backend-1.onrender.com/analyze';
+
+        // إظهار خانة النشاط المخصص إذا اختار المستخدم "Other"
+        activitySelect.addEventListener('change', (e) => {
+            if (e.target.value === 'Other') {
+                customActivityGroup.style.display = 'block';
+                customActivityInput.required = true;
+            } else {
+                customActivityGroup.style.display = 'none';
+                customActivityInput.required = false;
+            }
+        });
+
+        // قاعدة بيانات بسيطة وذكية لاكتشاف التناقضات الفجة (مثل وضع مدينة أمريكية بدولة عربية والعكس كمثال توضيحي)
+        function detectContradictions(country, city) {
+            const c = country.trim().toLowerCase();
+            const ci = city.trim().toLowerCase();
+
+            // أمثلة لاكتشاف التناقضات الشائعة
+            if ((c.includes('الجزائر') || c.includes('algeria')) && (ci.includes('new york') || ci.includes('نيويورك') || ci.includes('paris') || ci.includes('باريس'))) {
+                return '⚠️ تنبيه ذكي من BuildX: يبدو أن هناك تناقضاً؛ لقد اخترت دولة الجزائر بينما المدينة المدخلة تتبع دولة أخرى. يرجى تصحيح المعطيات لضمان دقة التحليل.';
+            }
+            if ((c.includes('الامارات') || c.includes('uae') || c.includes('united arab emirates')) && (ci.includes('الجزائر') || ci.includes('algiers'))) {
+                return '⚠️ تنبيه ذكي من BuildX: تناقض رصدي؛ المدينة لا تتطابق مع الدولة المدخلة. تحقق من البيانات من فضلك.';
+            }
+            return null;
+        }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // جمع البيانات من الحقول
-            const country = countryInput.value;
-            const city = cityInput.value;
-            const activity = activityInput.value;
+            smartAlert.style.display = 'none';
+            smartAlert.innerHTML = '';
 
-            // إظهار حالة التحميل وإخفاء النتائج
+            const country = document.getElementById('country').value.trim();
+            const city = document.getElementById('city').value.trim();
+            
+            // تحديد النشاط النهائي بناءً على القائمة أو الخانة المخصصة
+            let activity = activitySelect.value;
+            if (activity === 'Other') {
+                activity = customActivityInput.value.trim();
+            }
+
+            const budget = document.getElementById('budget').value;
+            const location = document.getElementById('location').value;
+            const area = document.getElementById('area').value;
+
+            // 1. فحص التناقض الذكي
+            const contradictionError = detectContradictions(country, city);
+            if (contradictionError) {
+                smartAlert.innerHTML = contradictionError;
+                smartAlert.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+
+            // تجميع النص الكامل للنشاط والميزانية لإرساله للـ API الخلفي
+            const fullActivityPayload = `${activity} (الميزانية: ${budget}، الموقع: غير محدد، المساحة: ${area ? area + ' م2' : 'غير محددة'})`;
+
             submitBtn.disabled = true;
             loadingDiv.style.display = 'block';
             resultDiv.style.display = 'none';
-            resultContent.innerHTML = '';
 
             try {
-                // إرسال الطلب إلى الـ API
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ country, city, activity })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        country: country, 
+                        city: city, 
+                        activity: fullActivityPayload 
+                    })
                 });
 
-                if (!response.ok) {
-                    throw new Error('حدث خطأ في الاتصال بالخادم');
-                }
+                if (!response.ok) throw new Error('خطأ في استجابة الخادم الخلفي.');
 
-                // قراءة النتيجة
                 const data = await response.json();
-                
-                // عرض النتيجة بشكل جميل
-                resultContent.innerHTML = data.analysis || 'لم يتم العثور على بيانات تحليل.';
+                resultContent.innerHTML = data.analysis || 'لم يتم استرجاع نتائج كافية.';
                 resultDiv.style.display = 'block';
+                window.scrollTo({ top: resultDiv.offsetTop - 20, behavior: 'smooth' });
 
             } catch (error) {
-                // عرض رسالة خطأ
-                resultContent.innerHTML = 'عذراً، حدث خطأ أثناء تحليل البيانات. يرجى المحاولة لاحقاً.<br>الخطأ: ' + error.message;
+                resultContent.innerHTML = 'عذراً، حدث خطأ أثناء الاتصال بالمحرك: ' + error.message;
                 resultDiv.style.display = 'block';
-                resultDiv.style.borderColor = '#fecaca'; // حدود حمراء في حالة الخطأ
-                resultDiv.style.backgroundColor = '#fef2f2';
-                resultContent.style.color = '#991b1b';
             } finally {
-                // إعادة تفعيل الزر وإخفاء التحميل
                 submitBtn.disabled = false;
                 loadingDiv.style.display = 'none';
             }
         });
     </script>
-
 </body>
 </html>
