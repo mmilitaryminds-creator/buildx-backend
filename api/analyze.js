@@ -16,16 +16,15 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Gemini API Key is missing in environment variables.' });
     }
 
-    const prompt = `قم بإعداد تحليل سوق احترافي ومختصر للمشروع التالي:
+    const prompt = `قم بإعداد تحليل سوق احترافي ومختصر باللغة العربية للمشروع التالي:
 - النشاط: ${businessType}
 - الدولة: ${country}
 - المدينة: ${city}
 - الميزانية: ${budget} دولار
-- الفئة المستهدفة: ${targetAudience}
-أعطني التقرير باللغة العربية بشكل منظم وواضح.`;
+- الفئة المستهدفة: ${targetAudience}`;
 
-    // الرابط المحدث والنهائي باستخدام الإصدار v1 والنموذج القياسي
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    // استخدام نموذج gemini-1.5-pro المعتمد والمدعم بالكامل
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
