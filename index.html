@@ -12,6 +12,8 @@
     input { width: 100%; padding: 10px; background: #334155; border: 1px solid #475569; color: #fff; border-radius: 6px; box-sizing: border-box; }
     button { width: 100%; padding: 12px; background: #2563eb; color: #fff; border: none; border-radius: 6px; margin-top: 18px; font-weight: bold; cursor: pointer; }
     button:hover { background: #1d4ed8; }
+    .btn-copy { background: #059669; margin-top: 10px; display: none; }
+    .btn-copy:hover { background: #047857; }
     .result { margin-top: 15px; padding: 16px; background: #020617; border-radius: 8px; font-size: 14px; color: #e2e8f0; line-height: 1.6; border: 1px solid #334155; }
     .result h3 { color: #38bdf8; margin-top: 0; font-size: 16px; border-bottom: 1px solid #1e293b; padding-bottom: 8px; }
     .result-item { margin-bottom: 8px; display: flex; justify-content: space-between; }
@@ -42,12 +44,18 @@
       <h3>تقرير التحليل</h3>
       <p style="color: #64748b; text-align: center; margin: 10px 0;">النتائج ستظهر هنا مرتبة ومنسقة...</p>
     </div>
+
+    <button id="copyBtn" class="btn-copy" onclick="copyReport()">📋 نسخ التقرير</button>
   </div>
 
   <script>
+    let lastReportText = "";
+
     async function runAnalysis() {
       const output = document.getElementById('output');
+      const copyBtn = document.getElementById('copyBtn');
       output.innerHTML = `<h3>جاري تحليل البيانات...</h3><p style="text-align:center;">يرجى الانتظار قليلاً.</p>`;
+      copyBtn.style.display = 'none';
 
       const budgetVal = Number(document.getElementById('budget').value);
 
@@ -67,6 +75,18 @@
         const data = await res.json();
 
         if (data.success) {
+          lastReportText = `📊 تقرير تحليل المشروع\n` +
+                           `- الحالة: نجاح (Success)\n` +
+                           `- الدولة والمدينة: ${payload.country}, ${payload.city}\n` +
+                           `- نوع النشاط: ${payload.businessType}\n` +
+                           `- الميزانية المحددة: $${budgetVal.toLocaleString()} USD\n` +
+                           `- حجم السوق: ${data.data?.competition?.marketSize || 'متوفر'}\n` +
+                           `- الكثافة السكانية: ${data.data?.competition?.cityPopulation || 'غير متوفرة'} نسمة\n` +
+                           `- المستوى المديني: ${data.data?.competition?.cityTier || 'متوسط'}\n` +
+                           `- المنافسين المقدرين: ${data.data?.competition?.estimatedCompetitors || 'N/A'} منافس\n` +
+                           `- تشبع السوق: ${data.data?.competition?.marketSaturation || 'معتدل'}\n` +
+                           `- حواجز الدخول: ${data.data?.competition?.barriers || 'عادية'}`;
+
           output.innerHTML = `
             <h3>📊 تقرير تحليل المشروع</h3>
             <div class="result-item"><span>الحالة:</span> <strong>نجاح (Success)</strong></div>
@@ -81,12 +101,24 @@
             <div class="result-item"><span>تشبع السوق:</span> <strong style="color: #f87171;">${data.data?.competition?.marketSaturation || 'معتدل'}</strong></div>
             <div class="result-item"><span>حواجز الدخول:</span> <strong>${data.data?.competition?.barriers || 'عادية'}</strong></div>
           `;
+          copyBtn.style.display = 'block';
         } else {
           output.innerHTML = `<h3>⚠️ تنبيه</h3><p>لم يتم جلب البيانات بنجاح، تحقق من المدخلات.</p>`;
         }
       } catch (err) {
         output.innerHTML = `<h3>❌ خطأ</h3><p>حدث خطأ في الاتصال: ${err.message}</p>`;
       }
+    }
+
+    function copyReport() {
+      if (!lastReportText) return;
+      navigator.clipboard.writeText(lastReportText).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.innerText = "✅ تم النسخ بنجاح!";
+        setTimeout(() => { btn.innerText = "📋 نسخ التقرير"; }, 2000);
+      }).catch(err => {
+        alert("فشل النسخ: " + err);
+      });
     }
   </script>
 
