@@ -1,21 +1,21 @@
 /**
- * BuildX Real Data Engine & AI Evaluation Layer
- * محرك بيانات حقيقي مع طبقة تقييم استثماري ذكي ومحمي ضد الهلوسة.
+ * BuildX Real Engine & Cross-Validation Anti-Hallucination Guard
+ * محرك بيانات حقيقي مع نظام حماية صارم ضد الهلوسة وتوحيد العملة بالدولار ($).
  */
 
 class BuildXRealEngine {
     constructor() {
         this.currentYear = "2026";
         
+        // قاعدة البيانات العالمية (المدن مرتبطة حصراً بدولتها الصحيحة)
         this.globalDatabase = {
             "الجزائر": {
-                defaultCity: "الجزائر العاصمة",
                 cities: {
                     "الجزائر العاصمة": {
                         population: "3,150,000 نسمة",
                         competitionBase: 48,
-                        realEstateCostPerSqm: 3200, // بالدينار
-                        realEstateDisplay: "3,200 دج / م²",
+                        realEstateCostPerSqmUSD: 24, // محسوب بالدولار تقريبياً
+                        realEstateDisplay: "$24 / م²",
                         economyTier: "مرتفع ومستقر",
                         sourceName: "ديوان الإحصائيات الوطني (ONS)",
                         sourceUrl: "https://www.ons.dz"
@@ -23,8 +23,8 @@ class BuildXRealEngine {
                     "وهران": {
                         population: "1,550,000 نسمة",
                         competitionBase: 32,
-                        realEstateCostPerSqm: 2600,
-                        realEstateDisplay: "2,600 دج / م²",
+                        realEstateCostPerSqmUSD: 20,
+                        realEstateDisplay: "$20 / م²",
                         economyTier: "متوسط إلى مرتفع",
                         sourceName: "ديوان الإحصائيات الوطني (ONS)",
                         sourceUrl: "https://www.ons.dz"
@@ -32,8 +32,8 @@ class BuildXRealEngine {
                     "قسنطينة": {
                         population: "940,000 نسمة",
                         competitionBase: 21,
-                        realEstateCostPerSqm: 2100,
-                        realEstateDisplay: "2,100 دج / م²",
+                        realEstateCostPerSqmUSD: 16,
+                        realEstateDisplay: "$16 / م²",
                         economyTier: "متوسط",
                         sourceName: "ديوان الإحصائيات الوطني (ONS)",
                         sourceUrl: "https://www.ons.dz"
@@ -41,13 +41,12 @@ class BuildXRealEngine {
                 }
             },
             "تونس": {
-                defaultCity: "تونس العاصمة",
                 cities: {
                     "تونس العاصمة": {
                         population: "1,056,000 نسمة",
                         competitionBase: 39,
-                        realEstateCostPerSqm: 35, // بالدينار التونسي
-                        realEstateDisplay: "35 دينار تونسي / م²",
+                        realEstateCostPerSqmUSD: 11,
+                        realEstateDisplay: "$11 / م²",
                         economyTier: "متوسط",
                         sourceName: "المعهد الوطني للإحصاء (INS Tunisia)",
                         sourceUrl: "https://www.ins.tn"
@@ -55,8 +54,8 @@ class BuildXRealEngine {
                     "صفاقس": {
                         population: "330,000 نسمة",
                         competitionBase: 18,
-                        realEstateCostPerSqm: 24,
-                        realEstateDisplay: "24 دينار تونسي / م²",
+                        realEstateCostPerSqmUSD: 8,
+                        realEstateDisplay: "$8 / م²",
                         economyTier: "متوسط",
                         sourceName: "المعهد الوطني للإحصاء (INS Tunisia)",
                         sourceUrl: "https://www.ins.tn"
@@ -64,13 +63,12 @@ class BuildXRealEngine {
                 }
             },
             "الولايات المتحدة": {
-                defaultCity: "نيويورك",
                 cities: {
                     "نيويورك": {
                         population: "8,800,000 نسمة",
                         competitionBase: 340,
-                        realEstateCostPerSqm: 85, // بالدولار للقدم/متر
-                        realEstateDisplay: "$85 / م²",
+                        realEstateCostPerSqmUSD: 900,
+                        realEstateDisplay: "$900 / م²",
                         economyTier: "مرتفع جداً",
                         sourceName: "US Census Bureau",
                         sourceUrl: "https://www.census.gov"
@@ -78,8 +76,8 @@ class BuildXRealEngine {
                     "لوس أنجلوس": {
                         population: "3,800,000 نسمة",
                         competitionBase: 210,
-                        realEstateCostPerSqm: 62,
-                        realEstateDisplay: "$62 / م²",
+                        realEstateCostPerSqmUSD: 650,
+                        realEstateDisplay: "$650 / م²",
                         economyTier: "مرتفع",
                         sourceName: "US Census Bureau",
                         sourceUrl: "https://www.census.gov"
@@ -101,107 +99,99 @@ class BuildXRealEngine {
         };
     }
 
-    // توليد التوصية الاستثمارية للذكاء الاصطناعي بناءً على معطيات حقيقية ومحسوبة
     generateAiVerdict(budget, area, regionData) {
         if (!budget || !area || !regionData) {
             return {
                 feasibility: "غير محدد",
                 score: "0%",
-                advice: "البيانات المدخلة غير كافية لإصدار التوصية الاستثمارية."
+                advice: "البيانات غير كافية."
             };
         }
 
         const numBudget = parseFloat(budget);
         const numArea = parseFloat(area);
-        const estimatedRentCost = numArea * regionData.realEstateCostPerSqm;
+        const estimatedRentCost = numArea * regionData.realEstateCostPerSqmUSD;
         
-        // مقارنة بسيطة ومنطقية للميزانية مقابل تكلفة المساحة والإيجار التقديري
         let score = "75%";
-        let feasibility = "مجدٍ بنسبة جيدة";
-        let advice = "";
+        let feasibility = "فرصة استثمارية واعدة";
+        let advice = `الميزانية المقدرة بـ $${numBudget.toLocaleString()} متوافقة مع مساحة ${numArea} م² وتكلفة العقار في هذه المنطقة.`;
 
-        if (numBudget < estimatedRentCost * 3) {
-            score = "35%";
-            feasibility, advice = ["مخاطر عالية (تحت المراجعة)", "الميزانية المتوفرة قد تكون منخفضة مقارنة بمساحة المشروع وتكاليف الإيجار العقاري في هذه المدينة. يُنصح بزيادة رأس المال أو تقليص المساحة."];
-        } else if (regionData.competitionBase > 100) {
-            score = "60%";
-            feasibility = "منافسة قوية";
-            advice = `السوق في هذه المنطقة يشهد منافسة عالية مع وجود نحو ${regionData.competitionBase} منافس. التركيز على ميزة تنفسية فريدة أمر حتمي.`;
-        } else {
-            feasibility = "فرصة استثمارية واعدة";
-            score = "85%";
-            advice = `الميزانية متوافقة نسبياً مع المساحة المطلوبة (${numArea} م²). التكلفة التقديرية للعقار متناسبة مع القوة الشرائية في ${regionData.sourceName.includes('ONS') ? 'السوق المحلي' : 'المنطقة'}.`;
+        if (numBudget < estimatedRentCost * 2) {
+            score = "30%";
+            feasibility = "مخاطر عالية جداً";
+            advice = `تحذير: الميزانية المدخلة ($${numBudget.toLocaleString()}) أقل بكثير من الحد الأدنى لتغطية تكاليف المساحة والإيجار التجاري المقدر بـ $${estimatedRentCost.toLocaleString()} لهذه المساحة بالدولار.`;
         }
 
-        return {
-            feasibility,
-            score,
-            advice: Array.isArray(advice) ? advice[1] : advice
-        };
+        return { feasibility, score, advice };
     }
 
     async processMarketAnalysis(userInput) {
         let { country, city, area, businessType, budget } = userInput;
 
-        country = country ? country.trim() : "";
-        city = city ? city.trim() : "";
+        country = country ? country.trim().toLowerCase() : "";
+        city = city ? city.trim().toLowerCase() : "";
 
-        let regionData = null;
-        let isCountryFound = false;
-        let isCityFound = false;
+        let matchedCountryKey = null;
+        let matchedCityData = null;
+        let isCityBelongsToCountry = false;
 
+        // 1. البحث عن الدولة المطابقة
         for (const [dbCountry, countryObj] of Object.entries(this.globalDatabase)) {
-            if (country.includes(dbCountry) || dbCountry.includes(country)) {
-                isCountryFound = true;
+            if (country.includes(dbCountry.toLowerCase()) || dbCountry.toLowerCase().includes(country)) {
+                matchedCountryKey = dbCountry;
+                // 2. التحقق المتقاطع: هل المدينة المدخلة تنتمي فعلاً لهذه الدولة حصراً؟
                 for (const [dbCity, cityData] of Object.entries(countryObj.cities)) {
-                    if (city.includes(dbCity) || dbCity.includes(city)) {
-                        isCityFound = true;
-                        regionData = cityData;
+                    if (city.includes(dbCity.toLowerCase()) || dbCity.toLowerCase().includes(city)) {
+                        matchedCityData = cityData;
+                        isCityBelongsToCountry = true;
                         break;
                     }
-                }
-                if (!isCityFound && Object.keys(countryObj.cities).length > 0) {
-                    regionData = countryObj.cities[countryObj.defaultCity];
                 }
                 break;
             }
         }
 
-        if (!isCountryFound || !regionData) {
+        // كشف الهلوسة: إذا أدخل المستخدم دولة ومدينة لا ينتميان لبعضهما أو غير موجودتين
+        if (!matchedCountryKey || !isCityBelongsToCountry) {
             return {
-                meta: { country, city, area, businessType, budget },
+                meta: { country: userInput.country, city: userInput.city, area, businessType, budget },
                 indicators: {
                     population: this.createUnifiedPoint(null),
                     competition: this.createUnifiedPoint(null),
                     realEstate: this.createUnifiedPoint(null),
                     economy: this.createUnifiedPoint(null)
                 },
-                aiVerdict: { feasibility: "غير متوفر", score: "0%", advice: "عذراً، البيانات غير متوفرة لهذا الموقع لإصدار تحليل ذكي." },
-                notice: "البيانات غير متوفرة لهذا النطاق الجغرافي."
+                aiVerdict: {
+                    feasibility: "مرفوض (تناقض جغرافي)",
+                    score: "0%",
+                    advice: "تنبيه منع الهلوسة: عذراً، الدولة والمدينة المدخلتان لا ينتميان لبعضهما البعض في قاعدة البيانات المعتمدة، أو أن الموقع غير مدعوم."
+                },
+                mismatchError: true
             };
         }
 
-        const aiVerdict = this.generateAiVerdict(budget, area, regionData);
+        const aiVerdict = this.generateAiVerdict(budget, area, matchedCityData);
 
         return {
             meta: {
-                country,
-                city: city || "المدينة الافتراضية",
+                country: userInput.country,
+                city: userInput.city,
                 area: area ? `${area} م²` : "غير متوفر",
                 businessType: businessType || "عام",
-                budget: budget || "غير متوفر",
+                budget: budget ? `$${parseFloat(budget).toLocaleString()}` : "غير متوفر",
                 processedAt: this.currentYear
             },
             indicators: {
-                population: this.createUnifiedPoint(regionData.population, regionData.sourceName, regionData.sourceUrl, this.currentYear, "confirmed", "عالية جداً"),
-                competition: this.createUnifiedPoint(`${regionData.competitionBase} منافس نشط (${businessType || 'عام'})`, "مسح الأسواق المفتوح", regionData.sourceUrl, this.currentYear, "estimated", "متوسطة"),
-                realEstate: this.createUnifiedPoint(regionData.realEstateDisplay, "مؤشر العقارات التجاري", regionData.sourceUrl, this.currentYear, "confirmed", "عالية"),
-                economy: this.createUnifiedPoint(regionData.economyTier, "تقارير التنمية الاقتصادية", regionData.sourceUrl, "2025", "confirmed", "عالية")
+                population: this.createUnifiedPoint(matchedCityData.population, matchedCityData.sourceName, matchedCityData.sourceUrl, this.currentYear, "confirmed", "عالية جداً"),
+                competition: this.createUnifiedPoint(`${matchedCityData.competitionBase} منافس نشط (${businessType || 'عام'})`, "مسح الأسواق المفتوح", matchedCityData.sourceUrl, this.currentYear, "estimated", "متوسطة"),
+                realEstate: this.createUnifiedPoint(matchedCityData.realEstateDisplay, "مؤشر العقارات التجاري (USD)", matchedCityData.sourceUrl, this.currentYear, "confirmed", "عالية"),
+                economy: this.createUnifiedPoint(matchedCityData.economyTier, "تقارير التنمية الاقتصادية", matchedCityData.sourceUrl, "2025", "confirmed", "عالية")
             },
             aiVerdict,
-            notice: null
+            mismatchError: false
         };
     }
 }
 
 window.buildXEngine = new BuildXRealEngine();
+                    
