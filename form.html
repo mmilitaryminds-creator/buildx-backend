@@ -166,7 +166,7 @@
     <main>
         <div class="form-container">
             <h1>معلومات المشروع</h1>
-            <p class="subtitle">قم بتعبئة الحقول أدناه لكي يقوم محرك الذكاء الاصطناعي بتحليل السوق بدقة.</p>
+            <p class="subtitle">قم بتعبئة الحقول أدناه لتحديد موقع المشروع ومساحته وميزانيته بدقة.</p>
             
             <form id="analysisForm" onsubmit="handleAnalysis(event)">
                 <div class="form-group">
@@ -180,12 +180,17 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="area">المساحة بالمتر المربع (م²)</label>
+                    <input type="number" id="area" placeholder="مثال: 120" required>
+                </div>
+
+                <div class="form-group">
                     <label for="businessType">نوع النشاط التجاري</label>
                     <input type="text" id="businessType" placeholder="مثال: مقهى، تسوق إلكتروني، مطعم..." required>
                 </div>
 
                 <div class="form-group">
-                    <label for="budget">الميزانية المتوفرة (د.ج أو بالعملة المحلية)</label>
+                    <label for="budget">الميزانية المتوفرة</label>
                     <input type="number" id="budget" placeholder="مثال: 500000" required>
                 </div>
 
@@ -204,15 +209,17 @@
             
             const country = document.getElementById('country').value;
             const city = document.getElementById('city').value;
+            const area = document.getElementById('area').value;
             const businessType = document.getElementById('businessType').value;
             const budget = document.getElementById('budget').value;
 
             localStorage.setItem('project_country', country);
             localStorage.setItem('project_city', city);
+            localStorage.setItem('project_area', area);
             localStorage.setItem('project_business', businessType);
             localStorage.setItem('project_budget', budget);
 
-            alert('جاري تحليل السوق لمشروعك بنجاح!');
+            alert('جاري تحليل السوق لمشروعك بالمساحة المحددة بنجاح!');
         }
     </script>
 </body>
