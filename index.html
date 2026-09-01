@@ -81,7 +81,7 @@
             align-items: center;
             text-align: center;
             padding: 60px 20px;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -108,7 +108,7 @@
         p.description {
             font-size: clamp(16px, 2vw, 20px);
             color: var(--text-muted);
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             line-height: 1.6;
         }
 
@@ -126,12 +126,55 @@
             text-decoration: none;
             box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
             transition: all 0.3s ease;
+            margin-bottom: 50px;
         }
 
         .cta-button:hover {
             background-color: #1d4ed8;
             transform: translateY(-2px);
             box-shadow: 0 15px 30px -5px rgba(30, 58, 138, 0.4);
+        }
+
+        /* قسم كيف يعمل النظام (خطوات واضحة وشفافة) */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .step-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        .step-number {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary-light);
+            margin-bottom: 10px;
+            display: inline-block;
+            background: #eff6ff;
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        .step-card h3 {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .step-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
         }
 
         /* التذييل البسيط */
@@ -142,6 +185,7 @@
             color: var(--text-muted);
             border-top: 1px solid var(--border-color);
             background: var(--white);
+            margin-top: 40px;
         }
 
         /* تجاوب الهاتف المحمول */
@@ -151,6 +195,9 @@
             }
             .hero-section {
                 padding: 40px 15px;
+            }
+            .steps-container {
+                text-align: center;
             }
         }
     </style>
@@ -171,13 +218,32 @@
     <main class="hero-section">
         <div class="tagline">Make smarter business decisions.</div>
         <h1>هل مشروعك يستحق الاستثمار؟</h1>
-        <p class="description">حلّل أي مشروع في أي مدينة حول العالم بالاعتماد على البيانات والذكاء الاصطناعي بدقة متناهية.</p>
+        <p class="description">حلّل أي مشروع في أي مدينة حول العالم بالاعتماد على البيانات ورؤى الذكاء الاصطناعي الاسترشادية بدقة متناهية.</p>
         
-        <!-- زر الانتقال لصفحة التحليل التي برمجناها سابقاً -->
+        <!-- زر الانتقال لصفحة التحليل -->
         <a href="analyzer.html" class="cta-button">
             Start Analysis 
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </a>
+
+        <!-- قسم خطوات العمل الشفافة -->
+        <div class="steps-container">
+            <div class="step-card">
+                <span class="step-number">الخطوة 01</span>
+                <h3>أدخل معطيات مشروعك</h3>
+                <p>حدد الدولة، المدينة، النشاط التجاري، والميزانية المتوفرة لديك بكل بساطة.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">الخطوة 02</span>
+                <h3>معالجة ذكية للبيانات</h3>
+                <p>يقوم محرك الذكاء الاصطناعي بتحليل طبيعة السوق والمؤشرات المتعلقة بالنشاط.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-number">الخطوة 03</span>
+                <h3>احصل على التقرير</h3>
+                <p>استلم تقريراً استراتيجياً منظماً يساعدك في تقييم الفرص واتخاذ قرارك الاستثماري.</p>
+            </div>
+        </div>
     </main>
 
     <!-- التذييل -->
