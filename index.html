@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildX — Live Data Prototype</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #171a21;
+    --border: #2a2e38;
+    --text: #eef1f6;
+    --muted: #9aa3b2;
+    --accent: #4f7cff;
+    --accent-2: #22c55e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 28px; }
+  header .logo {
+    font-size: 28px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  header p { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  select, button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 15px;
+    font-family: inherit;
+  }
+  select {
+    background: #10131a; color: var(--text); margin-bottom: 14px;
+  }
+  button {
+    background: var(--accent); color: #fff; border: none;
+    font-weight: 700; cursor: pointer; transition: opacity .15s;
+  }
+  button:active { opacity: .8; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+
+  .status { font-size: 13px; color: var(--muted); margin-top: 12px; text-align: center; min-height: 18px; }
+
+  .result {
+    display: none;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+  .result.show { display: block; }
+  .stat { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+  .stat:last-child { border-bottom: none; }
+  .stat .k { color: var(--muted); font-size: 14px; }
+  .stat .v { font-weight: 700; font-size: 15px; }
+
+  .badge {
+    display: inline-block; font-size: 12px; color: var(--accent-2);
+    background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.3);
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 12px;
+  }
+  .source {
+    font-size: 12px; color: var(--muted); margin-top: 14px; line-height: 1.7;
+    border-top: 1px solid var(--border); padding-top: 12px;
+  }
+  .error { color: #f87171; font-size: 14px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">BuildX</div>
+    <p>Live Data Prototype — بيانات حقيقية من Census API</p>
+  </header>
+
+  <div class="card">
+    <label for="state">اختر الولاية (لتحليل مبدئي)</label>
+    <select id="state">
+      <option value="">-- اختر --</option>
+    </select>
+    <button id="btn">حلّل هذه المنطقة</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="card result" id="result">
+    <span class="badge">بيانات حقيقية ✓</span>
+    <div class="stat"><span class="k">الولاية</span><span class="v" id="r-name">—</span></div>
+    <div class="stat"><span class="k">عدد السكان (2021)</span><span class="v" id="r-pop">—</span></div>
+    <div class="source">
+      Source: U.S. Census Bureau (Population Estimates)<br>
+      Data year: 2021 · Retrieved via BuildX Secure Backend
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API_URL = "https://buildx-backend.vercel.app/api/census";
+const stateSelect = document.getElementById("state");
+const btn = document.getElementById("btn");
+const statusEl = document.getElementById("status");
+const resultEl = document.getElementById("result");
+
+let cachedData = null;
+
+async function loadStates() {
+  statusEl.textContent = "جاري تحميل قائمة الولايات...";
+  btn.disabled = true;
+  try {
+    const res = await fetch(API_URL, { method: "GET", mode: "cors" });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status} — ${text || res.statusText}`);
+    }
+
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || "خطأ غير معروف من الخادم");
+
+    const rows = json.data.slice(1);
+    if (!rows || rows.length === 0) throw new Error("لا توجد بيانات في الرد");
+
+    cachedData = rows;
+
+    rows
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .forEach(row => {
+        const opt = document.createElement("option");
+        opt.value = row[0];
+        opt.textContent = row[0];
+        stateSelect.appendChild(opt);
+      });
+
+    statusEl.textContent = "جاهز — اختر ولاية واضغط تحليل";
+    btn.disabled = false;
+  } catch (err) {
+    statusEl.innerHTML = `
+      <span class="error">تعذر تحميل البيانات:<br>${err.message}</span><br>
+      <button id="retry" style="margin-top:10px;width:auto;padding:8px 16px;font-size:13px;">إعادة المحاولة</button>
+    `;
+    document.getElementById("retry").addEventListener("click", loadStates);
+  }
+}
+
+btn.addEventListener("click", () => {
+  const selected = stateSelect.value;
+  if (!selected) {
+    statusEl.innerHTML = `<span class="error">الرجاء اختيار ولاية أولاً</span>`;
+    return;
+  }
+  const row = cachedData.find(r => r[0] === selected);
+  if (!row) return;
+
+  document.getElementById("r-name").textContent = row[0];
+  document.getElementById("r-pop").textContent = Number(row[1]).toLocaleString("en-US");
+  resultEl.classList.add("show");
+  statusEl.textContent = "";
+});
+
+loadStates();
+</script>
+
+</body>
+</html>
