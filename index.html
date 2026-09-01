@@ -6,13 +6,17 @@
   <title>BuildX Engine</title>
   <style>
     body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; padding: 20px; display: flex; justify-content: center; }
-    .card { background: #1e293b; padding: 24px; border-radius: 12px; max-width: 480px; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    .card { background: #1e293b; padding: 24px; border-radius: 12px; max-width: 520px; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
     h2 { margin-top: 0; color: #38bdf8; text-align: center; }
     label { display: block; margin-top: 12px; margin-bottom: 4px; font-size: 14px; color: #94a3b8; }
     input { width: 100%; padding: 10px; background: #334155; border: 1px solid #475569; color: #fff; border-radius: 6px; box-sizing: border-box; }
     button { width: 100%; padding: 12px; background: #2563eb; color: #fff; border: none; border-radius: 6px; margin-top: 18px; font-weight: bold; cursor: pointer; }
     button:hover { background: #1d4ed8; }
-    .result { margin-top: 15px; padding: 12px; background: #020617; border-radius: 6px; font-family: monospace; font-size: 13px; color: #4ade80; white-space: pre-wrap; word-break: break-all; }
+    .result { margin-top: 15px; padding: 16px; background: #020617; border-radius: 8px; font-size: 14px; color: #e2e8f0; line-height: 1.6; border: 1px solid #334155; }
+    .result h3 { color: #38bdf8; margin-top: 0; font-size: 16px; border-bottom: 1px solid #1e293b; padding-bottom: 8px; }
+    .result-item { margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .result-item span { color: #94a3b8; }
+    .result-item strong { color: #4ade80; }
   </style>
 </head>
 <body>
@@ -24,29 +28,34 @@
     <input type="text" id="country" placeholder="مثال: الجزائر">
 
     <label>المدينة (City):</label>
-    <input type="text" id="city" placeholder="مثال: الجزائر العاصمة">
+    <input type="text" id="city" placeholder="مثال: بليدة">
 
     <label>نوع النشاط (Business Type):</label>
-    <input type="text" id="businessType" placeholder="مثال: مقهى / منصة رقمية">
+    <input type="text" id="businessType" placeholder="مثال: مقهى">
 
-    <label>الميزانية (Budget):</label>
-    <input type="number" id="budget" placeholder="مثال: 50000">
+    <label>الميزانية بالدولار الأمريكي (Budget - USD):</label>
+    <input type="number" id="budget" placeholder="مثال: 10000">
 
-    <button onclick="runAnalysis()">تشغيل المحرك (POST /api/analyze)</button>
+    <button onclick="runAnalysis()">تشغيل تحليل السوق</button>
 
-    <div id="output" class="result">النتائج ستظهر هنا بعد الضغط على الزر...</div>
+    <div id="output" class="result">
+      <h3>تقرير التحليل</h3>
+      <p style="color: #64748b; text-align: center; margin: 10px 0;">النتائج ستظهر هنا مرتبة ومنسقة...</p>
+    </div>
   </div>
 
   <script>
     async function runAnalysis() {
       const output = document.getElementById('output');
-      output.innerText = "... جاري الاتصال بالمحرك ...";
+      output.innerHTML = `<h3>جاري تحليل البيانات...</h3><p style="text-align:center;">يرجى الانتظار قليلاً.</p>`;
+
+      const budgetVal = Number(document.getElementById('budget').value);
 
       const payload = {
         country: document.getElementById('country').value,
         city: document.getElementById('city').value,
         businessType: document.getElementById('businessType').value,
-        budget: Number(document.getElementById('budget').value)
+        budget: budgetVal
       };
 
       try {
@@ -56,9 +65,28 @@
           body: JSON.stringify(payload)
         });
         const data = await res.json();
-        output.innerText = JSON.stringify(data, null, 2);
-      } catch (err) {
-        output.innerText = "حدث خطأ في الاتصال: " + err.message;
+
+        if (data.success) {
+          // تصميم عرض النتائج بشكل تقرير مرتب وجميل مع فرض الدولار الأمريكي
+          output.innerHTML = `
+            <h3>📊 تقرير تحليل المشروع</h3>
+            <div class="result-item"><span>الحالة:</span> <strong>نجاح (Success)</strong></div>
+            <div class="result-item"><span>الدولة والمدينة:</span> <strong>${payload.country}, ${payload.city}</strong></div>
+            <div class="result-item"><span>نوع النشاط:</span> <strong>${payload.businessType}</strong></div>
+            <div class="result-item"><span>الميزانية المحددة:</span> <strong style="color: #38bdf8;">$${budgetVal.toLocaleString()} USD</strong></div>
+            <hr style="border: 0; border-top: 1px solid #1e293b; margin: 10px 0;">
+            <div class="result-item"><span>حجم السوق:</span> <strong>${data.data?.competition?.marketSize || 'متوفر'}</strong></div>
+            <div class="result-item"><span>الكثافة السكانية:</span> <strong>${data.data?.competition?.cityPopulation || 'غير متوفرة'} نسمة</strong></div>
+            <div class="result-item"><span>المستوى المديني:</span> <strong>${data.data?.competition?.cityTier || 'متوسط'}</strong></div>
+            <div class="result-item"><span>المنافسين المقدرين:</span> <strong>${data.data?.competition?.estimatedCompetitors || 'N/A'} منافس</strong></div>
+            <div class="result-item"><span>تشبع السوق:</span> <strong style="color: #f87171;">${data.data?.competition?.marketSaturation || 'معتدل'}</strong></div>
+            <div class="result-item"><span>حواجز الدخول:</span> <strong>${data.data?.competition?.barriers || 'عادية'}</strong></div>
+          `;
+        } else {
+          output.innerHTML = `<h3>⚠️ تنبيه</h3><p>لم يتم جلب البيانات بنجاح، تحقق من المدخلات.</p>`;
+        }
+      } `catch` (err) {
+        output.innerHTML = `<h3>❌ خطأ</h3><p>حدث خطأ في الاتصال: ${err.message}</p>`;
       }
     }
   </script>
