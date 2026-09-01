@@ -67,7 +67,6 @@
         const data = await res.json();
 
         if (data.success) {
-          // تصميم عرض النتائج بشكل تقرير مرتب وجميل مع فرض الدولار الأمريكي
           output.innerHTML = `
             <h3>📊 تقرير تحليل المشروع</h3>
             <div class="result-item"><span>الحالة:</span> <strong>نجاح (Success)</strong></div>
@@ -85,7 +84,7 @@
         } else {
           output.innerHTML = `<h3>⚠️ تنبيه</h3><p>لم يتم جلب البيانات بنجاح، تحقق من المدخلات.</p>`;
         }
-      } `catch` (err) {
+      } catch (err) {
         output.innerHTML = `<h3>❌ خطأ</h3><p>حدث خطأ في الاتصال: ${err.message}</p>`;
       }
     }
