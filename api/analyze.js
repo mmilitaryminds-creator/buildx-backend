@@ -4,33 +4,34 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log("Received body:", req.body); // لمعرفة ما ترسله الواجهة بالتحديد
-
-    const { businessType, location, budget, targetAudience, city, country } = req.body;
-    
-    // دمج المدينة والدولة لضمان عدم ضياع البيانات أياً كانت تسميتها
-    const fullLocation = location || `${city || ''}, ${country || ''}`.trim() || 'الجزائر';
-    const finalBusiness = businessType || 'مروع تجاري';
-    const finalBudget = budget || 'غير محدد';
-    const finalAudience = targetAudience || 'العموم';
+    const body = req.body || {};
+    const businessType = body.businessType || body.business || body.type || 'مشروع تجاري';
+    const city = body.city || body.location || 'الجزائر';
+    const country = body.country || 'الجزائر';
+    const budget = body.budget || body.money || '10000';
+    const targetAudience = body.targetAudience || body.audience || 'العموم';
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return res.status(500).json({ error: 'GEMINI_API_KEY is missing in Vercel.' });
     }
 
-    const prompt = `أنت خبير تحليل أسواق واقتصادي. قدم تقريراً تحليلياً احترافياً ومفصلاً باللغة العربية لنشاط تجاري بناءً على المعطيات التالية:
-- نوع النشاط: ${finalBusiness}
-- الموقع: ${fullLocation}
-- الميزانية: ${finalBudget} دولار
-- الفئة المستهدفة: ${finalAudience}
+    // برومبت ذكي يفحص حتى تناقضات المدخلات (مثل وضع مدينة لا تنتمي للدولة)
+    const prompt = `أنت خبير ذكي ومحلل اقتصادي ساخر ولطيف قليلاً. قم بتحليل الطلب التالي لنشاط تجاري:
+- الدولة المحددة: ${country}
+- المدينة المكتوبة: ${city}
+- نوع النشاط: ${businessType}
+- الميزانية: ${budget} دولار
+- الفئة المستهدفة: ${targetAudience}
 
-يرجى تقديم الرد في شكل تقرير منظم يتضمن:
-1. الملخص التنفيذي ونسبة نجاح المشروع (من 10)
-2. تحليل السوق المستهدف والجمهور
-3. تحليل المنافسين والفرص المتاحة
-4. الجدوى المالية وتوزيع الميزانية
-5. توصيات عملية لضمان النجاح`;
+ملاحظة هامة جداً: قم أولاً بالتحقق مما إذا كانت المدينة (${city}) منطقية أو تنتمي حقاً إلى الدولة (${country}). إذا لاحظت تناقضاً غبياً أو مضحكاً (مثل شخص يختار دولة عربية ويكتب مدينة أمريكية كنيويورك)، ابدأ تقريرك بتنبيه ذكي ومرح يوضح هذا التناقض بأسلوب احترافي، ثم أكمل التحليل الاقتصادي بناءً على الواقع الصحيح.
+
+قدم التقرير باللغة العربية متضمناً:
+1. ملاحظة ذكية حول المدخلات (إذا وجد تناقض جيو-اقتصادي) أو الملخص التنفيذي ونسبة نجاح المشروع (من 10).
+2. تحليل السوق المستهدف والجمهور.
+3. تحليل المنافسين والفرص المتاحة.
+4. الجدوى المالية وتوزيع الميزانية.
+5. توصيات عملية لضمان النجاح.`;
 
     const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     
@@ -45,8 +46,7 @@ export default async function handler(req, res) {
     const data = await apiResponse.json();
 
     if (data.error) {
-      console.error('Gemini API Error details:', data.error);
-      return res.status(500).json({ error: data.error.message || 'Gemini API rejected the request' });
+      return res.status(500).json({ error: data.error.message || 'Gemini API Error' });
     }
 
     const analysisText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'لم يتم توليد أي محتوى.';
