@@ -1,56 +1,58 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const body = req.body || {};
-    const businessType = body.businessType || body.business || body.type || 'مشروع تجاري';
+    const businessType = body.businessType || body.business || 'مشروع تجاري';
     const city = body.city || body.location || 'الجزائر';
     const country = body.country || 'الجزائر';
-    const budget = body.budget || body.money || '10000';
-    const targetAudience = body.targetAudience || body.audience || 'العموم';
+    const budget = body.budget || '10000';
+    const targetAudience = body.targetAudience || 'العموم';
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY is missing in Vercel.' });
+      return res.status(500).json({ error: 'Gemini API Key is missing in environment variables.' });
     }
 
-    const prompt = `أنت خبير تحليل أسواق واقتصادي. قدم تقريراً تحليلياً احترافياً ومفصلاً باللغة العربية لنشاط تجاري بناءً على المعطيات التالية:
+    const prompt = `قم بإعداد تحليل سوق احترافي ومختصر للمشروع التالي بناءً على المعطيات:
+- النشاط: ${businessType}
 - الدولة: ${country}
 - المدينة: ${city}
-- نوع النشاط: ${businessType}
 - الميزانية: ${budget} دولار
 - الفئة المستهدفة: ${targetAudience}
 
-يرجى تقديم الرد في شكل تقرير منظم يتضمن:
-1. الملخص التنفيذي ونسبة نجاح المشروع (من 10)
-2. تحليل السوق المستهدف والجمهور
-3. تحليل المنافسين والفرص المتاحة
-4. الجدوى المالية وتوزيع الميزانية
-5. توصيات عملية لضمان النجاح`;
+أعطني التقرير باللغة العربية بشكل منظم وواضح.`;
 
-    const fetchUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-    
-    const apiResponse = await fetch(fetchUrl, {
+    // الاتصال المباشر بنموذج Gemini
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
+        contents: [{
+          parts: [{ text: prompt }]
+        }]
       })
     });
 
-    const data = await apiResponse.json();
-
-    if (data.error) {
-      return res.status(500).json({ error: data.error.message || 'Gemini API Error' });
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'فشل الاتصال بخدمة الذكاء الاصطناعي');
     }
 
-    const analysisText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'لم يتم توليد أي محتوى.';
+    const analysisText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'لم يتم استرجاع نتيجة من الذكاء الاصطناعي';
 
-    return res.status(200).json({ success: true, analysis: analysisText });
+    return res.status(200).json({
+      success: true,
+      analysis: analysisText
+    });
+
   } catch (error) {
-    console.error('Server Catch Error:', error);
-    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    console.error('API Error:', error);
+    return res.status(500).json({ error: error.message || 'حدث خطأ غير متوقع في الخادم' });
   }
 }
