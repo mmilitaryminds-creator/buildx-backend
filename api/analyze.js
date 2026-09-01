@@ -24,8 +24,8 @@ export default async function handler(req, res) {
 - الفئة المستهدفة: ${targetAudience}
 أعطني التقرير باللغة العربية بشكل منظم وواضح.`;
 
-    // تم التحديث إلى النموذج المدعوم تماماً
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
+    // الرابط المحدث والنهائي باستخدام الإصدار v1 والنموذج القياسي
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
