@@ -1,158 +1,189 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BuildX Data Engine</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #0f172a;
-      color: #f8fafc;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      width: 100%;
-      max-width: 500px;
-    }
-    h2 {
-      text-align: center;
-      color: #38bdf8;
-      margin-bottom: 25px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 14px;
-      color: #94a3b8;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #fff;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background-color: #1d4ed8;
-    }
-    #output {
-      margin-top: 20px;
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 6px;
-      border: 1px solid #334155;
-      min-height: 80px;
-    }
-    #output h3 {
-      margin-top: 0;
-      color: #38bdf8;
-      font-size: 16px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildX - Make smarter business decisions</title>
+    <!-- استيراد خطوط عصرية ونظيفة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e3a8a; /* أزرق ملكي داكن */
+            --primary-light: #3b82f6; /* أزرق فاتح للمسات */
+            --bg-color: #f8fafc; /* خلفية فاتحة نظيفة */
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --white: #ffffff;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* شريط التنقل العلوي */
+        header {
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-color);
+            letter-spacing: -0.5px;
+        }
+
+        .lang-switcher {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .lang-switcher span {
+            margin: 0 5px;
+            transition: color 0.2s;
+        }
+
+        .lang-switcher span:hover, .lang-switcher span.active {
+            color: var(--primary-light);
+        }
+
+        /* قسم البطل الرئيسي (Hero Section) */
+        .hero-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tagline {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            background: #eff6ff;
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        p.description {
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* زر العمل البارز */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 16px 36px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 12px;
+            text-decoration: none;
+            box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(30, 58, 138, 0.4);
+        }
+
+        /* التذييل البسيط */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            background: var(--white);
+        }
+
+        /* تجاوب الهاتف المحمول */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+            .hero-section {
+                padding: 40px 15px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>BuildX Data Engine</h2>
-    
-    <div class="form-group">
-      <label>الدولة (Country):</label>
-      <input type="text" id="country" value="الجزائر">
-    </div>
+    <!-- الشريط العلوي -->
+    <header>
+        <div class="logo-container">
+            <div class="logo">BuildX</div>
+        </div>
+        <div class="lang-switcher">
+            <span class="active">العربية</span> | <span>English</span> | <span>Français</span>
+        </div>
+    </header>
 
-    <div class="form-group">
-      <label>المدينة (City):</label>
-      <input type="text" id="city" value="الجزائر العاصمة">
-    </div>
+    <!-- المحتوى الرئيسي -->
+    <main class="hero-section">
+        <div class="tagline">Make smarter business decisions.</div>
+        <h1>هل مشروعك يستحق الاستثمار؟</h1>
+        <p class="description">حلّل أي مشروع في أي مدينة حول العالم بالاعتماد على البيانات والذكاء الاصطناعي بدقة متناهية.</p>
+        
+        <!-- زر الانتقال لصفحة التحليل التي برمجناها سابقاً -->
+        <a href="analyzer.html" class="cta-button">
+            Start Analysis 
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+    </main>
 
-    <div class="form-group">
-      <label>نوع النشاط (Business Type):</label>
-      <input type="text" id="businessType" value="مقهى">
-    </div>
-
-    <div class="form-group">
-      <label>الفئة المستهدفة (Target Audience):</label>
-      <input type="text" id="targetAudience" value="العموم">
-    </div>
-
-    <div class="form-group">
-      <label>الميزانية بالدولار الأمريكي (Budget - USD):</label>
-      <input type="number" id="budget" value="10000">
-    </div>
-
-    <button onclick="runAnalysis()">تشغيل تحليل السوق</button>
-
-    <div id="output">
-      <h3>⚠️ تنبيه</h3>
-      <p>لم يتم جلب البيانات بعد، اضغط على الزر لبدء التحليل.</p>
-    </div>
-  </div>
-
-  <script>
-    async function runAnalysis() {
-      const output = document.getElementById('output');
-      output.innerHTML = `<h3>⏳ جاري التحليل...</h3><p>يرجى الانتظار بينما يقوم الذكاء الاصطناعي بدراسة السوق...</p>`;
-
-      const payload = {
-        country: document.getElementById('country').value,
-        city: document.getElementById('city').value,
-        businessType: document.getElementById('businessType').value,
-        targetAudience: document.getElementById('targetAudience').value,
-        budget: document.getElementById('budget').value
-      };
-
-      try {
-        const res = await fetch('/api/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-
-        if (res.ok && data.success) {
-          output.innerHTML = `
-            <h3>📊 تقرير تحليل المشروع</h3>
-            <div style="white-space: pre-line; line-height: 1.8; color: #e2e8f0; font-size: 14px;">
-              ${data.analysis}
-            </div>
-          `;
-        } else {
-          output.innerHTML = `<h3>⚠️ تنبيه</h3><p>${data.error || 'لم يتم جلب البيانات بنجاح، تحقق من المدخلات.'}</p>`;
-        }
-      } catch (err) {
-        output.innerHTML = `<h3>❌ خطأ</h3><p>حدث خطأ في الاتصال بالسيرفر: ${err.message}</p>`;
-      }
-    }
-  </script>
+    <!-- التذييل -->
+    <footer>
+        &copy; 2026 BuildX Data Engine. All rights reserved.
+    </footer>
 
 </body>
 </html>
