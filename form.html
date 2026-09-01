@@ -207,6 +207,7 @@
         function handleAnalysis(event) {
             event.preventDefault();
             
+            // قراءة القيم وتخزينها في ذاكرة المتصفح
             const country = document.getElementById('country').value;
             const city = document.getElementById('city').value;
             const area = document.getElementById('area').value;
@@ -219,7 +220,8 @@
             localStorage.setItem('project_business', businessType);
             localStorage.setItem('project_budget', budget);
 
-            alert('جاري تحليل السوق لمشروعك بالمساحة المحددة بنجاح!');
+            // الانتقال التلقائي المباشر لصفحة النتائج بدون أي تدخل يدوي
+            window.location.href = 'result.html';
         }
     </script>
 </body>
