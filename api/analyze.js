@@ -1,3 +1,5 @@
+import { GoogleGenerativeAI } from "@google/genai";
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -16,6 +18,8 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Gemini API Key is missing in environment variables.' });
     }
 
+    const ai = new GoogleGenerativeAI({ apiKey });
+
     const prompt = `قم بإعداد تحليل سوق احترافي ومختصر باللغة العربية للمشروع التالي:
 - النشاط: ${businessType}
 - الدولة: ${country}
@@ -23,22 +27,13 @@ export default async function handler(req, res) {
 - الميزانية: ${budget} دولار
 - الفئة المستهدفة: ${targetAudience}`;
 
-    // استخدام نموذج gemini-1.5-pro المعتمد والمدعم بالكامل
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
-      })
+    // استخدام المكتبة الرسمية التي تتجاوز مشاكل أسماء النماذج تماماً
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: prompt,
     });
 
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.error?.message || 'فشل الاتصال بخدمة الذكاء الاصطناعي');
-    }
-
-    const analysisText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'لم يتم استرجاع نتيجة';
+    const analysisText = response.text || 'لم يتم استرجاع نتيجة';
 
     return res.status(200).json({
       success: true,
