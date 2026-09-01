@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildX - تحليل المشروع</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-light: #3b82f6;
+            --bg-color: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --white: #ffffff;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .back-btn {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-color);
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .form-container {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        p.subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-light);
+            background-color: var(--white);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            background: var(--white);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">BuildX</a>
+        <a href="index.html" class="back-btn">← العودة للرئيسية</a>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h1>معلومات المشروع</h1>
+            <p class="subtitle">قم بتعبئة الحقول أدناه لكي يقوم محرك الذكاء الاصطناعي بتحليل السوق بدقة.</p>
+            
+            <form id="analysisForm" onsubmit="handleAnalysis(event)">
+                <div class="form-group">
+                    <label for="country">الدولة</label>
+                    <input type="text" id="country" placeholder="مثال: الجزائر" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="city">المدينة</label>
+                    <input type="text" id="city" placeholder="مثال: الجزائر العاصمة" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="businessType">نوع النشاط التجاري</label>
+                    <input type="text" id="businessType" placeholder="مثال: مقهى، تسوق إلكتروني، مطعم..." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="budget">الميزانية المتوفرة (د.ج أو بالعملة المحلية)</label>
+                    <input type="number" id="budget" placeholder="مثال: 500000" required>
+                </div>
+
+                <button type="submit" class="submit-btn">بدء التحليل الآن</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <span>&copy; 2026 BuildX Data Engine. All rights reserved.</span>
+    </footer>
+
+    <script>
+        function handleAnalysis(event) {
+            event.preventDefault();
+            
+            const country = document.getElementById('country').value;
+            const city = document.getElementById('city').value;
+            const businessType = document.getElementById('businessType').value;
+            const budget = document.getElementById('budget').value;
+
+            localStorage.setItem('project_country', country);
+            localStorage.setItem('project_city', city);
+            localStorage.setItem('project_business', businessType);
+            localStorage.setItem('project_budget', budget);
+
+            alert('جاري تحليل السوق لمشروعك بنجاح!');
+        }
+    </script>
+</body>
+</html>
