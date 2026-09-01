@@ -3,128 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BuildX Engine</title>
+  <title>BuildX Data Engine</title>
   <style>
-    body { font-family: system-ui, sans-serif; background: #0f172a; color: #fff; padding: 20px; display: flex; justify-content: center; }
-    .card { background: #1e293b; padding: 24px; border-radius: 12px; max-width: 520px; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-    h2 { margin-top: 0; color: #38bdf8; text-align: center; }
-    label { display: block; margin-top: 12px; margin-bottom: 4px; font-size: 14px; color: #94a3b8; }
-    input, select { width: 100%; padding: 10px; background: #334155; border: 1px solid #475569; color: #fff; border-radius: 6px; box-sizing: border-box; }
-    button { width: 100%; padding: 12px; background: #2563eb; color: #fff; border: none; border-radius: 6px; margin-top: 18px; font-weight: bold; cursor: pointer; }
-    button:hover { background: #1d4ed8; }
-    .btn-copy { background: #059669; margin-top: 10px; display: none; }
-    .btn-copy:hover { background: #047857; }
-    .result { margin-top: 15px; padding: 16px; background: #020617; border-radius: 8px; font-size: 14px; color: #e2e8f0; line-height: 1.6; border: 1px solid #334155; }
-    .result h3 { color: #38bdf8; margin-top: 0; font-size: 16px; border-bottom: 1px solid #1e293b; padding-bottom: 8px; }
-    .result-item { margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .result-item span { color: #94a3b8; }
-    .result-item strong { color: #4ade80; }
-    
-    .spinner-box { text-align: center; padding: 20px; }
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #334155;
-      border-top: 4px solid #38bdf8;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 10px auto;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .container {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 500px;
+    }
+    h2 {
+      text-align: center;
+      color: #38bdf8;
+      margin-bottom: 25px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #fff;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    #output {
+      margin-top: 20px;
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      min-height: 80px;
+    }
+    #output h3 {
+      margin-top: 0;
+      color: #38bdf8;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
+  <div class="container">
     <h2>BuildX Data Engine</h2>
     
-    <label>الدولة (Country):</label>
-    <input type="text" id="country" placeholder="مثال: الجزائر">
-
-    <label>المدينة (City):</label>
-    <input type="text" id="city" placeholder="مثال: بليدة">
-
-    <label>نوع النشاط (Business Type):</label>
-    <select id="businessTypeSelect" onchange="checkCustomBusiness()">
-      <option value="مقهى">مقهى (Cafe)</option>
-      <option value="مطعم">مطعم (Restaurant)</option>
-      <option value="مركز تجاري / مول">مركز تجاري / مول (Mall)</option>
-      <option value="متجر ملابس">متجر ملابس (Clothing Store)</option>
-      <option value="صيدلية">صيدلية (Pharmacy)</option>
-      <option value="أخرى">أخرى (اكتب مشروعك بنفسك)</option>
-    </select>
-
-    <!-- صندوق يظهر فقط إذا اختار المستخدم "أخرى" -->
-    <div id="customBusinessDiv" style="display: none; margin-top: 8px;">
-      <label>اكتب نوع المشروع الخاص بك:</label>
-      <input type="text" id="customBusinessType" placeholder="مثال: قاعة رياضية">
+    <div class="form-group">
+      <label>الدولة (Country):</label>
+      <input type="text" id="country" value="الجزائر">
     </div>
 
-    <label>الفئة المستهدفة (Target Audience):</label>
-    <select id="targetAudience">
-      <option value="الجميع / عام">الجميع / عام (General)</option>
-      <option value="الشباب">الشباب (Youth)</option>
-      <option value="العائلات">العائلات (Families)</option>
-      <option value="رجال الأعمال">رجال الأعمال (Businessmen)</option>
-      <option value="الطلاب">الطلاب (Students)</option>
-    </select>
+    <div class="form-group">
+      <label>المدينة (City):</label>
+      <input type="text" id="city" value="الجزائر العاصمة">
+    </div>
 
-    <label>الميزانية بالدولار الأمريكي (Budget - USD):</label>
-    <input type="number" id="budget" placeholder="مثال: 10000">
+    <div class="form-group">
+      <label>نوع النشاط (Business Type):</label>
+      <input type="text" id="businessType" value="مقهى">
+    </div>
+
+    <div class="form-group">
+      <label>الفئة المستهدفة (Target Audience):</label>
+      <input type="text" id="targetAudience" value="العموم">
+    </div>
+
+    <div class="form-group">
+      <label>الميزانية بالدولار الأمريكي (Budget - USD):</label>
+      <input type="number" id="budget" value="10000">
+    </div>
 
     <button onclick="runAnalysis()">تشغيل تحليل السوق</button>
 
-    <div id="output" class="result">
-      <h3>تقرير التحليل</h3>
-      <p style="color: #64748b; text-align: center; margin: 10px 0;">النتائج ستظهر هنا مرتبة ومنسقة...</p>
+    <div id="output">
+      <h3>⚠️ تنبيه</h3>
+      <p>لم يتم جلب البيانات بعد، اضغط على الزر لبدء التحليل.</p>
     </div>
-
-    <button id="copyBtn" class="btn-copy" onclick="copyReport()">📋 نسخ التقرير</button>
   </div>
 
   <script>
-    let lastReportText = "";
-
-    function checkCustomBusiness() {
-      const select = document.getElementById('businessTypeSelect');
-      const customDiv = document.getElementById('customBusinessDiv');
-      if (select.value === 'أخرى') {
-        customDiv.style.display = 'block';
-      } else {
-        customDiv.style.display = 'none';
-      }
-    }
-
     async function runAnalysis() {
       const output = document.getElementById('output');
-      const copyBtn = document.getElementById('copyBtn');
-      
-      output.innerHTML = `
-        <div class="spinner-box">
-          <div class="spinner"></div>
-          <p style="color: #38bdf8; margin: 0;">جاري تحليل السوق واستخراج البيانات...</p>
-        </div>
-      `;
-      copyBtn.style.display = 'none';
-
-      // تحديد نوع النشاط بناءً على القائمة أو الخيار المخصص
-      let finalBusinessType = document.getElementById('businessTypeSelect').value;
-      if (finalBusinessType === 'أخرى') {
-        finalBusinessType = document.getElementById('customBusinessType').value || 'مشروع عام';
-      }
-
-      const budgetVal = Number(document.getElementById('budget').value);
-      const targetVal = document.getElementById('targetAudience').value;
+      output.innerHTML = `<h3>⏳ جاري التحليل...</h3><p>يرجى الانتظار بينما يقوم الذكاء الاصطناعي بدراسة السوق...</p>`;
 
       const payload = {
         country: document.getElementById('country').value,
         city: document.getElementById('city').value,
-        businessType: finalBusinessType,
-        targetAudience: targetVal,
-        budget: budgetVal
+        businessType: document.getElementById('businessType').value,
+        targetAudience: document.getElementById('targetAudience').value,
+        budget: document.getElementById('budget').value
       };
 
       try {
@@ -133,43 +135,21 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+
         const data = await res.json();
 
-        if (data.success) {
-          lastReportText = `📊 تقرير تحليل المشروع\n` +
-                           `- الحالة: نجاح (Success)\n` +
-                           `- الدولة والمدينة: ${payload.country}, ${payload.city}\n` +
-                           `- نوع النشاط: ${payload.businessType}\n` +
-                           `- الفئة المستهدفة: ${payload.targetAudience}\n` +
-                           `- الميزانية المحددة: $${budgetVal.toLocaleString()} USD\n` +
-                           `- حجم السوق: ${data.data?.competition?.marketSize || 'متوفر'}\n` +
-                           `- الكثافة السكانية: ${data.data?.competition?.cityPopulation || 'غير متوفرة'} نسمة\n` +
-                           `- المستوى المديني: ${data.data?.competition?.cityTier || 'متوسط'}\n` +
-                           `- المنافسين المقدرين: ${data.data?.competition?.estimatedCompetitors || 'N/A'} منافس\n` +
-                           `- تشبع السوق: ${data.data?.competition?.marketSaturation || 'معتدل'}\n` +
-                           `- حواجز الدخول: ${data.data?.competition?.barriers || 'عادية'}`;
-
+        if (res.ok && data.success) {
           output.innerHTML = `
             <h3>📊 تقرير تحليل المشروع</h3>
-            <div class="result-item"><span>الحالة:</span> <strong>نجاح (Success)</strong></div>
-            <div class="result-item"><span>الدولة والمدينة:</span> <strong>${payload.country}, ${payload.city}</strong></div>
-            <div class="result-item"><span>نوع النشاط:</span> <strong>${payload.businessType}</strong></div>
-            <div class="result-item"><span>الفئة المستهدفة:</span> <strong style="color: #38bdf8;">${payload.targetAudience}</strong></div>
-            <div class="result-item"><span>الميزانية المحددة:</span> <strong style="color: #38bdf8;">$${budgetVal.toLocaleString()} USD</strong></div>
-            <hr style="border: 0; border-top: 1px solid #1e293b; margin: 10px 0;">
-            <div class="result-item"><span>حجم السوق:</span> <strong>${data.data?.competition?.marketSize || 'متوفر'}</strong></div>
-            <div class="result-item"><span>الكثافة السكانية:</span> <strong>${data.data?.competition?.cityPopulation || 'غير متوفرة'} نسمة</strong></div>
-            <div class="result-item"><span>المستوى المديني:</span> <strong>${data.data?.competition?.cityTier || 'متوسط'}</strong></div>
-            <div class="result-item"><span>المنافسين المقدرين:</span> <strong>${data.data?.competition?.estimatedCompetitors || 'N/A'} منافس</strong></div>
-            <div class="result-item"><span>تشبع السوق:</span> <strong style="color: #f87171;">${data.data?.competition?.marketSaturation || 'معتدل'}</strong></div>
-            <div class="result-item"><span>حواجز الدخول:</span> <strong>${data.data?.competition?.barriers || 'عادية'}</strong></div>
+            <div style="white-space: pre-line; line-height: 1.8; color: #e2e8f0; font-size: 14px;">
+              ${data.analysis}
+            </div>
           `;
-          copyBtn.style.display = 'block';
         } else {
-          output.innerHTML = `<h3>⚠️ تنبيه</h3><p>لم يتم جلب البيانات بنجاح، تحقق من المدخلات.</p>`;
+          output.innerHTML = `<h3>⚠️ تنبيه</h3><p>${data.error || 'لم يتم جلب البيانات بنجاح، تحقق من المدخلات.'}</p>`;
         }
       } catch (err) {
-        output.innerHTML = `<h3>❌ خطأ</h3><p>حدث خطأ في الاتصال: ${err.message}</p>`;
+        output.innerHTML = `<h3>❌ خطأ</h3><p>حدث خطأ في الاتصال بالسيرفر: ${err.message}</p>`;
       }
     }
   </script>
