@@ -77,27 +77,6 @@
             border-radius: 20px;
             border: 1px solid var(--border-color);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            width: 100%;
-            max-width: 600px;
-        }
-
-        h1 {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        p.subtitle {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
         }
 
         label {
@@ -136,66 +115,69 @@
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .submit-btn:hover {
-            background-color: #1d4ed8;
-            transform: translateY(-2px);
         }
 
         footer {
-            text-align: center;
+            bottom: 0;
+            width: 100%;
             padding: 20px;
-            font-size: 13px;
+            text-align: center;
+            font-size: 14px;
             color: var(--text-muted);
-            border-top: 1px solid var(--border-color);
             background: var(--white);
+            border-top: 1px solid var(--border-color);
         }
     </style>
 </head>
 <body>
-
     <header>
         <a href="index.html" class="logo">BuildX</a>
-        <a href="index.html" class="back-btn">← العودة للرئيسية</a>
+        <a href="index.html" class="back-btn">&larr; العودة</a>
     </header>
 
     <main>
         <div class="form-container">
-            <h1>معلومات المشروع</h1>
-            <p class="subtitle">قم بتعبئة الحقول أدناه لتحديد موقع المشروع ومساحته وميزانيته بدقة.</p>
-            
-            <form id="analysisForm" onsubmit="handleAnalysis(event)">
-                <div class="form-group">
-                    <label for="country">الدولة</label>
-                    <input type="text" id="country" placeholder="مثال: الجزائر" required>
-                </div>
+            <h1 style="text-align: center; margin-bottom: 30px; color: var(--primary-color);">هل مشروعك يستحق الاستثمار؟</h1>
 
-                <div class="form-group">
-                    <label for="city">المدينة</label>
-                    <input type="text" id="city" placeholder="مثال: الجزائر العاصمة" required>
-                </div>
+            <!-- الحقول الأساسية -->
+            <div style="margin-bottom: 20px;">
+                <label for="country">الدولة</label>
+                <input id="country" type="text" placeholder="مثال: الولايات المتحدة">
+            </div>
 
-                <div class="form-group">
-                    <label for="area">المساحة بالمتر المربع (م²)</label>
-                    <input type="number" id="area" placeholder="مثال: 120" required>
-                </div>
+            <div style="margin-bottom: 20px;">
+                <label for="city">المدينة</label>
+                <input id="city" type="text" placeholder="مثال: دبي">
+            </div>
 
-                <div class="form-group">
-                    <label for="businessType">نوع النشاط التجاري</label>
-                    <input type="text" id="businessType" placeholder="مثال: مقهى، تسوق إلكتروني، مطعم..." required>
-                </div>
+            <div style="margin-bottom: 20px;">
+                <label for="area">المساحة</label>
+                <input id="area" type="number" placeholder="مثال: 2222 م²">
+            </div>
 
-                <div class="form-group">
-                    <label for="budget">الميزانية المتوفرة</label>
-                    <input type="number" id="budget" placeholder="مثال: 500000" required>
-                </div>
+            <div style="margin-bottom: 20px;">
+                <label for="businessType">النشاط التجاري</label>
+                <input id="businessType" type="text" placeholder="مثال: مطعم">
+            </div>
 
-                <button type="submit" class="submit-btn">بدء التحليل الآن</button>
-            </form>
+            <div style="margin-bottom: 20px;">
+                <label for="budget">الميزانية</label>
+                <input id="budget" type="number" placeholder="مثال: $682">
+            </div>
+
+            <!-- مربع الكتابة الكبير + عداد الأحرف + زر السهم -->
+            <div style="margin-top: 30px;">
+                <label for="projectDescription">صف مشروعك بالتفصيل:</label>
+                <textarea id="projectDescription" maxlength="60000" placeholder="اكتب هنا تفاصيل مشروعك، أهدافك، التحديات..." style="width: 100%; height: 250px; padding: 14px; border: 1px solid var(--border-color); border-radius: 12px; background: #f8fafc; font-size: 15px; resize: vertical;"></textarea>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <span id="charCount" style="font-size: 14px; color: var(--text-muted);">0 / 60,000</span>
+                    <button id="aiButton" style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer;">→</button>
+                </div>
+            </div>
+
+            <!-- مكان عرض النتيجة -->
+            <div id="analysisResult" style="margin-top: 30px; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; display: none; line-height: 1.8; white-space: pre-wrap;"></div>
         </div>
     </main>
 
@@ -204,25 +186,59 @@
     </footer>
 
     <script>
-        function handleAnalysis(event) {
-            event.preventDefault();
-            
-            // قراءة القيم وتخزينها في ذاكرة المتصفح
-            const country = document.getElementById('country').value;
-            const city = document.getElementById('city').value;
-            const area = document.getElementById('area').value;
-            const businessType = document.getElementById('businessType').value;
-            const budget = document.getElementById('budget').value;
+        // عداد الأحرف
+        const textarea = document.getElementById('projectDescription');
+        const charCount = document.getElementById('charCount');
 
-            localStorage.setItem('project_country', country);
-            localStorage.setItem('project_city', city);
-            localStorage.setItem('project_area', area);
-            localStorage.setItem('project_business', businessType);
-            localStorage.setItem('project_budget', budget);
+        textarea.addEventListener('input', function () {
+            charCount.innerText = this.value.length + " / 60,000";
+            if (this.value.length > 60000) {
+                this.value = this.value.substring(0, 60000);
+            }
+        });
 
-            // الانتقال التلقائي المباشر لصفحة النتائج بدون أي تدخل يدوي
-            window.location.href = 'result.html';
+        // إرسال البيانات إلى AI
+        async function sendToAI() {
+            const description = textarea.value;
+            const resultDiv = document.getElementById('analysisResult');
+
+            // قراءة البيانات من النموذج
+            const projectData = {
+                country: document.getElementById('country').value,
+                city: document.getElementById('city').value,
+                area: document.getElementById('area').value,
+                businessType: document.getElementById('businessType').value,
+                budget: document.getElementById('budget').value
+            };
+
+            if (description.trim() === "") {
+                alert("الرجاء كتابة وصف المشروع أولاً");
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerText = "جاري تحليل البيانات الحقيقية...";
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: description, projectData: projectData })
+                });
+
+                const data = await response.json();
+                if (data.result) {
+                    resultDiv.innerText = data.result;
+                } else {
+                    resultDiv.innerText = "خطأ: " + (data.error || "حدث خطأ ما");
+                }
+            } catch (error) {
+                resultDiv.innerText = "خطأ في الاتصال: " + error;
+            }
         }
+
+        // ربط زر السهم
+        document.getElementById('aiButton').addEventListener('click', sendToAI);
     </script>
 </body>
 </html>
