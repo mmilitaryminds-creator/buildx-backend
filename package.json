@@ -2,7 +2,8 @@
   "name": "buildx-backend",
   "version": "1.0.0",
   "dependencies": {
-    "@google/generative-ai": "^0.1.3"
+    "@google/generative-ai": "^0.1.3",
+    "groq-sdk": "^0.15.0"
   },
   "scripts": {
     "dev": "vercel dev"
