@@ -3,242 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildX - تحليل المشروع</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>نتائج التحليل - BuildX</title>
     <style>
-        :root {
-            --primary-color: #1e3a8a;
-            --primary-light: #3b82f6;
-            --bg-color: #f8fafc;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --white: #ffffff;
-            --border-color: #e2e8f0;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            font-family: 'Cairo', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
         }
 
-        header {
-            width: 100%;
-            padding: 20px 5%;
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #1e3a8a;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        /* Score Box */
+        #scoreBox {
+            text-align: center;
+            padding: 50px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            font-size: 60px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        #scoreBox.excellent {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+        }
+
+        #scoreBox.good {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        #scoreBox.poor {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .score-label {
+            font-size: 24px;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-right: 4px solid #667eea;
+        }
+
+        .section h3 {
+            color: #1e3a8a;
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section.positive {
+            border-right-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .section.negative {
+            border-right-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .section.statistics {
+            border-right-color: #8b5cf6;
+            background: #faf5ff;
+        }
+
+        .section ul, .section ol {
+            margin-right: 20px;
+        }
+
+        .section li {
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .section p {
+            color: #334155;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* Statistics */
+        .stat-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            background: var(--white);
-            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary-color);
-            text-decoration: none;
+        .stat-item:last-child {
+            border-bottom: none;
         }
 
-        .back-btn {
-            font-size: 14px;
+        .stat-label {
+            color: #64748b;
             font-weight: 600;
-            color: var(--text-muted);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: color 0.2s;
         }
 
-        .back-btn:hover {
-            color: var(--primary-color);
+        .stat-value {
+            color: #1e3a8a;
+            font-weight: bold;
         }
 
-        main {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        .form-container {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 14px 16px;
-            font-size: 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            background-color: #f8fafc;
-            color: var(--text-main);
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--primary-light);
-            background-color: var(--white);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-        }
-
-        .submit-btn {
-            width: 100%;
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 700;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        footer {
-            bottom: 0;
-            width: 100%;
-            padding: 20px;
+        /* Loading Screen */
+        #loadingScreen {
+            display: none;
             text-align: center;
-            font-size: 14px;
-            color: var(--text-muted);
-            background: var(--white);
-            border-top: 1px solid var(--border-color);
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #64748b;
+            font-size: 18px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #1e3a8a;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            #scoreBox {
+                font-size: 40px;
+                padding: 30px;
+            }
+
+            .section {
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <a href="index.html" class="logo">BuildX</a>
-        <a href="index.html" class="back-btn">&larr; العودة</a>
-    </header>
-
-    <main>
-        <div class="form-container">
-            <h1 style="text-align: center; margin-bottom: 30px; color: var(--primary-color);">هل مشروعك يستحق الاستثمار؟</h1>
-
-            <!-- الحقول الأساسية -->
-            <div style="margin-bottom: 20px;">
-                <label for="country">الدولة</label>
-                <input id="country" type="text" placeholder="مثال: الولايات المتحدة">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label for="city">المدينة</label>
-                <input id="city" type="text" placeholder="مثال: دبي">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label for="area">المساحة</label>
-                <input id="area" type="number" placeholder="مثال: 2222 م²">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label for="businessType">النشاط التجاري</label>
-                <input id="businessType" type="text" placeholder="مثال: مطعم">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label for="budget">الميزانية</label>
-                <input id="budget" type="number" placeholder="مثال: $682">
-            </div>
-
-            <!-- مربع الكتابة الكبير + عداد الأحرف + زر السهم -->
-            <div style="margin-top: 30px;">
-                <label for="projectDescription">صف مشروعك بالتفصيل:</label>
-                <textarea id="projectDescription" maxlength="60000" placeholder="اكتب هنا تفاصيل مشروعك، أهدافك، التحديات..." style="width: 100%; height: 250px; padding: 14px; border: 1px solid var(--border-color); border-radius: 12px; background: #f8fafc; font-size: 15px; resize: vertical;"></textarea>
-                
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <span id="charCount" style="font-size: 14px; color: var(--text-muted);">0 / 60,000</span>
-                    <button id="aiButton" style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer;">→</button>
-                </div>
-            </div>
-
-            <!-- مكان عرض النتيجة -->
-            <div id="analysisResult" style="margin-top: 30px; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; display: none; line-height: 1.8; white-space: pre-wrap;"></div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 نتائج التحليل</h1>
+            <p>تحليل فرصة مشروعك مع BuildX</p>
         </div>
-    </main>
 
-    <footer>
-        <span>&copy; 2026 BuildX Data Engine. All rights reserved.</span>
-    </footer>
+        <!-- Loading Screen -->
+        <div id="loadingScreen">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">جاري تحليل مشروعك...</p>
+        </div>
+
+        <!-- Results Container -->
+        <div id="resultContainer" style="display: none;">
+            <!-- Score Box -->
+            <div id="scoreBox" class="excellent">
+                <div id="scoreValue">75</div>
+                <div class="score-label" id="scoreLabel">ممتاز</div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="section statistics">
+                <h3>📈 الإحصائيات</h3>
+                <div id="statisticsContent"></div>
+            </div>
+
+            <!-- Positive Points -->
+            <div class="section positive">
+                <h3>✓ النقاط الإيجابية</h3>
+                <ul id="positivePointsList"></ul>
+            </div>
+
+            <!-- Negative Points -->
+            <div class="section negative">
+                <h3>✗ النقاط السلبية</h3>
+                <ul id="negativePointsList"></ul>
+            </div>
+
+            <!-- Explanation -->
+            <div class="section">
+                <h3>💡 التحليل الكامل</h3>
+                <p id="explanationText"></p>
+            </div>
+
+            <!-- Data Source -->
+            <div class="section" style="border-right-color: #64748b; background: #f1f5f9;">
+                <h3>📍 مصدر البيانات</h3>
+                <p id="dataSourceText"></p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="location.href='form.html'">تحليل مشروع آخر</button>
+                <button class="btn btn-secondary" onclick="window.print()">طباعة التقرير</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // عداد الأحرف
-        const textarea = document.getElementById('projectDescription');
-        const charCount = document.getElementById('charCount');
-
-        textarea.addEventListener('input', function () {
-            charCount.innerText = this.value.length + " / 60,000";
-            if (this.value.length > 60000) {
-                this.value = this.value.substring(0, 60000);
-            }
-        });
-
-        // إرسال البيانات إلى AI
-        async function sendToAI() {
-            const description = textarea.value;
-            const resultDiv = document.getElementById('analysisResult');
-
-            // قراءة البيانات من النموذج
-            const projectData = {
-                country: document.getElementById('country').value,
-                city: document.getElementById('city').value,
-                area: document.getElementById('area').value,
-                businessType: document.getElementById('businessType').value,
-                budget: document.getElementById('budget').value
-            };
-
-            if (description.trim() === "") {
-                alert("الرجاء كتابة وصف المشروع أولاً");
-                return;
-            }
-
-            resultDiv.style.display = 'block';
-            resultDiv.innerText = "جاري تحليل البيانات الحقيقية...";
-
+        async function analyzeProjectWithAI() {
             try {
-                const response = await fetch('/api/chat', {
+                // Get values from form (stored in localStorage from form.html)
+                const projectData = JSON.parse(localStorage.getItem('projectData') || '{}');
+                
+                const country = projectData.country || 'USA';
+                const city = projectData.city;
+                const businessType = projectData.businessType;
+                const budget = projectData.budget;
+                const targetAudience = projectData.targetAudience;
+
+                // Validation
+                if (!city || !businessType || !budget) {
+                    alert('الرجاء ملء جميع الحقول المطلوبة');
+                    window.location.href = 'form.html';
+                    return;
+                }
+
+                // Show loading
+                document.getElementById('loadingScreen').style.display = 'block';
+                document.getElementById('resultContainer').style.display = 'none';
+
+                // Call API
+                const response = await fetch('https://buildx-backend.vercel.app/api/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: description, projectData: projectData })
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        country: country,
+                        city: city,
+                        businessType: businessType,
+                        budget: parseInt(budget),
+                        targetAudience: targetAudience || null
+                    })
                 });
 
                 const data = await response.json();
-                if (data.result) {
-                    resultDiv.innerText = data.result;
-                } else {
-                    resultDiv.innerText = "خطأ: " + (data.error || "حدث خطأ ما");
+
+                if (!data.success) {
+                    throw new Error(data.error || 'خطأ في التحليل');
                 }
+
+                // Display results
+                displayResults(data);
+
             } catch (error) {
-                resultDiv.innerText = "خطأ في الاتصال: " + error;
+                alert('خطأ: ' + error.message);
+                document.getElementById('loadingScreen').style.display = 'none';
             }
         }
 
-        // ربط زر السهم
-        document.getElementById('aiButton').addEventListener('click', sendToAI);
+        function displayResults(data) {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'block';
+
+            // Score
+            document.getElementById('scoreValue').textContent = data.score;
+            document.getElementById('scoreLabel').textContent = data.scoreLabel;
+
+            const scoreBox = document.getElementById('scoreBox');
+            scoreBox.classList.remove('poor', 'good', 'excellent');
+            if (data.score >= 70) scoreBox.classList.add('excellent');
+            else if (data.score >= 30) scoreBox.classList.add('good');
+            else scoreBox.classList.add('poor');
+
+            // Statistics
+            let statsHtml = '';
+            if (data.statistics && typeof data.statistics === 'object') {
+                for (const [key, value] of Object.entries(data.statistics)) {
+                    statsHtml += `<div class="stat-item"><span class="stat-label">${key}</span><span class="stat-value">${value}</span></div>`;
+                }
+            }
+            document.getElementById('statisticsContent').innerHTML = statsHtml || '<p>لا توجد بيانات إحصائية متاحة</p>';
+
+            // Positive Points
+            let positiveHtml = '';
+            if (Array.isArray(data.positivePoints)) {
+                data.positivePoints.forEach(point => {
+                    positiveHtml += `<li>${point}</li>`;
+                });
+            }
+            document.getElementById('positivePointsList').innerHTML = positiveHtml || '<li>لا توجد نقاط إيجابية</li>';
+
+            // Negative Points
+            let negativeHtml = '';
+            if (Array.isArray(data.negativePoints)) {
+                data.negativePoints.forEach(point => {
+                    negativeHtml += `<li>${point}</li>`;
+                });
+            }
+            document.getElementById('negativePointsList').innerHTML = negativeHtml || '<li>لا توجد نقاط سلبية</li>';
+
+            // Explanation
+            document.getElementById('explanationText').textContent = data.explanation || 'لا يوجد شرح';
+
+            // Data source
+            document.getElementById('dataSourceText').textContent = data.dataSource || 'AI Estimation';
+        }
+
+        // Auto-run analysis on page load
+        window.addEventListener('DOMContentLoaded', analyzeProjectWithAI);
     </script>
 </body>
 </html>
