@@ -34,7 +34,6 @@ function toggleMute() {
     document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊';
 }
 
-// عداد الأحرف
 const textarea = document.getElementById('projectDescription');
 const charCount = document.getElementById('charCount');
 
@@ -45,7 +44,6 @@ textarea.addEventListener('input', function () {
     }
 });
 
-// اختيار المشروع
 function selectProject(element) {
     document.querySelectorAll('.project-card').forEach(card => {
         card.classList.remove('selected');
@@ -118,94 +116,82 @@ function checkCompatibility() {
     }
 }
 
-// دالة عرض نتائج JSON بشكل احترافي
+// دالة عرض النتائج الاحترافية
 function displayResult(data) {
     const resultDiv = document.getElementById('analysisResult');
     resultDiv.style.display = 'block';
+    
+    // حساب الألوان
+    const getColor = (score) => {
+        if (score >= 70) return '#22c55e';
+        if (score >= 40) return '#eab308';
+        return '#ef4444';
+    };
 
-    const score = data.success_score;
-    let scoreColor = '';
-    if (score >= 70) scoreColor = '#22c55e'; // أخضر
-    else if (score >= 40) scoreColor = '#eab308'; // أصفر
-    else scoreColor = '#ef4444'; // أحمر
-
+    const score = data.final_score;
+    const indicators = data.indicators;
+    
     const html = `
         <div class="dashboard-result">
-            <div class="score-badge" style="background: ${scoreColor}">
-                <span class="score-value">${score}%</span>
-                <span class="score-label">فرصة النجاح</span>
-            </div>
-            <h3 style="text-align: center; margin: 20px 0;">${data.summary}</h3>
-            
-            <div class="result-section">
-                <h4>🌍 الموقع</h4>
-                <p><strong>الدولة:</strong> ${data.location.country}</p>
-                <p><strong>المدينة:</strong> ${data.location.city}</p>
-                <p><strong>السكان:</strong> ${data.location.population_country}</p>
-                <p><strong>سكان المدينة:</strong> ${data.location.population_city}</p>
-                <p><strong>التوقع:</strong> ${data.location.population_forecast}</p>
-            </div>
-
-            <div class="result-section">
-                <h4>💰 تحليل الميزانية</h4>
-                <p><strong>الميزانية:</strong> $${data.budget_analysis.budget}</p>
-                <p><strong>ملاءمة:</strong> ${data.budget_analysis.suitability}</p>
-                <ul>
-                    ${Object.entries(data.budget_analysis.breakdown).map(([key, value]) => `<li>${key}: ${value}</li>`).join('')}
-                </ul>
-            </div>
-
-            <div class="result-section">
-                <h4>📊 تحليل السوق</h4>
-                <p><strong>مستوى الطلب:</strong> ${data.market_analysis.demand_level}</p>
-                <p><strong>اتجاه السوق:</strong> ${data.market_analysis.trend}</p>
-                <p><strong>الفئة المستهدفة:</strong> ${data.market_analysis.target_audience.join(', ')}</p>
-            </div>
-
-            <div class="result-section">
-                <h4>🏪 المنافسة</h4>
-                <p><strong>عدد المنافسين:</strong> ${data.competition.competitors_count}</p>
-                <p><strong>مستوى المنافسة:</strong> ${data.competition.level}</p>
-                <p>${data.competition.details}</p>
-            </div>
-
-            <div class="result-section">
-                <h4>✅ الإيجابيات</h4>
-                <ul>${data.pros.map(pro => `<li>${pro}</li>`).join('')}</ul>
-            </div>
-
-            <div class="result-section">
-                <h4>⚠️ السلبيات</h4>
-                <ul>${data.cons.map(con => `<li>${con}</li>`).join('')}</ul>
-            </div>
-
-            <div class="result-section">
-                <h4>⚠️ المخاطر</h4>
-                <ul>
-                    ${data.risks.map(risk => `<li><strong>${risk.risk}:</strong> ${risk.level}</li>`).join('')}
-                </ul>
-            </div>
-
-            <div class="result-section">
-                <h4>🏙️ مدن بديلة</h4>
-                <p><strong>المدينة الحالية:</strong> ${data.alternative_cities.current_city}</p>
-                <p><strong>البديل المقترح:</strong> ${data.alternative_cities.suggested_city}</p>
-                <p><strong>السبب:</strong> ${data.alternative_cities.reason}</p>
-            </div>
-
-            <div class="result-section">
-                <h4>🤖 توصية BuildX</h4>
-                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px;">
-                    <p><strong>${data.recommendation.decision}</strong></p>
-                    <p>${data.recommendation.details}</p>
+            <div class="score-section">
+                <h2 style="text-align: center; margin: 0;">🎯 التقييم النهائي</h2>
+                <div class="score-circle" style="background: ${getColor(score)}">
+                    <span class="score-number">${score}</span>
+                    <span>/100</span>
                 </div>
+                <p style="text-align: center; font-weight: bold;">${data.final_label}</p>
+                <p style="text-align: center; color: #666; font-size: 14px;">${data.final_verdict}</p>
+            </div>
+            
+            <h3 style="margin-top: 30px;">📊 المؤشرات</h3>
+            <div class="indicators-grid">
+                ${Object.entries(indicators).map(([key, val]) => `
+                    <div class="indicator-card">
+                        <div class="indicator-title">${key}</div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: ${val.score}%; background: ${getColor(val.score)}"></div>
+                        </div>
+                        <div class="indicator-label">${val.label} (${val.score}/100)</div>
+                        <div class="indicator-note">${val.note}</div>
+                    </div>
+                `).join('')}
             </div>
 
-            <div class="result-section">
+            <h3 style="margin-top: 30px;">📊 الإحصائيات الرئيسية</h3>
+            <div class="stats-grid">
+                ${Object.entries(data.key_metrics).map(([key, value]) => `
+                    <div class="stat-card">
+                        <div class="stat-title">${key}</div>
+                        <div class="stat-value">${value}</div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <h3 style="margin-top: 30px;">✅ نقاط القوة</h3>
+            <ul class="pros-list">${data.pros.map(item => `<li>${item}</li>`).join('')}</ul>
+
+            <h3 style="margin-top: 30px;">⚠️ نقاط الضعف والمخاطر</h3>
+            <ul class="cons-list">${data.cons.map(item => `<li>${item}</li>`).join('')}</ul>
+
+            <h3 style="margin-top: 30px;">💡 التوصيات</h3>
+            <div class="recommendations">
+                ${data.recommendations.map(rec => `<div class="rec-item">${rec}</div>`).join('')}
+            </div>
+
+            <h3 style="margin-top: 30px;">🏆 أفضل المدن البديلة</h3>
+            <div class="cities-grid">
+                ${data.alternative_cities.map(city => `
+                    <div class="city-card">
+                        <strong>${city.city}</strong>
+                        <div class="city-score">${city.score}/100</div>
+                        <div class="city-reason">${city.reason}</div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="sources-section">
                 <h4>📚 المصادر</h4>
-                <ul>
-                    ${data.sources.map(source => `<li>${source.source} — آخر تحديث: ${source.updated}</li>`).join('')}
-                </ul>
+                <p style="font-size: 13px; color: #888;">بيانات تقديرية بناءً على مؤشرات عامة. مصادر رسمية قد تختلف.</p>
             </div>
         </div>
     `;
@@ -225,9 +211,9 @@ async function handleAnalysis() {
     const selectedAudienceCard = document.querySelector('.audience-option.selected');
     const customAudience = document.getElementById('customAudience').value.trim();
     const budget = document.getElementById('budget').value;
+    const area = document.getElementById('area').value;
     const description = textarea.value;
 
-    // تحقق من البيانات
     if (country === "") {
         document.getElementById('countryError').innerText = "يرجى اختيار الدولة أولًا.";
         document.getElementById('countryError').style.display = 'block';
@@ -265,11 +251,10 @@ async function handleAnalysis() {
         return;
     }
 
-    // إرسال البيانات
     submitButton.disabled = true;
     submitButton.innerText = "جاري تجهيز التحليل...";
     resultDiv.style.display = 'block';
-    resultDiv.innerHTML = '<div style="text-align: center; padding: 20px;">🔍 جاري التحليل...</div>';
+    resultDiv.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>جاري تحليل البيانات...</p></div>';
 
     const projectData = {
         country: country,
@@ -277,7 +262,8 @@ async function handleAnalysis() {
         businessType: businessType,
         projectType: project,
         audience: audience,
-        budget: budget
+        budget: budget,
+        area: area
     };
 
     try {
@@ -289,7 +275,6 @@ async function handleAnalysis() {
 
         const data = await response.json();
         
-        // إذا كان هناك خطأ جغرافي
         if (data.error === "geo_mismatch") {
             resultDiv.innerHTML = `<div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
                 <h3>⚠️ تعذر إجراء التحليل</h3>
@@ -300,7 +285,6 @@ async function handleAnalysis() {
             return;
         }
 
-        // عرض النتائج الاحترافية
         if (data.result && typeof data.result === 'object') {
             displayResult(data.result);
         } else if (data.result) {
