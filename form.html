@@ -121,6 +121,17 @@
             gap: 10px;
         }
 
+        .card-title .check {
+            margin-left: auto;
+            font-size: 20px;
+            color: var(--electric-blue);
+            display: none;
+        }
+
+        .card-title.check-visible .check {
+            display: block;
+        }
+
         label {
             display: block;
             font-size: 14px;
@@ -282,6 +293,29 @@
             background: rgba(0, 0, 0, 0.4);
         }
 
+        .mute-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--white);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .mute-btn:hover {
+            border-color: var(--electric-blue);
+        }
+
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -294,6 +328,15 @@
             .project-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
+
+            .budget-wrap {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .budget-unit {
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -305,33 +348,35 @@
 
     <div class="page-title">
         <h1>حلّل مشروعك</h1>
-        <p>أخبرنا عن مشروعك وسنستخدم البيانات والذكاء الاصطناعي لمساعدتك على فهم فرصته في السوق.</p>
+        <p>أخبرنا عن مشروعك، وسنستخدم البيانات والذكاء الاصطناعي لمساعدتك على فهم فرصته في السوق.</p>
         <div class="progress-bar">
             <div class="progress-fill"></div>
         </div>
-        <span style="color: var(--gray-light); font-size: 14px; display: block; margin-top: 10px;">الخطوة 1 من 1 — معلومات المشروع</span>
+        <span style="color: var(--gray-light); font-size: 14px; display: block; margin-top: 10px;">معلومات المشروع</span>
     </div>
 
     <div class="form-container">
 
         <!-- الدولة -->
         <div class="card">
-            <div class="card-title">🌍 الدولة</div>
+            <div class="card-title">🌍 الدولة <span class="check">✔</span></div>
+            <label>اختر الدولة التي تريد دراسة مشروعك فيها.</label>
             <input type="text" id="country" placeholder="اكتب اسم الدولة... مثال: الجزائر، الولايات المتحدة" oninput="checkCompatibility()">
             <div class="error-msg" id="countryError"></div>
         </div>
 
         <!-- المدينة -->
         <div class="card">
-            <div class="card-title">📍 المدينة</div>
+            <div class="card-title">📍 المدينة <span class="check">✔</span></div>
+            <label>اختر المدينة التي يقع فيها مشروعك ضمن الدولة المختارة.</label>
             <input type="text" id="city" placeholder="اكتب اسم المدينة... مثال: دبي، نيويورك" oninput="checkCompatibility()">
             <div class="error-msg" id="cityError"></div>
         </div>
 
         <!-- نوع النشاط -->
         <div class="card">
-            <div class="card-title">🏢 نوع النشاط</div>
-            <select id="businessType">
+            <div class="card-title">🏢 نوع النشاط <span class="check">✔</span></div>
+            <select id="businessType" onchange="playClickSound()">
                 <option value="">اختر نوع النشاط</option>
                 <option value="تجاري">تجاري</option>
                 <option value="صناعي">صناعي</option>
@@ -342,8 +387,8 @@
 
         <!-- المشروع -->
         <div class="card">
-            <div class="card-title">🏗️ ما المشروع الذي تريد دراسته؟</div>
-            <label>اختر المشروع الذي تحبه</label>
+            <div class="card-title">🏗️ ما المشروع الذي تريد دراسته؟ <span class="check">✔</span></div>
+            <label>اختر المشروع الذي تحبه، أو أضف مشروعًا خاصًا بك.</label>
             <div class="project-grid" id="projectGrid">
                 <div class="project-card" onclick="selectProject(this)" data-value="مقهى">☕ مقهى</div>
                 <div class="project-card" onclick="selectProject(this)" data-value="مطعم">🍽️ مطعم</div>
@@ -361,8 +406,8 @@
 
         <!-- الفئة المستهدفة -->
         <div class="card">
-            <div class="card-title">👥 الفئة المستهدفة</div>
-            <label>من هم الأشخاص الذين تستهدفهم؟</label>
+            <div class="card-title">👥 الفئة المستهدفة <span class="check">✔</span></div>
+            <label>من هم الأشخاص الذين يستهدفهم مشروعك؟</label>
             <div class="audience-grid" id="audienceGrid">
                 <div class="audience-option" onclick="selectAudience(this)">الجميع</div>
                 <div class="audience-option" onclick="selectAudience(this)">الشباب</div>
@@ -392,7 +437,7 @@
             <div class="card-title">📝 صف مشروعك بالتفصيل</div>
             <textarea id="projectDescription" maxlength="60000" placeholder="اكتب تفاصيل مشروعك هنا..." style="min-height: 200px;"></textarea>
             <p style="color: var(--gray-light); font-size: 14px; margin-top: 10px;">
-                يمكنك ذكر فكرتك، موقع المشروع، المساحة، المنتجات أو الخدمات، العملاء المستهدفين، عدد الموظفين، مستوى المشروع، وأي تفاصيل أخرى تعتقد أنها مهمة.
+                يمكنك ذكر فكرة المشروع، موقعه، المساحة، المنتجات أو الخدمات التي يقدمها، العملاء المستهدفين، عدد الموظفين، مستوى المشروع، وأي تفاصيل أخرى تعتقد أنها مهمة للتحليل.
             </p>
             <div class="char-counter" id="charCount">0 / 60,000</div>
         </div>
@@ -405,7 +450,40 @@
 
     </div>
 
+    <!-- زر كتم الصوت -->
+    <div class="mute-btn" onclick="toggleMute()" id="muteBtn">🔊</div>
+
     <script>
+        // إعداد الصوت
+        let audioCtx = null;
+        let isMuted = false;
+
+        function playClickSound() {
+            if (isMuted) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 800;
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.1);
+            } catch (error) {
+                // لا نكسر الصفحة إذا منع المتصفح الصوت
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊';
+        }
+
         // عداد الأحرف
         const textarea = document.getElementById('projectDescription');
         const charCount = document.getElementById('charCount');
@@ -424,6 +502,7 @@
             });
             element.classList.add('selected');
             document.getElementById('customProject').style.display = 'none';
+            playClickSound();
         }
 
         function selectOtherProject() {
@@ -433,6 +512,7 @@
             document.getElementById('otherProjectCard').classList.add('selected');
             document.getElementById('customProject').style.display = 'block';
             document.getElementById('customProject').focus();
+            playClickSound();
         }
 
         // اختيار الفئة المستهدفة
@@ -447,6 +527,7 @@
             } else {
                 document.getElementById('customAudience').style.display = 'none';
             }
+            playClickSound();
         }
 
         // التحقق من توافق الدولة والمدينة (مثال مبسط)
@@ -454,10 +535,11 @@
             const country = document.getElementById('country').value.trim().toLowerCase();
             const city = document.getElementById('city').value.trim().toLowerCase();
 
-            // هذا مثال مبسط للتحقق. يمكنك إضافة قائمة أكبر لاحقاً.
             const incompatibility = [
                 { country: 'الجزائر', city: 'نيويورك' },
-                { country: 'algeria', city: 'new york' }
+                { country: 'algeria', city: 'new york' },
+                { country: 'الجزائر', city: 'باريس' },
+                { country: 'algeria', city: 'paris' }
             ];
 
             const isIncompatible = incompatibility.some(item => 
@@ -465,7 +547,7 @@
             );
 
             if (isIncompatible) {
-                document.getElementById('cityError').innerText = "يبدو أن المدينة لا تنتمي إلى الدولة المختارة. هل تقصد اختيار دولة أخرى؟";
+                document.getElementById('cityError').innerText = "يبدو أن المدينة المختارة لا تتبع الدولة المحددة. يرجى التحقق من اختيار الدولة والمدينة.";
                 document.getElementById('cityError').style.display = 'block';
             } else {
                 document.getElementById('cityError').style.display = 'none';
@@ -482,75 +564,4 @@
             const city = document.getElementById('city').value.trim();
             const businessType = document.getElementById('businessType').value;
             const selectedProjectCard = document.querySelector('.project-card.selected');
-            const customProject = document.getElementById('customProject').value.trim();
-            const selectedAudienceCard = document.querySelector('.audience-option.selected');
-            const customAudience = document.getElementById('customAudience').value.trim();
-            const budget = document.getElementById('budget').value;
-            const description = textarea.value;
-
-            // التحقق من البيانات
-            if (country === "") {
-                alert("الرجاء إدخال الدولة");
-                return;
-            }
-            if (city === "") {
-                alert("الرجاء إدخال المدينة");
-                return;
-            }
-            if (businessType === "") {
-                alert("الرجاء اختيار نوع النشاط");
-                return;
-            }
-            if (!selectedProjectCard) {
-                alert("الرجاء اختيار نوع المشروع");
-                return;
-            }
-            const project = selectedProjectCard.dataset.value || customProject;
-            if (project === "") {
-                alert("الرجاء إدخال اسم المشروع الخاص بك");
-                return;
-            }
-            if (!selectedAudienceCard) {
-                alert("الرجاء اختيار الفئة المستهدفة");
-                return;
-            }
-            const audience = selectedAudienceCard.innerText === 'فئة أخرى' ? customAudience : selectedAudienceCard.innerText;
-            if (audience === "") {
-                alert("الرجاء إدخال الفئة المستهدفة الخاصة بك");
-                return;
-            }
-            if (budget === "" || isNaN(budget) || Number(budget) <= 0) {
-                alert("الرجاء إدخال ميزانية صحيحة بالدولار الأمريكي");
-                return;
-            }
-
-            // إرسال البيانات
-            submitButton.disabled = true;
-            submitButton.innerText = "جاري تجهيز التحليل...";
-            resultDiv.style.display = 'block';
-            resultDiv.innerText = "جاري تحليل البيانات الحقيقية...";
-
-            const projectData = {
-                country: country,
-                city: city,
-                businessType: businessType,
-                projectType: project,
-                audience: audience,
-                budget: budget
-            };
-
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: description, projectData: projectData })
-                });
-
-                const data = await response.json();
-                if (data.result) {
-                    resultDiv.innerText = data.result;
-                } else {
-                    resultDiv.innerText = "خطأ: " + (data.error || "حدث خطأ ما");
-                }
-            } catch (error) {
-                resultDiv.innerText = "خطأ في
+            const customProject 
