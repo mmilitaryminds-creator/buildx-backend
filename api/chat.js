@@ -18,9 +18,9 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: 'Missing GEMINI_API_KEY' });
     }
 
-    // إنشاء الاتصال بالنموذج الحديث المجاني
+    // إنشاء الاتصال بالنموذج الحديث والمتاح حالياً (بناءً على طلب Google في الرسالة)
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
 
     const result = await model.generateContent(prompt);
     const response = result.response.text();
