@@ -1,4 +1,5 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const Groq = require("groq-sdk");
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -8,47 +9,59 @@ module.exports = async (req, res) => {
   try {
     const { prompt, projectData } = req.body;
 
-    // هذا هو "البرومبت" المحسن الذي يحول Gemini إلى خبير تحليل
     const fullContext = `
-    أنت "خبير BuildX" (BuildX Expert). أنت مستشار أعمال واقتصادي خبير متخصص في تحليل المشاريع، السوق، والاستثمارات.
+    أنت "خبير BuildX" (BuildX Expert). أنت مستشار أعمال خبير في تحليل المشاريع والاستثمار.
     
-    ### الخطوة الأولى: تحليل البيانات
-    لديك معلومات المشروع التي أدخلها المستخدم:
+    ### البيانات المدخلة من المستخدم:
     ${projectData ? JSON.stringify(projectData, null, 2) : "لا توجد بيانات إضافية"}
     
-    وصف المشروع الذي كتبه المستخدم:
+    ### وصف المشروع:
     ${prompt}
     
-    ### الخطوة الثانية: البحث والاستنتاج
-    قم بتحليل شامل بناءً على:
-    1. **الموقع الجغرافي:** استنتج قوة السوق في المدينة والدولة المحددة.
-    2. **نوع النشاط:** قم بتحليل الطلب على هذا النشاط في السوق.
-    3. **الميزانية والمساحة:** هل هما كافيان لنجاح المشروع؟ ما العيوب أو المخاطر المحتملة؟
-    
-    ### الخطوة الثالثة: التعليمات الصارمة (لا تتجاوزها)
-    1. **لا تخترع أرقاماً أو بيانات غير موجودة.** إذا لم تكن متأكداً من معلومة، اكتب: "معلومة غير مؤكدة تحتاج لبحث ميداني".
-    2. **لا تكتفِ بقراءة الأرقام.** بل قم بربطها ببعضها البعض لتقديم رؤية استثمارية واضحة.
-    3. **قم بتقديم توصيات عملية وواقعية** لنجاح المشروع أو تعديله.
-    4. **أجب باللغة العربية الفصحى** وبأسلوب تقرير مهني واضح ومقسم إلى نقاط (أو عناوين فرعية).
-    
-    ### المطلوب النهائي:
-    أعد تقريراً شاملاً، مفصلاً، وواقعياً جداً يحتوي على: تحليل السوق، تقييم الجدوى، المخاطر، والتوصيات النهائية.
+    ### تعليمات صارمة:
+    1. لا تخترع أي أرقام أو بيانات غير موجودة في المعلومات أعلاه.
+    2. إذا لم تكن متأكداً من معلومة، اكتب: "معلومة غير مؤكدة".
+    3. قم بتحليل السوق بناءً على المدينة، المساحة، الميزانية، والنشاط التجاري المذكور.
+    4. قم بتقديم توصيات عملية وواقعية.
+    5. أجب باللغة العربية وبأسلوب تقرير احترافي.
     `;
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return res.status(500).json({ error: 'Missing GEMINI_API_KEY' });
+    // 1. المحاولة مع Gemini
+    try {
+      const geminiApiKey = process.env.GEMINI_API_KEY;
+      if (!geminiApiKey) {
+        throw new Error("No Gemini Key");
+      }
+      const genAI = new GoogleGenerativeAI(geminiApiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      const result = await model.generateContent(fullContext);
+      const response = result.response.text();
+
+      res.status(200).json({ result: response });
+    } catch (geminiError) {
+      // 2. إذا فشل Gemini، انتقل تلقائياً إلى Groq
+      console.error("Gemini failed, switching to Groq:", geminiError);
+
+      try {
+        const groqApiKey = process.env.GROQ_API_KEY;
+        if (!groqApiKey) {
+          throw new Error("No Groq Key");
+        }
+        const groq = new Groq({ apiKey: groqApiKey });
+        const completion = await groq.chat.completions.create({
+          messages: [{ role: "user", content: fullContext }],
+          model: "llama-3.3-70b-versatile"
+        });
+        const response = completion.choices[0].message.content;
+
+        res.status(200).json({ result: response });
+      } catch (groqError) {
+        console.error("Groq failed:", groqError);
+        return res.status(500).json({ error: 'فشل الاتصال: ' + groqError.message });
+      }
     }
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
-
-    const result = await model.generateContent(fullContext);
-    const response = result.response.text();
-
-    res.status(200).json({ result: response });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'فشل الاتصال بـ Gemini: ' + error.message });
+    return res.status(500).json({ error: 'فشل الاتصال: ' + error.message });
   }
 };
