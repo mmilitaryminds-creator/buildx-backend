@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildX - تحليل المشروع</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>BuildX - حلّل مشروعك</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1e3a8a;
-            --primary-light: #3b82f6;
-            --bg-color: #f8fafc;
-            --text-main: #0f172a;
-            --text-muted: #475569;
+            --bg-dark: #050810;
+            --electric-blue: #00a8ff;
+            --sky-blue: #38bdf8;
             --white: #ffffff;
-            --border-color: #e2e8f0;
+            --gray-light: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --input-border: rgba(255, 255, 255, 0.15);
+            --glow: 0 0 20px rgba(0, 168, 255, 0.4);
         }
 
         * {
@@ -24,171 +27,383 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background: var(--bg-dark);
+            color: var(--white);
             min-height: 100vh;
-            flex-direction: column;
-            display: flex;
+            padding: 20px;
+            background-image: radial-gradient(circle at 20% 20%, rgba(0, 168, 255, 0.1), transparent 40%),
+                              radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.1), transparent 40%);
         }
 
         header {
-            width: 100%;
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--white);
-            border-bottom: 1px solid var(--border-color);
+            padding: 20px 0;
+            text-align: center;
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 900;
             text-decoration: none;
+            color: var(--white);
         }
 
-        .back-btn {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: color 0.2s;
+        .logo .x {
+            color: var(--electric-blue);
+            text-shadow: var(--glow);
         }
 
-        .back-btn:hover {
-            color: var(--primary-color);
+        .page-title {
+            margin-top: 40px;
+            text-align: center;
         }
 
-        main {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
+        .page-title h1 {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: var(--gray-light);
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 400px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 10%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--electric-blue), var(--sky-blue));
+            border-radius: 20px;
+            animation: fillBar 0.5s ease forwards;
+        }
+
+        @keyframes fillBar {
+            from { width: 0; }
+            to { width: 10%; }
         }
 
         .form-container {
-            background: var(--white);
-            padding: 40px;
+            max-width: 700px;
+            margin: 40px auto 0;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--sky-blue);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         label {
             display: block;
             font-size: 14px;
-            font-weight: 700;
-            color: var(--text-main);
+            font-weight: 600;
+            color: var(--gray-light);
             margin-bottom: 8px;
         }
 
-        input, select {
+        input, select, textarea {
             width: 100%;
-            padding: 14px 16px;
-            font-size: 15px;
-            border: 1px solid var(--border-color);
+            padding: 15px;
+            font-size: 16px;
+            color: var(--white);
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
             border-radius: 12px;
-            background-color: #f8fafc;
-            color: var(--text-main);
             outline: none;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
-        input:focus, select:focus {
-            border-color: var(--primary-light);
-            background-color: var(--white);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--electric-blue);
+            box-shadow: 0 0 15px rgba(0, 168, 255, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300a8ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            background-size: 15px;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .project-card {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            border-color: var(--electric-blue);
+            transform: translateY(-3px);
+        }
+
+        .project-card.selected {
+            border-color: var(--electric-blue);
+            background: rgba(0, 168, 255, 0.1);
+            box-shadow: var(--glow);
+        }
+
+        .project-card .icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .audience-option {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .audience-option:hover {
+            border-color: var(--sky-blue);
+        }
+
+        .audience-option.selected {
+            border-color: var(--electric-blue);
+            background: rgba(0, 168, 255, 0.1);
+        }
+
+        .budget-wrap {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .budget-unit {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-light);
+            background: var(--input-bg);
+            padding: 12px 15px;
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .char-counter {
+            font-size: 14px;
+            color: var(--gray-light);
+            text-align: left;
+            margin-top: 8px;
         }
 
         .submit-btn {
             width: 100%;
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--electric-blue), #0056b3);
             color: var(--white);
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 20px;
+            font-weight: 900;
+            padding: 20px;
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow);
         }
 
-        footer {
-            bottom: 0;
-            width: 100%;
-            padding: 20px;
-            text-align: center;
-            font-size: 14px;
-            color: var(--text-muted);
-            background: var(--white);
-            border-top: 1px solid var(--border-color);
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.7);
+        }
+
+        .submit-btn:disabled {
+            background: #334155;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .analysis-result {
+            margin-top: 30px;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            display: none;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .project-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
     </style>
 </head>
 <body>
+
     <header>
-        <a href="index.html" class="logo">BuildX</a>
-        <a href="index.html" class="back-btn">&larr; العودة</a>
+        <a href="index.html" class="logo">Build<span class="x">X</span></a>
     </header>
 
-    <main>
-        <div class="form-container">
-            <h1 style="text-align: center; margin-bottom: 30px; color: var(--primary-color);">هل مشروعك يستحق الاستثمار؟</h1>
-
-            <!-- الحقول الأساسية -->
-            <div style="margin-bottom: 20px;">
-                <label for="country">🌍 الدولة</label>
-                <input id="country" type="text" placeholder="مثال: الولايات المتحدة">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label for="city">🏙️ المدينة</label>
-                <input id="city" type="text" placeholder="مثال: دبي">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label for="area">📐 مساحة المشروع</label>
-                <input id="area" type="number" placeholder="مثال: 2222 م²">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label for="businessType">🏢 نوع المشروع</label>
-                <input id="businessType" type="text" placeholder="مثال: مطعم">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label for="audience">👥 الجمهور المستهدف</label>
-                <input id="audience" type="text" placeholder="مثال: العائلات والموظفين">
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label for="budget">💰 الميزانية بالدولار الأمريكي</label>
-                <input id="budget" type="number" placeholder="مثال: $682">
-            </div>
-
-            <!-- مربع الكتابة الكبير + عداد الأحرف + زر السهم -->
-            <div style="margin-top: 30px;">
-                <label for="projectDescription">📝 صف مشروعك بالتفصيل:</label>
-                <textarea id="projectDescription" maxlength="60000" placeholder="اكتب هنا تفاصيل مشروعك، أهدافك، التحديات..." style="width: 100%; height: 250px; padding: 14px; border: 1px solid var(--border-color); border-radius: 12px; background: #f8fafc; font-size: 15px; resize: vertical;"></textarea>
-                
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <span id="charCount" style="font-size: 14px; color: var(--text-muted);">0 / 60,000</span>
-                    <button id="aiButton" style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer;">→</button>
-                </div>
-            </div>
-
-            <!-- مكان عرض النتيجة -->
-            <div id="analysisResult" style="margin-top: 30px; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; display: none; line-height: 1.8; white-space: pre-wrap;"></div>
+    <div class="page-title">
+        <h1>حلّل مشروعك</h1>
+        <p>أخبرنا عن مشروعك وسنستخدم البيانات والذكاء الاصطناعي لمساعدتك على فهم فرصته في السوق.</p>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
         </div>
-    </main>
+        <span style="color: var(--gray-light); font-size: 14px; display: block; margin-top: 10px;">الخطوة 1 من 1 — معلومات المشروع</span>
+    </div>
 
-    <footer>
-        <span>&copy; 2026 BuildX Data Engine. All rights reserved.</span>
-    </footer>
+    <div class="form-container">
+
+        <!-- الدولة -->
+        <div class="card">
+            <div class="card-title">🌍 الدولة</div>
+            <input type="text" id="country" placeholder="اكتب اسم الدولة... مثال: الجزائر، الولايات المتحدة" oninput="checkCompatibility()">
+            <div class="error-msg" id="countryError"></div>
+        </div>
+
+        <!-- المدينة -->
+        <div class="card">
+            <div class="card-title">📍 المدينة</div>
+            <input type="text" id="city" placeholder="اكتب اسم المدينة... مثال: دبي، نيويورك" oninput="checkCompatibility()">
+            <div class="error-msg" id="cityError"></div>
+        </div>
+
+        <!-- نوع النشاط -->
+        <div class="card">
+            <div class="card-title">🏢 نوع النشاط</div>
+            <select id="businessType">
+                <option value="">اختر نوع النشاط</option>
+                <option value="تجاري">تجاري</option>
+                <option value="صناعي">صناعي</option>
+                <option value="خدمي">خدمي</option>
+                <option value="زراعي">زراعي</option>
+            </select>
+        </div>
+
+        <!-- المشروع -->
+        <div class="card">
+            <div class="card-title">🏗️ ما المشروع الذي تريد دراسته؟</div>
+            <label>اختر المشروع الذي تحبه</label>
+            <div class="project-grid" id="projectGrid">
+                <div class="project-card" onclick="selectProject(this)" data-value="مقهى">☕ مقهى</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="مطعم">🍽️ مطعم</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="متجر">🛍️ متجر</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="فندق">🏨 فندق</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="صالة رياضية">🏋️ صالة رياضية</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="مكتب">🏢 مكتب</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="مصنع">🏭 مصنع</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="مشروع تجاري">🏪 مشروع تجاري</div>
+                <div class="project-card" id="otherProjectCard" onclick="selectOtherProject()">➕ اختر مشروعًا آخر</div>
+            </div>
+            <input type="text" id="customProject" placeholder="أدخل اسم مشروعك هنا..." style="display: none; margin-top: 15px;">
+            <div class="error-msg" id="projectError"></div>
+        </div>
+
+        <!-- الفئة المستهدفة -->
+        <div class="card">
+            <div class="card-title">👥 الفئة المستهدفة</div>
+            <label>من هم الأشخاص الذين تستهدفهم؟</label>
+            <div class="audience-grid" id="audienceGrid">
+                <div class="audience-option" onclick="selectAudience(this)">الجميع</div>
+                <div class="audience-option" onclick="selectAudience(this)">الشباب</div>
+                <div class="audience-option" onclick="selectAudience(this)">العائلات</div>
+                <div class="audience-option" onclick="selectAudience(this)">الأطفال</div>
+                <div class="audience-option" onclick="selectAudience(this)">الطلاب</div>
+                <div class="audience-option" onclick="selectAudience(this)">الموظفون</div>
+                <div class="audience-option" onclick="selectAudience(this)">السياح</div>
+                <div class="audience-option" onclick="selectAudience(this)">الشركات</div>
+                <div class="audience-option" onclick="selectAudience(this)">فئة أخرى</div>
+            </div>
+            <input type="text" id="customAudience" placeholder="أدخل الفئة المستهدفة هنا..." style="display: none; margin-top: 15px;">
+        </div>
+
+        <!-- الميزانية -->
+        <div class="card">
+            <div class="card-title">💰 ميزانية المشروع</div>
+            <label>أدخل ميزانية مشروعك بالدولار الأمريكي (USD).</label>
+            <div class="budget-wrap">
+                <input type="number" id="budget" placeholder="$50,000" min="0">
+                <div class="budget-unit">USD — US Dollar</div>
+            </div>
+        </div>
+
+        <!-- وصف المشروع -->
+        <div class="card">
+            <div class="card-title">📝 صف مشروعك بالتفصيل</div>
+            <textarea id="projectDescription" maxlength="60000" placeholder="اكتب تفاصيل مشروعك هنا..." style="min-height: 200px;"></textarea>
+            <p style="color: var(--gray-light); font-size: 14px; margin-top: 10px;">
+                يمكنك ذكر فكرتك، موقع المشروع، المساحة، المنتجات أو الخدمات، العملاء المستهدفين، عدد الموظفين، مستوى المشروع، وأي تفاصيل أخرى تعتقد أنها مهمة.
+            </p>
+            <div class="char-counter" id="charCount">0 / 60,000</div>
+        </div>
+
+        <!-- زر التحليل -->
+        <button class="submit-btn" id="submitButton" onclick="handleAnalysis()">🚀 ابدأ تحليل المشروع</button>
+
+        <!-- مكان عرض النتيجة -->
+        <div class="analysis-result" id="analysisResult"></div>
+
+    </div>
 
     <script>
         // عداد الأحرف
@@ -202,28 +417,127 @@
             }
         });
 
-        // إرسال البيانات إلى AI
-        async function sendToAI() {
-            const description = textarea.value;
+        // اختيار المشروع
+        function selectProject(element) {
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            document.getElementById('customProject').style.display = 'none';
+        }
+
+        function selectOtherProject() {
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.getElementById('otherProjectCard').classList.add('selected');
+            document.getElementById('customProject').style.display = 'block';
+            document.getElementById('customProject').focus();
+        }
+
+        // اختيار الفئة المستهدفة
+        function selectAudience(element) {
+            document.querySelectorAll('.audience-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            if (element.innerText === 'فئة أخرى') {
+                document.getElementById('customAudience').style.display = 'block';
+                document.getElementById('customAudience').focus();
+            } else {
+                document.getElementById('customAudience').style.display = 'none';
+            }
+        }
+
+        // التحقق من توافق الدولة والمدينة (مثال مبسط)
+        function checkCompatibility() {
+            const country = document.getElementById('country').value.trim().toLowerCase();
+            const city = document.getElementById('city').value.trim().toLowerCase();
+
+            // هذا مثال مبسط للتحقق. يمكنك إضافة قائمة أكبر لاحقاً.
+            const incompatibility = [
+                { country: 'الجزائر', city: 'نيويورك' },
+                { country: 'algeria', city: 'new york' }
+            ];
+
+            const isIncompatible = incompatibility.some(item => 
+                item.country === country && item.city === city
+            );
+
+            if (isIncompatible) {
+                document.getElementById('cityError').innerText = "يبدو أن المدينة لا تنتمي إلى الدولة المختارة. هل تقصد اختيار دولة أخرى؟";
+                document.getElementById('cityError').style.display = 'block';
+            } else {
+                document.getElementById('cityError').style.display = 'none';
+            }
+        }
+
+        // الدالة الرئيسية للإرسال
+        async function handleAnalysis() {
+            const submitButton = document.getElementById('submitButton');
             const resultDiv = document.getElementById('analysisResult');
 
-            // قراءة البيانات من النموذج
-            const projectData = {
-                country: document.getElementById('country').value,
-                city: document.getElementById('city').value,
-                area: document.getElementById('area').value,
-                businessType: document.getElementById('businessType').value,
-                audience: document.getElementById('audience').value,
-                budget: document.getElementById('budget').value
-            };
+            // جمع البيانات
+            const country = document.getElementById('country').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const businessType = document.getElementById('businessType').value;
+            const selectedProjectCard = document.querySelector('.project-card.selected');
+            const customProject = document.getElementById('customProject').value.trim();
+            const selectedAudienceCard = document.querySelector('.audience-option.selected');
+            const customAudience = document.getElementById('customAudience').value.trim();
+            const budget = document.getElementById('budget').value;
+            const description = textarea.value;
 
-            if (description.trim() === "") {
-                alert("الرجاء كتابة وصف المشروع أولاً");
+            // التحقق من البيانات
+            if (country === "") {
+                alert("الرجاء إدخال الدولة");
+                return;
+            }
+            if (city === "") {
+                alert("الرجاء إدخال المدينة");
+                return;
+            }
+            if (businessType === "") {
+                alert("الرجاء اختيار نوع النشاط");
+                return;
+            }
+            if (!selectedProjectCard) {
+                alert("الرجاء اختيار نوع المشروع");
+                return;
+            }
+            const project = selectedProjectCard.dataset.value || customProject;
+            if (project === "") {
+                alert("الرجاء إدخال اسم المشروع الخاص بك");
+                return;
+            }
+            if (!selectedAudienceCard) {
+                alert("الرجاء اختيار الفئة المستهدفة");
+                return;
+            }
+            const audience = selectedAudienceCard.innerText === 'فئة أخرى' ? customAudience : selectedAudienceCard.innerText;
+            if (audience === "") {
+                alert("الرجاء إدخال الفئة المستهدفة الخاصة بك");
+                return;
+            }
+            if (budget === "" || isNaN(budget) || Number(budget) <= 0) {
+                alert("الرجاء إدخال ميزانية صحيحة بالدولار الأمريكي");
                 return;
             }
 
+            // إرسال البيانات
+            submitButton.disabled = true;
+            submitButton.innerText = "جاري تجهيز التحليل...";
             resultDiv.style.display = 'block';
             resultDiv.innerText = "جاري تحليل البيانات الحقيقية...";
+
+            const projectData = {
+                country: country,
+                city: city,
+                businessType: businessType,
+                projectType: project,
+                audience: audience,
+                budget: budget
+            };
 
             try {
                 const response = await fetch('/api/chat', {
@@ -239,12 +553,4 @@
                     resultDiv.innerText = "خطأ: " + (data.error || "حدث خطأ ما");
                 }
             } catch (error) {
-                resultDiv.innerText = "خطأ في الاتصال: " + error;
-            }
-        }
-
-        // ربط زر السهم
-        document.getElementById('aiButton').addEventListener('click', sendToAI);
-    </script>
-</body>
-</html>
+                resultDiv.innerText = "خطأ في
