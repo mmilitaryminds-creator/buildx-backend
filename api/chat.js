@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
         const groq = new Groq({ apiKey: groqApiKey });
         const completion = await groq.chat.completions.create({
           messages: [{ role: "user", content: fullContext }],
-          model: 'llama-3.1-70b-versatile'
+          model: 'openai/gpt-oss-120b'
         });
         const response = completion.choices[0].message.content;
 
