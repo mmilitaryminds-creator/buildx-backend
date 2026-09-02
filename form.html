@@ -133,5 +133,25 @@
 
     <!-- استدعاء ملف المنطق والوظائف -->
     <script src="form-logic.js"></script>
+    <!-- شاشة التحميل (تحليل البيانات) -->
+<div id="analysisLoading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 8, 16, 0.95); z-index: 9999; align-items: center; justify-content: center; flex-direction: column; text-align: center;">
+    <div class="ai-loader-circle" style="width: 80px; height: 80px; border: 6px solid #1e3a8a; border-top-color: #00a8ff; border-radius: 50%; animation: aiLoaderSpin 1s linear infinite; margin-bottom: 20px;"></div>
+    <h3 style="color: #ffffff; font-size: 20px;">جاري تحليل المشروع...</h3>
+    <p style="color: #94a3b8; font-size: 14px; margin-top: 10px; max-width: 300px;">نقوم بجمع البيانات من مصادر متعددة، وتحليل السوق والمنافسين، وتقييم فرص نجاح المشروع.</p>
+</div>
+
+<!-- طلب إغلاق شاشة التحميل عند اكتمال البيانات -->
+<script>
+    function showLoading() {
+        const loading = document.getElementById('analysisLoading');
+        loading.style.display = 'flex';
+    }
+
+    function hideLoading() {
+        const loading = document.getElementById('analysisLoading');
+        loading.style.display = 'none';
+    }
+</script>
+    
 </body>
                     </html>
