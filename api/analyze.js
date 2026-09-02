@@ -1,3 +1,6 @@
+import { calculateIndicators, calculateFinalScore } from './lib/indicators.js';
+import { suggestCities } from './lib/cities.js';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed. Use POST.' });
@@ -63,7 +66,13 @@ export default async function handler(req, res) {
     }
 
     // Step 3: Use Gemini to analyze (real data if available, or disclaimer if not)
-    let geminiPrompt = '';
+    // Calculate indicators and score
+analysisData.indicators = calculateIndicators(analysisData);
+analysisData.score = calculateFinalScore(analysisData.indicators);
+analysisData.verdict = analysisData.score >= 70 ? 'ممتاز' : analysisData.score >= 30 ? 'جيد' : 'غير مقبول';
+analysisData.alternativeCities = suggestCities(country, city, businessType);
+
+let geminiPrompt = '';
     
     if (analysisData.dataAvailable) {
       geminiPrompt = `
