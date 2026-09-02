@@ -83,12 +83,6 @@
             height: 100%;
             background: linear-gradient(90deg, var(--electric-blue), var(--sky-blue));
             border-radius: 20px;
-            animation: fillBar 0.5s ease forwards;
-        }
-
-        @keyframes fillBar {
-            from { width: 0; }
-            to { width: 10%; }
         }
 
         .form-container {
@@ -230,6 +224,7 @@
         .audience-option.selected {
             border-color: var(--electric-blue);
             background: rgba(0, 168, 255, 0.1);
+            box-shadow: var(--glow);
         }
 
         .budget-wrap {
@@ -316,6 +311,56 @@
             border-color: var(--electric-blue);
         }
 
+        /* نافذة اختيار مشروع آخر */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #0a0f1c;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+        }
+
+        .modal-content input {
+            margin-bottom: 20px;
+        }
+
+        .modal-content button {
+            background: var(--electric-blue);
+            color: var(--white);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -376,7 +421,7 @@
         <!-- نوع النشاط -->
         <div class="card">
             <div class="card-title">🏢 نوع النشاط <span class="check">✔</span></div>
-            <select id="businessType" onchange="playClickSound()">
+            <select id="businessType">
                 <option value="">اختر نوع النشاط</option>
                 <option value="تجاري">تجاري</option>
                 <option value="صناعي">صناعي</option>
@@ -398,9 +443,8 @@
                 <div class="project-card" onclick="selectProject(this)" data-value="مكتب">🏢 مكتب</div>
                 <div class="project-card" onclick="selectProject(this)" data-value="مصنع">🏭 مصنع</div>
                 <div class="project-card" onclick="selectProject(this)" data-value="مشروع تجاري">🏪 مشروع تجاري</div>
-                <div class="project-card" id="otherProjectCard" onclick="selectOtherProject()">➕ اختر مشروعًا آخر</div>
+                <div class="project-card" id="otherProjectCard" onclick="openModal()">➕ اختر مشروعًا آخر</div>
             </div>
-            <input type="text" id="customProject" placeholder="أدخل اسم مشروعك هنا..." style="display: none; margin-top: 15px;">
             <div class="error-msg" id="projectError"></div>
         </div>
 
@@ -450,13 +494,31 @@
 
     </div>
 
+    <!-- نافذة اختيار مشروع آخر -->
+    <div class="modal" id="customProjectModal">
+        <div class="modal-content">
+            <h2>اختر مشروعك</h2>
+            <input type="text" id="customProjectInput" placeholder="اكتب اسم مشروعك... مثال: مركز ألعاب VR">
+            <button onclick="confirmCustomProject()">تأكيد</button>
+            <button onclick="closeModal()" style="background: transparent; border: 1px solid var(--gray-light); color: var(--gray-light); margin-left: 10px;">إلغاء</button>
+        </div>
+    </div>
+
     <!-- زر كتم الصوت -->
     <div class="mute-btn" onclick="toggleMute()" id="muteBtn">🔊</div>
 
     <script>
-        // إعداد الصوت
+        // تفعيل الصوت عند أول تفاعل
         let audioCtx = null;
         let isMuted = false;
+
+        document.body.addEventListener('click', function() {
+            if (audioCtx === null && !isMuted) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {}
+            }
+        }, { once: true });
 
         function playClickSound() {
             if (isMuted) return;
@@ -474,9 +536,7 @@
                 gainNode.connect(audioCtx.destination);
                 oscillator.start();
                 oscillator.stop(audioCtx.currentTime + 0.1);
-            } catch (error) {
-                // لا نكسر الصفحة إذا منع المتصفح الصوت
-            }
+            } catch (error) {}
         }
 
         function toggleMute() {
@@ -495,73 +555,37 @@
             }
         });
 
-        // اختيار المشروع
+        // اختيار المشروع (مع الحفاظ على الإطار الأزرق)
         function selectProject(element) {
             document.querySelectorAll('.project-card').forEach(card => {
                 card.classList.remove('selected');
             });
             element.classList.add('selected');
-            document.getElementById('customProject').style.display = 'none';
+            document.getElementById('customProjectInput').value = '';
             playClickSound();
         }
 
-        function selectOtherProject() {
+        // نافذة اختيار مشروع آخر
+        function openModal() {
             document.querySelectorAll('.project-card').forEach(card => {
                 card.classList.remove('selected');
             });
             document.getElementById('otherProjectCard').classList.add('selected');
-            document.getElementById('customProject').style.display = 'block';
-            document.getElementById('customProject').focus();
+            document.getElementById('customProjectModal').classList.add('show');
+            document.getElementById('customProjectInput').focus();
             playClickSound();
         }
 
-        // اختيار الفئة المستهدفة
-        function selectAudience(element) {
-            document.querySelectorAll('.audience-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-            element.classList.add('selected');
-            if (element.innerText === 'فئة أخرى') {
-                document.getElementById('customAudience').style.display = 'block';
-                document.getElementById('customAudience').focus();
-            } else {
-                document.getElementById('customAudience').style.display = 'none';
+        function confirmCustomProject() {
+            const customProject = document.getElementById('customProjectInput').value.trim();
+            if (customProject === "") {
+                alert("الرجاء إدخال اسم المشروع");
+                return;
             }
+            document.getElementById('customProjectInput').value = customProject;
+            document.getElementById('customProjectModal').classList.remove('show');
             playClickSound();
         }
 
-        // التحقق من توافق الدولة والمدينة (مثال مبسط)
-        function checkCompatibility() {
-            const country = document.getElementById('country').value.trim().toLowerCase();
-            const city = document.getElementById('city').value.trim().toLowerCase();
-
-            const incompatibility = [
-                { country: 'الجزائر', city: 'نيويورك' },
-                { country: 'algeria', city: 'new york' },
-                { country: 'الجزائر', city: 'باريس' },
-                { country: 'algeria', city: 'paris' }
-            ];
-
-            const isIncompatible = incompatibility.some(item => 
-                item.country === country && item.city === city
-            );
-
-            if (isIncompatible) {
-                document.getElementById('cityError').innerText = "يبدو أن المدينة المختارة لا تتبع الدولة المحددة. يرجى التحقق من اختيار الدولة والمدينة.";
-                document.getElementById('cityError').style.display = 'block';
-            } else {
-                document.getElementById('cityError').style.display = 'none';
-            }
-        }
-
-        // الدالة الرئيسية للإرسال
-        async function handleAnalysis() {
-            const submitButton = document.getElementById('submitButton');
-            const resultDiv = document.getElementById('analysisResult');
-
-            // جمع البيانات
-            const country = document.getElementById('country').value.trim();
-            const city = document.getElementById('city').value.trim();
-            const businessType = document.getElementById('businessType').value;
-            const selectedProjectCard = document.querySelector('.project-card.selected');
-            const customProject 
+        function closeModal() {
+            document.getElementById('customProjectModa
