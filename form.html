@@ -1,591 +1,986 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildX - حلّل مشروعك</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-dark: #050810;
-            --electric-blue: #00a8ff;
-            --sky-blue: #38bdf8;
-            --white: #ffffff;
-            --gray-light: #94a3b8;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --input-bg: rgba(0, 0, 0, 0.3);
-            --input-border: rgba(255, 255, 255, 0.15);
-            --glow: 0 0 20px rgba(0, 168, 255, 0.4);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
+<title>BuildX - حلّل مشروعك</title>
 
-        body {
-            background: var(--bg-dark);
-            color: var(--white);
-            min-height: 100vh;
-            padding: 20px;
-            background-image: radial-gradient(circle at 20% 20%, rgba(0, 168, 255, 0.1), transparent 40%),
-                              radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.1), transparent 40%);
-        }
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-        header {
-            padding: 20px 0;
-            text-align: center;
-        }
+<style>
+:root {
+    --bg: #050810;
+    --bg2: #080d18;
+    --blue: #00a8ff;
+    --cyan: #38bdf8;
+    --white: #ffffff;
+    --gray: #94a3b8;
+    --border: rgba(255,255,255,.11);
+    --glass: rgba(255,255,255,.035);
+    --input: rgba(0,0,0,.32);
+    --danger: #ef4444;
+    --success: #22c55e;
+    --glow: 0 0 25px rgba(0,168,255,.35);
+}
 
-        .logo {
-            font-size: 28px;
-            font-weight: 900;
-            text-decoration: none;
-            color: var(--white);
-        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Cairo", sans-serif;
+}
 
-        .logo .x {
-            color: var(--electric-blue);
-            text-shadow: var(--glow);
-        }
+html {
+    scroll-behavior: smooth;
+}
 
-        .page-title {
-            margin-top: 40px;
-            text-align: center;
-        }
+body {
+    min-height: 100vh;
+    color: var(--white);
+    background:
+        radial-gradient(circle at 15% 15%, rgba(0,168,255,.10), transparent 35%),
+        radial-gradient(circle at 85% 85%, rgba(56,189,248,.08), transparent 35%),
+        var(--bg);
+    padding: 20px;
+}
 
-        .page-title h1 {
-            font-size: 36px;
-            font-weight: 900;
-            margin-bottom: 10px;
-        }
+/* =========================
+   HEADER
+========================= */
 
-        .page-title p {
-            color: var(--gray-light);
-            margin-bottom: 20px;
-        }
+header {
+    max-width: 1000px;
+    margin: auto;
+    padding: 15px 0 25px;
+    text-align: center;
+}
 
-        .progress-bar {
-            width: 100%;
-            max-width: 400px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
+.logo {
+    color: white;
+    text-decoration: none;
+    font-size: 30px;
+    font-weight: 900;
+}
 
-        .progress-fill {
-            width: 10%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--electric-blue), var(--sky-blue));
-            border-radius: 20px;
-        }
+.logo span {
+    color: var(--blue);
+    text-shadow: var(--glow);
+}
 
-        .form-container {
-            max-width: 700px;
-            margin: 40px auto 0;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
+/* =========================
+   TITLE
+========================= */
 
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
+.page-title {
+    max-width: 800px;
+    margin: 35px auto 0;
+    text-align: center;
+}
 
-        .card:hover {
-            border-color: var(--sky-blue);
-        }
+.page-title h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 900;
+    margin-bottom: 10px;
+}
 
-        .card-title {
-            font-size: 20px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+.page-title p {
+    color: var(--gray);
+    line-height: 1.8;
+}
 
-        .card-title .check {
-            margin-left: auto;
-            font-size: 20px;
-            color: var(--electric-blue);
-            display: none;
-        }
+.progress {
+    max-width: 450px;
+    height: 7px;
+    margin: 25px auto 8px;
+    background: rgba(255,255,255,.08);
+    border-radius: 20px;
+    overflow: hidden;
+}
 
-        .card-title.check-visible .check {
-            display: block;
-        }
+.progress-fill {
+    width: 15%;
+    height: 100%;
+    background: linear-gradient(90deg,var(--blue),var(--cyan));
+    box-shadow: 0 0 15px var(--blue);
+}
 
-        label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--gray-light);
-            margin-bottom: 8px;
-        }
+/* =========================
+   CONTAINER
+========================= */
 
-        input, select, textarea {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            color: var(--white);
-            background: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 12px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
+.container {
+    width: 100%;
+    max-width: 760px;
+    margin: 40px auto;
+}
 
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--electric-blue);
-            box-shadow: 0 0 15px rgba(0, 168, 255, 0.3);
-            background: rgba(0, 0, 0, 0.5);
-        }
+.card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 28px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(15px);
+    transition: .3s ease;
+}
 
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300a8ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: left 15px center;
-            background-size: 15px;
-        }
+.card:hover {
+    border-color: rgba(0,168,255,.35);
+}
 
-        .error-msg {
-            color: #ef4444;
-            font-size: 14px;
-            margin-top: 8px;
-            display: none;
-        }
+.title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 9px;
+}
 
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
+.card-check {
+    margin-right: auto;
+    color: var(--blue);
+    opacity: 0;
+    transform: scale(.5);
+    transition: .25s ease;
+}
 
-        .project-card {
-            background: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+.card.completed .card-check {
+    opacity: 1;
+    transform: scale(1);
+}
 
-        .project-card:hover {
-            border-color: var(--electric-blue);
-            transform: translateY(-3px);
-        }
+.description {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 18px;
+    line-height: 1.8;
+}
 
-        .project-card.selected {
-            border-color: var(--electric-blue);
-            background: rgba(0, 168, 255, 0.1);
-            box-shadow: var(--glow);
-        }
+/* =========================
+   INPUTS
+========================= */
 
-        .project-card .icon {
-            font-size: 30px;
-            margin-bottom: 10px;
-        }
+input,
+select,
+textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    outline: none;
+    color: white;
+    background: var(--input);
+    border-radius: 14px;
+    padding: 15px;
+    font-size: 15px;
+    transition: .25s ease;
+}
 
-        .audience-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
-        }
+input::placeholder,
+textarea::placeholder {
+    color: #64748b;
+}
 
-        .audience-option {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid var(--input-border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 20px rgba(0,168,255,.22);
+}
 
-        .audience-option:hover {
-            border-color: var(--sky-blue);
-        }
+select {
+    cursor: pointer;
+}
 
-        .audience-option.selected {
-            border-color: var(--electric-blue);
-            background: rgba(0, 168, 255, 0.1);
-            box-shadow: var(--glow);
-        }
+/* =========================
+   SELECTION BOXES
+========================= */
 
-        .budget-wrap {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 12px;
+}
 
-        .budget-unit {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--gray-light);
-            background: var(--input-bg);
-            padding: 12px 15px;
-            border: 1px solid var(--input-border);
-            border-radius: 12px;
-            white-space: nowrap;
-        }
+.option {
+    position: relative;
+    min-height: 85px;
+    padding: 15px 10px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: rgba(0,0,0,.25);
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+    transition:
+        border-color .25s ease,
+        background .25s ease,
+        box-shadow .25s ease,
+        transform .25s ease;
+}
 
-        .char-counter {
-            font-size: 14px;
-            color: var(--gray-light);
-            text-align: left;
-            margin-top: 8px;
-        }
+.option:hover {
+    border-color: rgba(56,189,248,.7);
+    transform: translateY(-2px);
+}
 
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--electric-blue), #0056b3);
-            color: var(--white);
-            font-size: 20px;
-            font-weight: 900;
-            padding: 20px;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--glow);
-        }
+/*
+   IMPORTANT:
+   الحالة المختارة تبقى موجودة
+*/
+.option.selected {
+    border: 2px solid var(--blue);
+    background: rgba(0,168,255,.13);
+    box-shadow:
+        0 0 10px rgba(0,168,255,.25),
+        0 0 25px rgba(0,168,255,.15);
+    transform: translateY(-2px);
+}
 
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(0, 168, 255, 0.7);
-        }
+.option .icon {
+    font-size: 28px;
+}
 
-        .submit-btn:disabled {
-            background: #334155;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
+.option .check {
+    position: absolute;
+    top: 7px;
+    left: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: scale(.5);
+    transition: .2s ease;
+}
 
-        .analysis-result {
-            margin-top: 30px;
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 30px;
-            display: none;
-            line-height: 1.8;
-            white-space: pre-wrap;
-            background: rgba(0, 0, 0, 0.4);
-        }
+.option.selected .check {
+    opacity: 1;
+    transform: scale(1);
+}
 
-        .mute-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-            color: var(--white);
-            transition: all 0.3s;
-            z-index: 1000;
-        }
+/* =========================
+   PROJECT
+========================= */
 
-        .mute-btn:hover {
-            border-color: var(--electric-blue);
-        }
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 13px;
+}
 
-        /* نافذة اختيار مشروع آخر */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
+.project {
+    position: relative;
+    min-height: 110px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: rgba(0,0,0,.25);
+    cursor: pointer;
+    padding: 18px 10px;
+    text-align: center;
+    transition: .25s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
 
-        .modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
+.project:hover {
+    border-color: var(--cyan);
+    transform: translateY(-3px);
+}
 
-        .modal-content {
-            background: #0a0f1c;
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 40px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
+.project.selected {
+    border: 2px solid var(--blue);
+    background: rgba(0,168,255,.13);
+    box-shadow: var(--glow);
+    transform: translateY(-3px);
+}
 
-        .modal-content h2 {
-            margin-bottom: 20px;
-        }
+.project-icon {
+    font-size: 32px;
+}
 
-        .modal-content input {
-            margin-bottom: 20px;
-        }
+.project-check {
+    position: absolute;
+    top: 7px;
+    left: 8px;
+    color: var(--blue);
+    font-size: 18px;
+    opacity: 0;
+}
 
-        .modal-content button {
-            background: var(--electric-blue);
-            color: var(--white);
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-        }
+.project.selected .project-check {
+    opacity: 1;
+}
 
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
+/* =========================
+   CUSTOM PROJECT
+========================= */
 
-            .card {
-                padding: 20px;
-            }
+.custom-project {
+    border-style: dashed;
+}
 
-            .project-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+.custom-project.selected {
+    border-style: solid;
+}
 
-            .budget-wrap {
-                flex-direction: column;
-                align-items: stretch;
-            }
+.custom-project-name {
+    display: none;
+    font-size: 14px;
+    font-weight: 700;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
 
-            .budget-unit {
-                text-align: center;
-            }
-        }
-    </style>
+.custom-project.has-name .custom-project-default {
+    display: none;
+}
+
+.custom-project.has-name .custom-project-name {
+    display: block;
+}
+
+/* =========================
+   BUDGET
+========================= */
+
+.budget-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.currency {
+    min-width: 145px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,.25);
+    text-align: center;
+    color: var(--gray);
+    font-weight: 700;
+}
+
+/* =========================
+   TEXTAREA
+========================= */
+
+textarea {
+    min-height: 230px;
+    resize: vertical;
+    line-height: 1.8;
+}
+
+.helper {
+    margin-top: 10px;
+    color: var(--gray);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.counter {
+    text-align: left;
+    color: var(--gray);
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.counter.limit {
+    color: #f87171;
+}
+
+/* =========================
+   ERRORS
+========================= */
+
+.error {
+    color: #f87171;
+    font-size: 13px;
+    margin-top: 8px;
+    display: none;
+}
+
+.error.show {
+    display: block;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.submit {
+    width: 100%;
+    border: none;
+    border-radius: 17px;
+    padding: 19px;
+    color: white;
+    background: linear-gradient(135deg,#00a8ff,#0756a3);
+    box-shadow: var(--glow);
+    cursor: pointer;
+    font-size: 19px;
+    font-weight: 900;
+    transition: .25s ease;
+}
+
+.submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 35px rgba(0,168,255,.55);
+}
+
+.submit:active {
+    transform: scale(.98);
+}
+
+.submit:disabled {
+    opacity: .65;
+    cursor: wait;
+    transform: none;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+    color: var(--gray);
+}
+
+.loading.show {
+    display: flex;
+}
+
+.dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: pulse 1s infinite;
+}
+
+.dot:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: .3s;
+}
+
+@keyframes pulse {
+    0%,100% {
+        opacity: .25;
+        transform: scale(.7);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* =========================
+   RESULT
+========================= */
+
+.result {
+    display: none;
+    margin-top: 25px;
+    padding: 25px;
+    border: 1px solid rgba(0,168,255,.3);
+    border-radius: 20px;
+    background: rgba(0,168,255,.05);
+    white-space: pre-wrap;
+    line-height: 1.9;
+}
+
+/* =========================
+   MODAL / PAGE
+========================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    background: rgba(2,5,12,.94);
+    backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition: .3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.modal-page {
+    width: 100%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+    border-radius: 25px;
+    border: 1px solid rgba(0,168,255,.25);
+    background:
+        radial-gradient(circle at top,rgba(0,168,255,.09),transparent 45%),
+        #080d18;
+    box-shadow: 0 0 50px rgba(0,168,255,.15);
+    transform: translateY(20px) scale(.97);
+    transition: .3s ease;
+}
+
+.modal.show .modal-page {
+    transform: translateY(0) scale(1);
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.modal-header h2 {
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.modal-header p {
+    color: var(--gray);
+    font-size: 14px;
+    margin-top: 7px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 13px;
+    border-radius: 13px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.confirm {
+    border: none;
+    background: var(--blue);
+    color: white;
+}
+
+.cancel {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--gray);
+}
+
+/* =========================
+   SOUND BUTTON
+========================= */
+
+.sound {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 7000;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,168,255,.3);
+    background: rgba(8,13,24,.9);
+    color: white;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: 0 0 15px rgba(0,168,255,.12);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:700px) {
+
+    body {
+        padding: 12px;
+    }
+
+    .card {
+        padding: 20px;
+        border-radius: 18px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .project-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .budget-box {
+        flex-direction: column;
+    }
+
+    .currency {
+        width: 100%;
+    }
+
+    .modal-page {
+        padding: 22px;
+    }
+}
+
+@media(max-width:420px) {
+
+    .project-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .project {
+        min-height: 100px;
+    }
+
+    .page-title h1 {
+        font-size: 29px;
+    }
+}
+</style>
 </head>
+
 <body>
 
-    <header>
-        <a href="index.html" class="logo">Build<span class="x">X</span></a>
-    </header>
+<header>
+    <a href="index.html" class="logo">
+        Build<span>X</span>
+    </a>
+</header>
 
-    <div class="page-title">
-        <h1>حلّل مشروعك</h1>
-        <p>أخبرنا عن مشروعك، وسنستخدم البيانات والذكاء الاصطناعي لمساعدتك على فهم فرصته في السوق.</p>
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
-        </div>
-        <span style="color: var(--gray-light); font-size: 14px; display: block; margin-top: 10px;">معلومات المشروع</span>
+<section class="page-title">
+    <h1>حلّل مشروعك</h1>
+    <p>
+        أخبرنا عن مشروعك وسنستخدم البيانات والذكاء الاصطناعي
+        لمساعدتك على فهم فرصته في السوق.
+    </p>
+
+    <div class="progress">
+        <div class="progress-fill"></div>
     </div>
 
-    <div class="form-container">
-
-        <!-- الدولة -->
-        <div class="card">
-            <div class="card-title">🌍 الدولة <span class="check">✔</span></div>
-            <label>اختر الدولة التي تريد دراسة مشروعك فيها.</label>
-            <input type="text" id="country" placeholder="اكتب اسم الدولة... مثال: الجزائر، الولايات المتحدة" oninput="checkCompatibility()">
-            <div class="error-msg" id="countryError"></div>
-        </div>
-
-        <!-- المدينة -->
-        <div class="card">
-            <div class="card-title">📍 المدينة <span class="check">✔</span></div>
-            <label>اختر المدينة التي يقع فيها مشروعك ضمن الدولة المختارة.</label>
-            <input type="text" id="city" placeholder="اكتب اسم المدينة... مثال: دبي، نيويورك" oninput="checkCompatibility()">
-            <div class="error-msg" id="cityError"></div>
-        </div>
-
-        <!-- نوع النشاط -->
-        <div class="card">
-            <div class="card-title">🏢 نوع النشاط <span class="check">✔</span></div>
-            <select id="businessType">
-                <option value="">اختر نوع النشاط</option>
-                <option value="تجاري">تجاري</option>
-                <option value="صناعي">صناعي</option>
-                <option value="خدمي">خدمي</option>
-                <option value="زراعي">زراعي</option>
-            </select>
-        </div>
-
-        <!-- المشروع -->
-        <div class="card">
-            <div class="card-title">🏗️ ما المشروع الذي تريد دراسته؟ <span class="check">✔</span></div>
-            <label>اختر المشروع الذي تحبه، أو أضف مشروعًا خاصًا بك.</label>
-            <div class="project-grid" id="projectGrid">
-                <div class="project-card" onclick="selectProject(this)" data-value="مقهى">☕ مقهى</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مطعم">🍽️ مطعم</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="متجر">🛍️ متجر</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="فندق">🏨 فندق</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="صالة رياضية">🏋️ صالة رياضية</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مكتب">🏢 مكتب</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مصنع">🏭 مصنع</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مشروع تجاري">🏪 مشروع تجاري</div>
-                <div class="project-card" id="otherProjectCard" onclick="openModal()">➕ اختر مشروعًا آخر</div>
-            </div>
-            <div class="error-msg" id="projectError"></div>
-        </div>
-
-        <!-- الفئة المستهدفة -->
-        <div class="card">
-            <div class="card-title">👥 الفئة المستهدفة <span class="check">✔</span></div>
-            <label>من هم الأشخاص الذين يستهدفهم مشروعك؟</label>
-            <div class="audience-grid" id="audienceGrid">
-                <div class="audience-option" onclick="selectAudience(this)">الجميع</div>
-                <div class="audience-option" onclick="selectAudience(this)">الشباب</div>
-                <div class="audience-option" onclick="selectAudience(this)">العائلات</div>
-                <div class="audience-option" onclick="selectAudience(this)">الأطفال</div>
-                <div class="audience-option" onclick="selectAudience(this)">الطلاب</div>
-                <div class="audience-option" onclick="selectAudience(this)">الموظفون</div>
-                <div class="audience-option" onclick="selectAudience(this)">السياح</div>
-                <div class="audience-option" onclick="selectAudience(this)">الشركات</div>
-                <div class="audience-option" onclick="selectAudience(this)">فئة أخرى</div>
-            </div>
-            <input type="text" id="customAudience" placeholder="أدخل الفئة المستهدفة هنا..." style="display: none; margin-top: 15px;">
-        </div>
-
-        <!-- الميزانية -->
-        <div class="card">
-            <div class="card-title">💰 ميزانية المشروع</div>
-            <label>أدخل ميزانية مشروعك بالدولار الأمريكي (USD).</label>
-            <div class="budget-wrap">
-                <input type="number" id="budget" placeholder="$50,000" min="0">
-                <div class="budget-unit">USD — US Dollar</div>
-            </div>
-        </div>
-
-        <!-- وصف المشروع -->
-        <div class="card">
-            <div class="card-title">📝 صف مشروعك بالتفصيل</div>
-            <textarea id="projectDescription" maxlength="60000" placeholder="اكتب تفاصيل مشروعك هنا..." style="min-height: 200px;"></textarea>
-            <p style="color: var(--gray-light); font-size: 14px; margin-top: 10px;">
-                يمكنك ذكر فكرة المشروع، موقعه، المساحة، المنتجات أو الخدمات التي يقدمها، العملاء المستهدفين، عدد الموظفين، مستوى المشروع، وأي تفاصيل أخرى تعتقد أنها مهمة للتحليل.
-            </p>
-            <div class="char-counter" id="charCount">0 / 60,000</div>
-        </div>
-
-        <!-- زر التحليل -->
-        <button class="submit-btn" id="submitButton" onclick="handleAnalysis()">🚀 ابدأ تحليل المشروع</button>
-
-        <!-- مكان عرض النتيجة -->
-        <div class="analysis-result" id="analysisResult"></div>
-
+    <div style="color:#94a3b8;font-size:13px;">
+        معلومات المشروع
     </div>
+</section>
 
-    <!-- نافذة اختيار مشروع آخر -->
-    <div class="modal" id="customProjectModal">
-        <div class="modal-content">
-            <h2>اختر مشروعك</h2>
-            <input type="text" id="customProjectInput" placeholder="اكتب اسم مشروعك... مثال: مركز ألعاب VR">
-            <button onclick="confirmCustomProject()">تأكيد</button>
-            <button onclick="closeModal()" style="background: transparent; border: 1px solid var(--gray-light); color: var(--gray-light); margin-left: 10px;">إلغاء</button>
+<main class="container">
+
+    <!-- الدولة -->
+    <section class="card" id="countryCard">
+
+        <div class="title">
+            🌍 الدولة
+            <span class="card-check">✔</span>
         </div>
-    </div>
 
-    <!-- زر كتم الصوت -->
-    <div class="mute-btn" onclick="toggleMute()" id="muteBtn">🔊</div>
+        <div class="description">
+            اختر الدولة التي تريد دراسة مشروعك فيها.
+        </div>
 
-    <script>
-        // تفعيل الصوت عند أول تفاعل
-        let audioCtx = null;
-        let isMuted = false;
+        <input
+            id="country"
+            type="text"
+            autocomplete="off"
+            placeholder="اكتب اسم الدولة... مثال: الجزائر أو United States"
+        >
 
-        document.body.addEventListener('click', function() {
-            if (audioCtx === null && !isMuted) {
-                try {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                } catch (e) {}
-            }
-        }, { once: true });
+        <div class="error" id="countryError"></div>
+    </section>
 
-        function playClickSound() {
-            if (isMuted) return;
-            try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                oscillator.type = 'sine';
-                oscillator.frequency.value = 800;
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.1);
-            } catch (error) {}
-        }
 
-        function toggleMute() {
-            isMuted = !isMuted;
-            document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊';
-        }
+    <!-- المدينة -->
+    <section class="card" id="cityCard">
 
-        // عداد الأحرف
-        const textarea = document.getElementById('projectDescription');
-        const charCount = document.getElementById('charCount');
+        <div class="title">
+            📍 المدينة
+            <span class="card-check">✔</span>
+        </div>
 
-        textarea.addEventListener('input', function () {
-            charCount.innerText = this.value.length + " / 60,000";
-            if (this.value.length > 60000) {
-                this.value = this.value.substring(0, 60000);
-            }
-        });
+        <div class="description">
+            اختر المدينة التي يقع فيها مشروعك ضمن الدولة المختارة.
+        </div>
 
-        // اختيار المشروع (مع الحفاظ على الإطار الأزرق)
-        function selectProject(element) {
-            document.querySelectorAll('.project-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            element.classList.add('selected');
-            document.getElementById('customProjectInput').value = '';
-            playClickSound();
-        }
+        <input
+            id="city"
+            type="text"
+            autocomplete="off"
+            placeholder="اكتب اسم المدينة... مثال: الجزائر العاصمة أو New York"
+        >
 
-        // نافذة اختيار مشروع آخر
-        function openModal() {
-            document.querySelectorAll('.project-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            document.getElementById('otherProjectCard').classList.add('selected');
-            document.getElementById('customProjectModal').classList.add('show');
-            document.getElementById('customProjectInput').focus();
-            playClickSound();
-        }
+        <div class="error" id="cityError"></div>
+    </section>
 
-        function confirmCustomProject() {
-            const customProject = document.getElementById('customProjectInput').value.trim();
-            if (customProject === "") {
-                alert("الرجاء إدخال اسم المشروع");
-                return;
-            }
-            document.getElementById('customProjectInput').value = customProject;
-            document.getElementById('customProjectModal').classList.remove('show');
-            playClickSound();
-        }
 
-        function closeModal() {
-            document.getElementById('customProjectModa
+    <!-- نوع النشاط -->
+    <section class="card" id="businessCard">
+
+        <div class="title">
+            🏢 نوع النشاط
+            <span class="card-check">✔</span>
+        </div>
+
+        <div class="description">
+            اختر نوع النشاط الذي ينتمي إليه مشروعك.
+        </div>
+
+        <select id="businessType">
+            <option value="">اختر نوع النشاط</option>
+            <option value="تجاري">تجاري</option>
+            <option value="صناعي">صناعي</option>
+            <option value="خدمي">خدمي</option>
+            <option value="زراعي">زراعي</option>
+            <option value="تقني">تقني</option>
+            <option value="عقاري">عقاري</option>
+            <option value="سياحي">سياحي</option>
+        </select>
+
+        <div class="error" id="businessError"></div>
+    </section>
+
+
+    <!-- المشروع -->
+    <section class="card" id="projectCardSection">
+
+        <div class="title">
+            🏗️ ما المشروع الذي تريد دراسته؟
+            <span class="card-check">✔</span>
+        </div>
+
+        <div class="description">
+            اختر المشروع الذي تحبه، أو أضف مشروعًا خاصًا بك.
+        </div>
+
+        <div class="project-grid" id="projectGrid">
+
+            <div class="project" data-project="مقهى">
+                <span class="project-check">✔</span>
+                <span class="project-icon">☕</span>
+                <strong>مقهى</strong>
+            </div>
+
+            <div class="project" data-project="مطعم">
+                <span class="project-check">✔</span>
+                <span class="project-icon">🍽️</span>
+                <strong>مطعم</strong>
+            </div>
+
+            <div class="project" data-project="متجر">
+                <span class="project-check">✔</span>
+                <span class="project-icon">🛍️</span>
+                <strong>متجر</strong>
+            </div>
+
+            <div class="project" data-project="فندق">
+                <span class="project-check">✔</span>
+                <span class="project-icon">🏨</span>
+                <strong>فندق</strong>
+            </div>
+
+            <div class="project" data-project="صالة رياضية">
+                <span class="project-check">✔</span>
+                <span class="project-icon">🏋️</span>
+                <strong>صالة رياضية</strong>
+            </div>
+
+            <div class="project" data-project="مكتب">
+                <span class="project-check">✔</span>
+                <span class="project-icon">🏢</span>
+                <strong>مكتب</strong>
+            </div>
+
+            <div class="project" data-project="مصنع">
+                <span class="project-check">✔</span>
+                <span class="project-icon">🏭</span>
+                <strong>مصنع</strong>
+            </div>
+
+            <div class="project" data-project="مشروع تجاري">
+                <span class="project-check">✔</span>
+                <span class="project-icon">🏪</span>
+                <strong>مشروع تجاري</strong>
+            </div>
+
+            <!-- المشروع المخصص -->
+            <div
+                class="project custom-project"
+                id="customProjectCard"
+            >
+                <span class="project-check">✔</span>
+
+                <span class="project-icon">➕</span>
+
+                <strong class="custom-project-default">
+                    اختر مشروعًا آخر
+                </strong>
+
+                <span
+                    class="custom-project-name"
+                    id="customProjectName"
+                ></span>
+            </div>
+
+        </div>
+
+        <div class="error" id="projectError"></div>
+    </section>
+
+
+    <!-- الفئة المستهدفة -->
+    <section class="card" id="audienceCard">
+
+        <div class="title">
+            👥 الفئة المستهدفة
+            <span class="card-check">✔</span>
+        </div>
+
+        <div class="description">
+            من هم الأشخاص الذين يستهدفهم مشروعك؟
+        </div>
+
+        <div class="grid" id="audienceGrid">
+
+            <div class="option" data-audience="الجميع">
+                <span class="check">✔</span>
+                👨‍👩‍👧‍👦
+                <strong>الجميع</strong>
+            </div>
+
+            <div class="option" data-audience="الشباب">
+                <span class="check">✔</span>
+                👨‍💻
+                <strong>الشباب</strong>
+            </div>
+
+            <div class="option" data-audience="العائلات">
+                <span class="check">✔</span>
+                👨‍👩‍👧
+                <strong>العائلات</strong>
+            </div>
+
+            <div class="option" data-audience="الأطفال">
+                <span class="check">✔</span>
+                🧒
+                <strong>الأطفال</strong>
+            </div>
+
+            <div class="option" data-audience="الطلاب">
+                <span class="check">✔</span>
+                🎓
+                <strong>الطلاب</strong>
+            </div>
+
+            <div class="option" data-audience="الموظفون">
+                <span class="check">✔</span>
+                💼
+                <strong>الموظفون</strong>
+            </div>
+
+            <div class="option" data-audience="السياح">
+                <span class="check">✔</span>
+                ✈️
+                <strong>السياح</strong>
+            </div>
+
+            <div class="option" data-audience="الشركات">
+                <span class="check">✔</span>
+                🏢
+                <strong>الشركات</strong>
+            </div>
+
+            <div class="option" data-audience="أخرى">
+                <span class="check">✔</span>
+                👤
+                <strong>فئة أخرى</strong>
+            </div>
+
+        </div>
+
+        <input
+            id="customAudience"
+            type="text"
+            placeholder="اكتب الفئة المستهدفة..."
+            style="display:none;margin-top:15px;"
+        >
+
+        <div class="error" id="audienceError"></div>
+    </section>
+
+
+    <!-- الميزانية -->
+    <section class="card" id="budgetCard">
+
+        <div class="title">
+            💰 ميزانية المشروع
+            <span class="card-check">✔</span>
+        </div>
+
+        <div class="description">
+            أدخل ميزانية مشروعك بالدولار الأمريكي (USD).
+        </div>
+
+        <div class="budget-box">
+
+            <input
+                id="budget"
+                type="number"
+                min="0"
+                step="1"
+                placeholder="50,000"
+            >
+
+            <div class="currency">
+                USD — الدولار الأمريكي
+            </div>
+
+        </div>
+
+        <div class="error" id="budgetError"></div>
+    </section>
+
+
+    <!-- وصف المشروع -->
+    <section class="card" id="descriptionCard">
+
+        <div class="title">
+            📝 صف مشروعك بالتفصيل
+            <span class="card-check">✔</span>
+        </div>
+
+        <div class="description">
+            يمكنك ذكر فكرتك، موقع المشروع، المساحة، المنتجات أو الخدمات،
+            العملاء المستهدفين، عدد الموظفين،
