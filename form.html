@@ -1,986 +1,137 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>BuildX - حلّل مشروعك</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-<style>
-:root {
-    --bg: #050810;
-    --bg2: #080d18;
-    --blue: #00a8ff;
-    --cyan: #38bdf8;
-    --white: #ffffff;
-    --gray: #94a3b8;
-    --border: rgba(255,255,255,.11);
-    --glass: rgba(255,255,255,.035);
-    --input: rgba(0,0,0,.32);
-    --danger: #ef4444;
-    --success: #22c55e;
-    --glow: 0 0 25px rgba(0,168,255,.35);
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: "Cairo", sans-serif;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    min-height: 100vh;
-    color: var(--white);
-    background:
-        radial-gradient(circle at 15% 15%, rgba(0,168,255,.10), transparent 35%),
-        radial-gradient(circle at 85% 85%, rgba(56,189,248,.08), transparent 35%),
-        var(--bg);
-    padding: 20px;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-header {
-    max-width: 1000px;
-    margin: auto;
-    padding: 15px 0 25px;
-    text-align: center;
-}
-
-.logo {
-    color: white;
-    text-decoration: none;
-    font-size: 30px;
-    font-weight: 900;
-}
-
-.logo span {
-    color: var(--blue);
-    text-shadow: var(--glow);
-}
-
-/* =========================
-   TITLE
-========================= */
-
-.page-title {
-    max-width: 800px;
-    margin: 35px auto 0;
-    text-align: center;
-}
-
-.page-title h1 {
-    font-size: clamp(28px, 5vw, 42px);
-    font-weight: 900;
-    margin-bottom: 10px;
-}
-
-.page-title p {
-    color: var(--gray);
-    line-height: 1.8;
-}
-
-.progress {
-    max-width: 450px;
-    height: 7px;
-    margin: 25px auto 8px;
-    background: rgba(255,255,255,.08);
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    width: 15%;
-    height: 100%;
-    background: linear-gradient(90deg,var(--blue),var(--cyan));
-    box-shadow: 0 0 15px var(--blue);
-}
-
-/* =========================
-   CONTAINER
-========================= */
-
-.container {
-    width: 100%;
-    max-width: 760px;
-    margin: 40px auto;
-}
-
-.card {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    padding: 28px;
-    margin-bottom: 24px;
-    backdrop-filter: blur(15px);
-    transition: .3s ease;
-}
-
-.card:hover {
-    border-color: rgba(0,168,255,.35);
-}
-
-.title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 9px;
-}
-
-.card-check {
-    margin-right: auto;
-    color: var(--blue);
-    opacity: 0;
-    transform: scale(.5);
-    transition: .25s ease;
-}
-
-.card.completed .card-check {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.description {
-    color: var(--gray);
-    font-size: 14px;
-    margin-bottom: 18px;
-    line-height: 1.8;
-}
-
-/* =========================
-   INPUTS
-========================= */
-
-input,
-select,
-textarea {
-    width: 100%;
-    border: 1px solid var(--border);
-    outline: none;
-    color: white;
-    background: var(--input);
-    border-radius: 14px;
-    padding: 15px;
-    font-size: 15px;
-    transition: .25s ease;
-}
-
-input::placeholder,
-textarea::placeholder {
-    color: #64748b;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: var(--blue);
-    box-shadow: 0 0 20px rgba(0,168,255,.22);
-}
-
-select {
-    cursor: pointer;
-}
-
-/* =========================
-   SELECTION BOXES
-========================= */
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 12px;
-}
-
-.option {
-    position: relative;
-    min-height: 85px;
-    padding: 15px 10px;
-    border: 1px solid var(--border);
-    border-radius: 15px;
-    background: rgba(0,0,0,.25);
-    cursor: pointer;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-    user-select: none;
-    transition:
-        border-color .25s ease,
-        background .25s ease,
-        box-shadow .25s ease,
-        transform .25s ease;
-}
-
-.option:hover {
-    border-color: rgba(56,189,248,.7);
-    transform: translateY(-2px);
-}
-
-/*
-   IMPORTANT:
-   الحالة المختارة تبقى موجودة
-*/
-.option.selected {
-    border: 2px solid var(--blue);
-    background: rgba(0,168,255,.13);
-    box-shadow:
-        0 0 10px rgba(0,168,255,.25),
-        0 0 25px rgba(0,168,255,.15);
-    transform: translateY(-2px);
-}
-
-.option .icon {
-    font-size: 28px;
-}
-
-.option .check {
-    position: absolute;
-    top: 7px;
-    left: 8px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--blue);
-    color: white;
-    font-size: 13px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transform: scale(.5);
-    transition: .2s ease;
-}
-
-.option.selected .check {
-    opacity: 1;
-    transform: scale(1);
-}
-
-/* =========================
-   PROJECT
-========================= */
-
-.project-grid {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 13px;
-}
-
-.project {
-    position: relative;
-    min-height: 110px;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background: rgba(0,0,0,.25);
-    cursor: pointer;
-    padding: 18px 10px;
-    text-align: center;
-    transition: .25s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-}
-
-.project:hover {
-    border-color: var(--cyan);
-    transform: translateY(-3px);
-}
-
-.project.selected {
-    border: 2px solid var(--blue);
-    background: rgba(0,168,255,.13);
-    box-shadow: var(--glow);
-    transform: translateY(-3px);
-}
-
-.project-icon {
-    font-size: 32px;
-}
-
-.project-check {
-    position: absolute;
-    top: 7px;
-    left: 8px;
-    color: var(--blue);
-    font-size: 18px;
-    opacity: 0;
-}
-
-.project.selected .project-check {
-    opacity: 1;
-}
-
-/* =========================
-   CUSTOM PROJECT
-========================= */
-
-.custom-project {
-    border-style: dashed;
-}
-
-.custom-project.selected {
-    border-style: solid;
-}
-
-.custom-project-name {
-    display: none;
-    font-size: 14px;
-    font-weight: 700;
-    max-width: 100%;
-    overflow-wrap: anywhere;
-}
-
-.custom-project.has-name .custom-project-default {
-    display: none;
-}
-
-.custom-project.has-name .custom-project-name {
-    display: block;
-}
-
-/* =========================
-   BUDGET
-========================= */
-
-.budget-box {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.currency {
-    min-width: 145px;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    background: rgba(0,0,0,.25);
-    text-align: center;
-    color: var(--gray);
-    font-weight: 700;
-}
-
-/* =========================
-   TEXTAREA
-========================= */
-
-textarea {
-    min-height: 230px;
-    resize: vertical;
-    line-height: 1.8;
-}
-
-.helper {
-    margin-top: 10px;
-    color: var(--gray);
-    font-size: 13px;
-    line-height: 1.8;
-}
-
-.counter {
-    text-align: left;
-    color: var(--gray);
-    margin-top: 8px;
-    font-size: 13px;
-}
-
-.counter.limit {
-    color: #f87171;
-}
-
-/* =========================
-   ERRORS
-========================= */
-
-.error {
-    color: #f87171;
-    font-size: 13px;
-    margin-top: 8px;
-    display: none;
-}
-
-.error.show {
-    display: block;
-}
-
-/* =========================
-   BUTTON
-========================= */
-
-.submit {
-    width: 100%;
-    border: none;
-    border-radius: 17px;
-    padding: 19px;
-    color: white;
-    background: linear-gradient(135deg,#00a8ff,#0756a3);
-    box-shadow: var(--glow);
-    cursor: pointer;
-    font-size: 19px;
-    font-weight: 900;
-    transition: .25s ease;
-}
-
-.submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 35px rgba(0,168,255,.55);
-}
-
-.submit:active {
-    transform: scale(.98);
-}
-
-.submit:disabled {
-    opacity: .65;
-    cursor: wait;
-    transform: none;
-}
-
-/* =========================
-   LOADING
-========================= */
-
-.loading {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 15px;
-    color: var(--gray);
-}
-
-.loading.show {
-    display: flex;
-}
-
-.dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--cyan);
-    animation: pulse 1s infinite;
-}
-
-.dot:nth-child(2) {
-    animation-delay: .15s;
-}
-
-.dot:nth-child(3) {
-    animation-delay: .3s;
-}
-
-@keyframes pulse {
-    0%,100% {
-        opacity: .25;
-        transform: scale(.7);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* =========================
-   RESULT
-========================= */
-
-.result {
-    display: none;
-    margin-top: 25px;
-    padding: 25px;
-    border: 1px solid rgba(0,168,255,.3);
-    border-radius: 20px;
-    background: rgba(0,168,255,.05);
-    white-space: pre-wrap;
-    line-height: 1.9;
-}
-
-/* =========================
-   MODAL / PAGE
-========================= */
-
-.modal {
-    position: fixed;
-    inset: 0;
-    z-index: 5000;
-    background: rgba(2,5,12,.94);
-    backdrop-filter: blur(15px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-
-    transition: .3s ease;
-}
-
-.modal.show {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
-.modal-page {
-    width: 100%;
-    max-width: 550px;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 30px;
-    border-radius: 25px;
-    border: 1px solid rgba(0,168,255,.25);
-    background:
-        radial-gradient(circle at top,rgba(0,168,255,.09),transparent 45%),
-        #080d18;
-    box-shadow: 0 0 50px rgba(0,168,255,.15);
-    transform: translateY(20px) scale(.97);
-    transition: .3s ease;
-}
-
-.modal.show .modal-page {
-    transform: translateY(0) scale(1);
-}
-
-.modal-header {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.modal-header h2 {
-    font-size: 28px;
-    font-weight: 900;
-}
-
-.modal-header p {
-    color: var(--gray);
-    font-size: 14px;
-    margin-top: 7px;
-}
-
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 18px;
-}
-
-.modal-actions button {
-    flex: 1;
-    padding: 13px;
-    border-radius: 13px;
-    cursor: pointer;
-    font-weight: 800;
-    font-size: 15px;
-}
-
-.confirm {
-    border: none;
-    background: var(--blue);
-    color: white;
-}
-
-.cancel {
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--gray);
-}
-
-/* =========================
-   SOUND BUTTON
-========================= */
-
-.sound {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    z-index: 7000;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,168,255,.3);
-    background: rgba(8,13,24,.9);
-    color: white;
-    cursor: pointer;
-    font-size: 20px;
-    box-shadow: 0 0 15px rgba(0,168,255,.12);
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media(max-width:700px) {
-
-    body {
-        padding: 12px;
-    }
-
-    .card {
-        padding: 20px;
-        border-radius: 18px;
-    }
-
-    .grid {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .project-grid {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .budget-box {
-        flex-direction: column;
-    }
-
-    .currency {
-        width: 100%;
-    }
-
-    .modal-page {
-        padding: 22px;
-    }
-}
-
-@media(max-width:420px) {
-
-    .project-grid {
-        grid-template-columns: repeat(2,1fr);
-    }
-
-    .project {
-        min-height: 100px;
-    }
-
-    .page-title h1 {
-        font-size: 29px;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildX - حلّل مشروعك</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- استدعاء ملف التصميم -->
+    <link rel="stylesheet" href="form-style.css">
 </head>
-
 <body>
 
-<header>
-    <a href="index.html" class="logo">
-        Build<span>X</span>
-    </a>
-</header>
+    <header>
+        <a href="index.html" class="logo">Build<span class="x">X</span></a>
+    </header>
 
-<section class="page-title">
-    <h1>حلّل مشروعك</h1>
-    <p>
-        أخبرنا عن مشروعك وسنستخدم البيانات والذكاء الاصطناعي
-        لمساعدتك على فهم فرصته في السوق.
-    </p>
-
-    <div class="progress">
-        <div class="progress-fill"></div>
+    <div class="page-title">
+        <h1>حلّل مشروعك</h1>
+        <p>أخبرنا عن مشروعك، وسنستخدم البيانات والذكاء الاصطناعي لمساعدتك على فهم فرصته في السوق.</p>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        <span style="color: var(--gray-light); font-size: 14px; display: block; margin-top: 10px;">معلومات المشروع</span>
     </div>
 
-    <div style="color:#94a3b8;font-size:13px;">
-        معلومات المشروع
+    <div class="form-container">
+
+        <!-- الدولة -->
+        <div class="card">
+            <div class="card-title">🌍 الدولة</div>
+            <label>اختر الدولة التي تريد دراسة مشروعك فيها.</label>
+            <input type="text" id="country" placeholder="اكتب اسم الدولة... مثال: الجزائر، الولايات المتحدة" oninput="checkCompatibility()">
+            <div class="error-msg" id="countryError"></div>
+        </div>
+
+        <!-- المدينة -->
+        <div class="card">
+            <div class="card-title">📍 المدينة</div>
+            <label>اختر المدينة التي يقع فيها مشروعك ضمن الدولة المختارة.</label>
+            <input type="text" id="city" placeholder="اكتب اسم المدينة... مثال: دبي، نيويورك" oninput="checkCompatibility()">
+            <div class="error-msg" id="cityError"></div>
+        </div>
+
+        <!-- نوع النشاط -->
+        <div class="card">
+            <div class="card-title">🏢 نوع النشاط</div>
+            <select id="businessType">
+                <option value="">اختر نوع النشاط</option>
+                <option value="تجاري">تجاري</option>
+                <option value="صناعي">صناعي</option>
+                <option value="خدمي">خدمي</option>
+                <option value="زراعي">زراعي</option>
+            </select>
+        </div>
+
+        <!-- المشروع -->
+        <div class="card">
+            <div class="card-title">🏗️ ما المشروع الذي تريد دراسته؟</div>
+            <label>اختر المشروع الذي تحبه، أو أضف مشروعًا خاصًا بك.</label>
+            <div class="project-grid" id="projectGrid">
+                <div class="project-card" onclick="selectProject(this)" data-value="مقهى">☕ مقهى</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="مطعم">🍽️ مطعم</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="متجر">🛍️ متجر</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="فندق">🏨 فندق</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="صالة رياضية">🏋️ صالة رياضية</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="مكتب">🏢 مكتب</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="مصنع">🏭 مصنع</div>
+                <div class="project-card" onclick="selectProject(this)" data-value="مشروع تجاري">🏪 مشروع تجاري</div>
+                <div class="project-card" id="otherProjectCard" onclick="openModal()">➕ اختر مشروعًا آخر</div>
+            </div>
+            <div class="error-msg" id="projectError"></div>
+        </div>
+
+        <!-- الفئة المستهدفة -->
+        <div class="card">
+            <div class="card-title">👥 الفئة المستهدفة</div>
+            <label>من هم الأشخاص الذين يستهدفهم مشروعك؟</label>
+            <div class="audience-grid" id="audienceGrid">
+                <div class="audience-option" onclick="selectAudience(this)">الجميع</div>
+                <div class="audience-option" onclick="selectAudience(this)">الشباب</div>
+                <div class="audience-option" onclick="selectAudience(this)">العائلات</div>
+                <div class="audience-option" onclick="selectAudience(this)">الأطفال</div>
+                <div class="audience-option" onclick="selectAudience(this)">الطلاب</div>
+                <div class="audience-option" onclick="selectAudience(this)">الموظفون</div>
+                <div class="audience-option" onclick="selectAudience(this)">السياح</div>
+                <div class="audience-option" onclick="selectAudience(this)">الشركات</div>
+                <div class="audience-option" onclick="selectAudience(this)">فئة أخرى</div>
+            </div>
+            <input type="text" id="customAudience" placeholder="أدخل الفئة المستهدفة هنا..." style="display: none; margin-top: 15px;">
+        </div>
+
+        <!-- الميزانية -->
+        <div class="card">
+            <div class="card-title">💰 ميزانية المشروع</div>
+            <label>أدخل ميزانية مشروعك بالدولار الأمريكي (USD).</label>
+            <div class="budget-wrap">
+                <input type="number" id="budget" placeholder="$50,000" min="0">
+                <div class="budget-unit">USD — US Dollar</div>
+            </div>
+        </div>
+
+        <!-- وصف المشروع -->
+        <div class="card">
+            <div class="card-title">📝 صف مشروعك بالتفصيل</div>
+            <textarea id="projectDescription" maxlength="60000" placeholder="اكتب تفاصيل مشروعك هنا..." style="min-height: 200px;"></textarea>
+            <p style="color: var(--gray-light); font-size: 14px; margin-top: 10px;">
+                يمكنك ذكر فكرة المشروع، موقعه، المساحة، المنتجات أو الخدمات التي يقدمها، العملاء المستهدفين، عدد الموظفين، مستوى المشروع، وأي تفاصيل أخرى تعتقد أنها مهمة للتحليل.
+            </p>
+            <div class="char-counter" id="charCount">0 / 60,000</div>
+        </div>
+
+        <!-- زر التحليل -->
+        <button class="submit-btn" id="submitButton" onclick="handleAnalysis()">🚀 ابدأ تحليل المشروع</button>
+
+        <!-- مكان عرض النتيجة -->
+        <div class="analysis-result" id="analysisResult"></div>
+
     </div>
-</section>
 
-<main class="container">
-
-    <!-- الدولة -->
-    <section class="card" id="countryCard">
-
-        <div class="title">
-            🌍 الدولة
-            <span class="card-check">✔</span>
+    <!-- نافذة اختيار مشروع آخر -->
+    <div class="modal" id="customProjectModal">
+        <div class="modal-content">
+            <h2>اختر مشروعك</h2>
+            <input type="text" id="customProjectInput" placeholder="اكتب اسم مشروعك... مثال: مركز ألعاب VR">
+            <button onclick="confirmCustomProject()">تأكيد</button>
+            <button onclick="closeModal()" style="background: transparent; border: 1px solid var(--gray-light); color: var(--gray-light); margin-left: 10px;">إلغاء</button>
         </div>
-
-        <div class="description">
-            اختر الدولة التي تريد دراسة مشروعك فيها.
-        </div>
-
-        <input
-            id="country"
-            type="text"
-            autocomplete="off"
-            placeholder="اكتب اسم الدولة... مثال: الجزائر أو United States"
-        >
-
-        <div class="error" id="countryError"></div>
-    </section>
-
-
-    <!-- المدينة -->
-    <section class="card" id="cityCard">
-
-        <div class="title">
-            📍 المدينة
-            <span class="card-check">✔</span>
-        </div>
-
-        <div class="description">
-            اختر المدينة التي يقع فيها مشروعك ضمن الدولة المختارة.
-        </div>
-
-        <input
-            id="city"
-            type="text"
-            autocomplete="off"
-            placeholder="اكتب اسم المدينة... مثال: الجزائر العاصمة أو New York"
-        >
-
-        <div class="error" id="cityError"></div>
-    </section>
-
-
-    <!-- نوع النشاط -->
-    <section class="card" id="businessCard">
-
-        <div class="title">
-            🏢 نوع النشاط
-            <span class="card-check">✔</span>
-        </div>
-
-        <div class="description">
-            اختر نوع النشاط الذي ينتمي إليه مشروعك.
-        </div>
-
-        <select id="businessType">
-            <option value="">اختر نوع النشاط</option>
-            <option value="تجاري">تجاري</option>
-            <option value="صناعي">صناعي</option>
-            <option value="خدمي">خدمي</option>
-            <option value="زراعي">زراعي</option>
-            <option value="تقني">تقني</option>
-            <option value="عقاري">عقاري</option>
-            <option value="سياحي">سياحي</option>
-        </select>
-
-        <div class="error" id="businessError"></div>
-    </section>
-
-
-    <!-- المشروع -->
-    <section class="card" id="projectCardSection">
-
-        <div class="title">
-            🏗️ ما المشروع الذي تريد دراسته؟
-            <span class="card-check">✔</span>
-        </div>
-
-        <div class="description">
-            اختر المشروع الذي تحبه، أو أضف مشروعًا خاصًا بك.
-        </div>
-
-        <div class="project-grid" id="projectGrid">
-
-            <div class="project" data-project="مقهى">
-                <span class="project-check">✔</span>
-                <span class="project-icon">☕</span>
-                <strong>مقهى</strong>
-            </div>
-
-            <div class="project" data-project="مطعم">
-                <span class="project-check">✔</span>
-                <span class="project-icon">🍽️</span>
-                <strong>مطعم</strong>
-            </div>
-
-            <div class="project" data-project="متجر">
-                <span class="project-check">✔</span>
-                <span class="project-icon">🛍️</span>
-                <strong>متجر</strong>
-            </div>
-
-            <div class="project" data-project="فندق">
-                <span class="project-check">✔</span>
-                <span class="project-icon">🏨</span>
-                <strong>فندق</strong>
-            </div>
-
-            <div class="project" data-project="صالة رياضية">
-                <span class="project-check">✔</span>
-                <span class="project-icon">🏋️</span>
-                <strong>صالة رياضية</strong>
-            </div>
-
-            <div class="project" data-project="مكتب">
-                <span class="project-check">✔</span>
-                <span class="project-icon">🏢</span>
-                <strong>مكتب</strong>
-            </div>
-
-            <div class="project" data-project="مصنع">
-                <span class="project-check">✔</span>
-                <span class="project-icon">🏭</span>
-                <strong>مصنع</strong>
-            </div>
-
-            <div class="project" data-project="مشروع تجاري">
-                <span class="project-check">✔</span>
-                <span class="project-icon">🏪</span>
-                <strong>مشروع تجاري</strong>
-            </div>
-
-            <!-- المشروع المخصص -->
-            <div
-                class="project custom-project"
-                id="customProjectCard"
-            >
-                <span class="project-check">✔</span>
-
-                <span class="project-icon">➕</span>
-
-                <strong class="custom-project-default">
-                    اختر مشروعًا آخر
-                </strong>
-
-                <span
-                    class="custom-project-name"
-                    id="customProjectName"
-                ></span>
-            </div>
-
-        </div>
-
-        <div class="error" id="projectError"></div>
-    </section>
-
-
-    <!-- الفئة المستهدفة -->
-    <section class="card" id="audienceCard">
-
-        <div class="title">
-            👥 الفئة المستهدفة
-            <span class="card-check">✔</span>
-        </div>
-
-        <div class="description">
-            من هم الأشخاص الذين يستهدفهم مشروعك؟
-        </div>
-
-        <div class="grid" id="audienceGrid">
-
-            <div class="option" data-audience="الجميع">
-                <span class="check">✔</span>
-                👨‍👩‍👧‍👦
-                <strong>الجميع</strong>
-            </div>
-
-            <div class="option" data-audience="الشباب">
-                <span class="check">✔</span>
-                👨‍💻
-                <strong>الشباب</strong>
-            </div>
-
-            <div class="option" data-audience="العائلات">
-                <span class="check">✔</span>
-                👨‍👩‍👧
-                <strong>العائلات</strong>
-            </div>
-
-            <div class="option" data-audience="الأطفال">
-                <span class="check">✔</span>
-                🧒
-                <strong>الأطفال</strong>
-            </div>
-
-            <div class="option" data-audience="الطلاب">
-                <span class="check">✔</span>
-                🎓
-                <strong>الطلاب</strong>
-            </div>
-
-            <div class="option" data-audience="الموظفون">
-                <span class="check">✔</span>
-                💼
-                <strong>الموظفون</strong>
-            </div>
-
-            <div class="option" data-audience="السياح">
-                <span class="check">✔</span>
-                ✈️
-                <strong>السياح</strong>
-            </div>
-
-            <div class="option" data-audience="الشركات">
-                <span class="check">✔</span>
-                🏢
-                <strong>الشركات</strong>
-            </div>
-
-            <div class="option" data-audience="أخرى">
-                <span class="check">✔</span>
-                👤
-                <strong>فئة أخرى</strong>
-            </div>
-
-        </div>
-
-        <input
-            id="customAudience"
-            type="text"
-            placeholder="اكتب الفئة المستهدفة..."
-            style="display:none;margin-top:15px;"
-        >
-
-        <div class="error" id="audienceError"></div>
-    </section>
-
-
-    <!-- الميزانية -->
-    <section class="card" id="budgetCard">
-
-        <div class="title">
-            💰 ميزانية المشروع
-            <span class="card-check">✔</span>
-        </div>
-
-        <div class="description">
-            أدخل ميزانية مشروعك بالدولار الأمريكي (USD).
-        </div>
-
-        <div class="budget-box">
-
-            <input
-                id="budget"
-                type="number"
-                min="0"
-                step="1"
-                placeholder="50,000"
-            >
-
-            <div class="currency">
-                USD — الدولار الأمريكي
-            </div>
-
-        </div>
-
-        <div class="error" id="budgetError"></div>
-    </section>
-
-
-    <!-- وصف المشروع -->
-    <section class="card" id="descriptionCard">
-
-        <div class="title">
-            📝 صف مشروعك بالتفصيل
-            <span class="card-check">✔</span>
-        </div>
-
-        <div class="description">
-            يمكنك ذكر فكرتك، موقع المشروع، المساحة، المنتجات أو الخدمات،
-            العملاء المستهدفين، عدد الموظفين،
+    </div>
+
+    <!-- زر كتم الصوت -->
+    <div class="mute-btn" onclick="toggleMute()" id="muteBtn">🔊</div>
+
+    <!-- استدعاء ملف المنطق والوظائف -->
+    <script src="form-logic.js"></script>
+</body>
+                    </html>
