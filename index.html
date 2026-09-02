@@ -1,359 +1,287 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlRoot">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">BuildX - Make smarter business decisions</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>BuildX - منصة تحليل المشاريع بالذكاء الاصطناعي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1e3a8a;
-            --primary-light: #3b82f6;
-            --bg-color: #f8fafc;
-            --text-main: #0f172a;
-            --text-muted: #475569;
+            --bg-dark: #050810;
+            --electric-blue: #00a8ff;
+            --sky-blue: #38bdf8;
             --white: #ffffff;
-            --border-color: #e2e8f0;
+            --gray-light: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --glow: 0 0 20px rgba(0, 168, 255, 0.5);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Cairo', 'Inter', sans-serif;
+            font-family: 'Cairo', sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: var(--bg-dark);
+            color: var(--white);
+            overflow-x: hidden;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        }
+
+        /* الخلفية المتحركة */
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 168, 255, 0.1), transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.1), transparent 40%),
+                url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?q=80&w=2064&auto=format&fit=crop') center/cover;
+            filter: brightness(0.3) blur(2px);
+        }
+
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 168, 255, 0.6);
+            animation: float 10s infinite linear;
+            opacity: 0.5;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh); opacity: 0; }
+        }
+
+        /* تأثيرات الظهور */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 10px rgba(0, 168, 255, 0.5); }
+            50% { text-shadow: 0 0 30px rgba(0, 168, 255, 0.9); }
         }
 
         header {
-            width: 100%;
             padding: 20px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--white);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            animation: fadeInUp 1s ease forwards;
         }
 
         .logo {
+            font-family: 'Orbitron', sans-serif;
             font-size: 24px;
-            font-weight: 800;
-            color: var(--primary-color);
-            letter-spacing: -0.5px;
-        }
-
-        .lang-switcher {
-            font-size: 14px;
-            color: var(--text-muted);
-            font-weight: 600;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .lang-switcher button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .lang-switcher button:hover, 
-        .lang-switcher button.active {
-            color: var(--white);
-            background-color: var(--primary-color);
-        }
-
-        .hero-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 60px 20px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .tagline {
-            font-size: 14px;
             font-weight: 700;
-            color: var(--primary-light);
-            text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 15px;
-            background: #eff6ff;
-            padding: 6px 16px;
-            border-radius: 20px;
         }
 
-        h1 {
-            font-size: clamp(32px, 5vw, 52px);
-            font-weight: 800;
-            color: var(--primary-color);
+        .logo .build {
+            color: var(--white);
+        }
+
+        .logo .x {
+            color: var(--electric-blue);
+            text-shadow: var(--glow);
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--gray-light);
+            cursor: pointer;
+        }
+
+        .lang-switch span.active {
+            color: var(--electric-blue);
+            font-weight: 700;
+        }
+
+        main {
+            text-align: center;
+            padding: 60px 20px 100px;
+        }
+
+        .hero {
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeInUp 1.2s 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 8vw, 80px);
+            font-weight: 900;
             line-height: 1.2;
             margin-bottom: 20px;
         }
 
-        p.description {
+        .hero h1 .highlight {
+            color: var(--electric-blue);
+            text-shadow: var(--glow);
+        }
+
+        .hero p {
             font-size: clamp(16px, 2vw, 20px);
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            line-height: 1.6;
+            color: var(--gray-light);
+            line-height: 1.8;
+            margin-bottom: 40px;
         }
 
-        .cta-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background-color: var(--primary-color);
+        .cta-btn {
+            background: linear-gradient(135deg, var(--electric-blue), #0056b3);
             color: var(--white);
-            padding: 16px 36px;
-            font-size: 18px;
-            font-weight: 700;
-            border-radius: 12px;
-            text-decoration: none;
-            box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
-            transition: all 0.3s ease;
-            margin-bottom: 50px;
-        }
-
-        .cta-button:hover {
-            background-color: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -5px rgba(30, 58, 138, 0.4);
-        }
-
-        .steps-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .step-card {
-            background: var(--white);
-            padding: 25px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-            text-align: inherit;
-        }
-
-        .step-number {
-            font-size: 14px;
+            font-size: 20px;
             font-weight: 800;
-            color: var(--primary-light);
-            margin-bottom: 10px;
-            display: inline-block;
-            background: #eff6ff;
-            padding: 4px 10px;
-            border-radius: 8px;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.4);
+            animation: glowPulse 2s infinite;
         }
 
-        .step-card h3 {
-            font-size: 18px;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-            font-weight: 700;
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(0, 168, 255, 0.8);
         }
 
-        .step-card p {
-            font-size: 14px;
-            color: var(--text-muted);
-            line-height: 1.5;
+        .cta-btn:active {
+            transform: scale(0.95);
         }
 
-        footer {
+        /* البطاقات الثلاث */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px 20px;
             text-align: center;
-            padding: 20px;
-            font-size: 13px;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-color);
-            background: var(--white);
-            margin-top: 40px;
+            transition: all 0.4s ease;
+            animation: fadeInUp 1s 1s ease forwards;
+            opacity: 0;
         }
+
+        .card:nth-child(2) {
+            animation-delay: 1.2s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: 1.4s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--electric-blue);
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.2);
+        }
+
+        .card-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .card h3 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 15px;
+            color: var(--gray-light);
+            line-height: 1.8;
+        }
+
+        .particle:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-duration: 8s; }
+        .particle:nth-child(2) { width: 6px; height: 6px; left: 30%; animation-duration: 12s; }
+        .particle:nth-child(3) { width: 3px; height: 3px; left: 50%; animation-duration: 9s; }
+        .particle:nth-child(4) { width: 5px; height: 5px; left: 70%; animation-duration: 11s; }
+        .particle:nth-child(5) { width: 2px; height: 2px; left: 90%; animation-duration: 7s; }
     </style>
 </head>
 <body>
 
+    <!-- الخلفية والجزيئات -->
+    <div class="background"></div>
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <header>
-        <div class="logo-container">
-            <div class="logo">BuildX</div>
-        </div>
-        <div class="lang-switcher">
-            <button onclick="setLanguage('ar')" id="btn-ar">🇩🇿 العربية</button>
+        <a href="#" class="logo"><span class="build">Build</span><span class="x">X</span></a>
+        <div class="lang-switch">
+            <span class="active">عربي</span>
             <span>|</span>
-            <button onclick="setLanguage('en')" id="btn-en">🇬🇧 English</button>
+            <span>EN</span>
             <span>|</span>
-            <button onclick="setLanguage('fr')" id="btn-fr">🇫🇷 Français</button>
-            <span>|</span>
-            <button onclick="setLanguage('de')" id="btn-de">🇩🇪 Deutsch</button>
+            <span>FR</span>
         </div>
     </header>
 
-    <main class="hero-section">
-        <div class="tagline" id="t-tagline">Make smarter business decisions.</div>
-        <h1 id="t-title">هل مشروعك يستحق الاستثمار؟</h1>
-        <p class="description" id="t-desc">أدخل الدولة والمدينة ونوع المشروع والميزانية، ودع BuildX يحلل السوق.</p>
-        
-        <!-- تم توجيه الزر إلى ملف form.html الجديد -->
-        <a href="form.html" id="t-cta" class="cta-button">ابدأ التحليل الآن</a>
+    <main>
+        <!-- القسم الرئيسي -->
+        <div class="hero">
+            <h1>حوّل فكرتك إلى <span class="highlight">قرار ذكي</span></h1>
+            <p>حلّل مشروعك، افهم السوق، واكتشف فرصتك باستخدام الذكاء الاصطناعي والبيانات الحديثة.</p>
+            <button class="cta-btn" onclick="window.location.href='form.html'">ابدأ تحليل مشروعك</button>
+        </div>
 
-        <div class="steps-container" id="stepsContainer">
-            <div class="step-card">
-                <span class="step-number" id="t-step1-num">الخطوة 01</span>
-                <h3 id="t-step1-title">أدخل معطيات مشروعك</h3>
-                <p id="t-step1-desc">حدد الدولة، المدينة، النشاط التجاري، والميزانية المتوفرة لديك بكل بساطة.</p>
+        <!-- البطاقات الثلاث -->
+        <div class="features">
+            <div class="card">
+                <span class="card-icon">📊</span>
+                <h3>تحليل السوق</h3>
+                <p>تحليل السوق والمنافسين والطلب في المنطقة التي يختارها المستخدم.</p>
             </div>
-            <div class="step-card">
-                <span class="step-number" id="t-step2-num">الخطوة 02</span>
-                <h3 id="t-step2-title">معالجة ذكية للبيانات</h3>
-                <p id="t-step2-desc">يقوم محرك الذكاء الاصطناعي بتحليل طبيعة السوق والمؤشرات المتعلقة بالنشاط.</p>
+            <div class="card">
+                <span class="card-icon">🌍</span>
+                <h3>بيانات حقيقية</h3>
+                <p>الاعتماد على مصادر بيانات حديثة وموثوقة بدل الأرقام العشوائية.</p>
             </div>
-            <div class="step-card">
-                <span class="step-number" id="t-step3-num">الخطوة 03</span>
-                <h3 id="t-step3-title">احصل على التقرير</h3>
-                <p id="t-step3-desc">استلم تقريراً استراتيجياً منظماً يساعدك في تقييم الفرص واتخاذ قرارك الاستثماري.</p>
+            <div class="card">
+                <span class="card-icon">🤖</span>
+                <h3>تحليل بالذكاء الاصطناعي</h3>
+                <p>تحليل المعلومات وإعطاء المستخدم تقييمًا واضحًا لفرصة المشروع ومخاطره.</p>
             </div>
         </div>
     </main>
 
-    <footer>
-        <span id="t-footer">&copy; 2026 BuildX Data Engine. All rights reserved.</span>
-    </footer>
-
-    <script>
-        const translations = {
-            ar: {
-                dir: 'rtl',
-                title: 'BuildX - اتخذ قرارات استثمارية أذكى',
-                tagline: 'Make smarter business decisions.',
-                mainTitle: 'هل مشروعك يستحق الاستثمار؟',
-                description: 'أدخل الدولة والمدينة ونوع المشروع والميزانية، ودع BuildX يحلل السوق بدقة متناهية.',
-                cta: 'ابدأ التحليل الآن',
-                step1Num: 'الخطوة 01',
-                step1Title: 'أدخل معطيات مشروعك',
-                step1Desc: 'حدد الدولة، المدينة، النشاط التجاري، والميزانية المتوفرة لديك بكل بساطة.',
-                step2Num: 'الخطوة 02',
-                step2Title: 'معالجة ذكية للبيانات',
-                step2Desc: 'يقوم محرك الذكاء الاصطناعي بتحليل طبيعة السوق والمؤشرات المتعلقة بالنشاط.',
-                step3Num: 'الخطوة 03',
-                step3Title: 'احصل على التقرير',
-                step3Desc: 'استلم تقريراً استراتيجياً منظماً يساعدك في تقييم الفرص واتخاذ قرارك الاستثماري.',
-                footer: 'جميع الحقوق محفوظة © 2026 BuildX Data Engine'
-            },
-            en: {
-                dir: 'ltr',
-                title: 'BuildX - Make smarter business decisions',
-                tagline: 'Make smarter business decisions.',
-                mainTitle: 'Is your business worth investing in?',
-                description: 'Enter the country, city, business type and budget, and let BuildX analyze the market.',
-                cta: 'Start Analysis',
-                step1Num: 'Step 01',
-                step1Title: 'Enter Business Data',
-                step1Desc: 'Specify your country, city, business sector, and available budget easily.',
-                step2Num: 'Step 02',
-                step2Title: 'Smart AI Processing',
-                step2Desc: 'Our AI engine analyzes market nature and key indicators related to your activity.',
-                step3Num: 'Step 03',
-                step3Title: 'Get the Report',
-                step3Desc: 'Receive a structured strategic report helping you evaluate opportunities and make decisions.',
-                footer: '© 2026 BuildX Data Engine. All rights reserved.'
-            },
-            fr: {
-                dir: 'ltr',
-                title: 'BuildX - Prenez des décisions commerciales plus intelligentes',
-                tagline: 'Make smarter business decisions.',
-                mainTitle: 'Votre entreprise vaut-elle la peine d\'être investie?',
-                description: 'Entrez le pays, la ville, le type d\'entreprise et le budget, et laissez BuildX analyser le marché.',
-                cta: 'Commencer l\'analyse',
-                step1Num: 'Étape 01',
-                step1Title: 'Entrez les données',
-                step1Desc: 'Spécifiez facilement votre pays, ville, secteur d\'activité et budget disponible.',
-                step2Num: 'Étape 02',
-                step2Title: 'Traitement IA intelligent',
-                step2Desc: 'Notre moteur analyse la nature du marché et les indicateurs clés liés à votre activité.',
-                step3Num: 'Étape 03',
-                step3Title: 'Obtenez le rapport',
-                step3Desc: 'Recevez un rapport stratégique structuré pour évaluer les opportunités.',
-                footer: '© 2026 BuildX Data Engine. Tous droits réservés.'
-            },
-            de: {
-                dir: 'ltr',
-                title: 'BuildX - Treffen Sie smartere Geschäftsentscheidungen',
-                tagline: 'Make smarter business decisions.',
-                mainTitle: 'Lohnt sich die Investition in Ihr Projekt?',
-                description: 'Geben Sie Land, Stadt, Geschäftstyp und Budget ein und lassen Sie BuildX den Markt analysieren.',
-                cta: 'Analyse starten',
-                step1Num: 'Schritt 01',
-                step1Title: 'Projektdaten eingeben',
-                step1Desc: 'Geben Sie ganz einfach Land, Stadt, Branche und das verfügbare Budget an.',
-                step2Num: 'Schritt 02',
-                step2Title: 'Intelligente KI-Verarbeitung',
-                step2Desc: 'Die KI-Engine analysiert die Marktnatur und wichtige Indikatoren für Ihre Aktivität.',
-                step3Num: 'Schritt 03',
-                step3Title: 'Bericht erhalten',
-                step3Desc: 'Erhalten Sie einen strukturierten Strategiebericht zur Bewertung von Chancen.',
-                footer: '© 2026 BuildX Data Engine. Alle Rechte vorbehalten.'
-            }
-        };
-
-        function setLanguage(lang) {
-            const t = translations[lang];
-            if (!t) return;
-
-            localStorage.setItem('buildx_lang', lang);
-
-            const htmlRoot = document.getElementById('htmlRoot');
-            htmlRoot.setAttribute('lang', lang);
-            htmlRoot.setAttribute('dir', t.dir);
-
-            document.getElementById('pageTitle').innerText = t.title;
-            document.getElementById('t-tagline').innerText = t.tagline;
-            document.getElementById('t-title').innerText = t.mainTitle;
-            document.getElementById('t-desc').innerText = t.description;
-            document.getElementById('t-cta').innerText = t.cta;
-            
-            document.getElementById('t-step1-num').innerText = t.step1Num;
-            document.getElementById('t-step1-title').innerText = t.step1Title;
-            document.getElementById('t-step1-desc').innerText = t.step1Desc;
-
-            document.getElementById('t-step2-num').innerText = t.step2Num;
-            document.getElementById('t-step2-title').innerText = t.step2Title;
-            document.getElementById('t-step2-desc').innerText = t.step2Desc;
-
-            document.getElementById('t-footer').innerText = t.footer;
-
-            document.querySelectorAll('.lang-switcher button').forEach(btn => btn.classList.remove('active'));
-            const activeBtn = document.getElementById('btn-' + lang);
-            if (activeBtn) activeBtn.classList.add('active');
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('buildx_lang') || 'ar';
-            setLanguage(savedLang);
-        });
-    </script>
 </body>
 </html>
