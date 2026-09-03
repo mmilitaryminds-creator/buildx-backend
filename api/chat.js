@@ -1,4 +1,5 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const Groq = require("groq-sdk");
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -18,22 +19,45 @@ module.exports = async (req, res) => {
     ${prompt}
 
     ### تعليمات صارمة:
-    1. لا تخترع أرقاماً. إذا لم تتوفر بيانات، اكتب "البيانات غير متوفرة".
+    1. لا تخترع أرقاماً.
     2. اعرض سنة البيانات (مؤكد / تقديري).
     3. أجب باللغة العربية.
     `;
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return res.status(500).json({ error: 'Missing GEMINI_API_KEY' });
+    // 1. المحاولة مع Groq (خطة أولى)
+    try {
+      const groqApiKey = process.env.GROQ_API_KEY;
+      if (!groqApiKey) throw new Error("No Groq Key");
+
+      const groq = new Groq({ apiKey: groqApiKey });
+      const completion = await groq.chat.completions.create({
+        messages: [{ role: "user", content: fullContext }],
+        model: "openai/gpt-oss-120b"
+      });
+
+      const responseText = completion.choices[0].message.content;
+      return res.status(200).json({ result: responseText });
+
+    } catch (groqError) {
+      console.error("Groq failed, switching to Gemini:", groqError);
+
+      // 2. المحاولة مع Gemini (خطة احتياطية)
+      try {
+        const geminiApiKey = process.env.GEMINI_API_KEY;
+        if (!geminiApiKey) throw new Error("No Gemini Key");
+
+        const genAI = new GoogleGenerativeAI(geminiApiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const result = await model.generateContent(fullContext);
+        const responseText = result.response.text();
+
+        return res.status(200).json({ result: responseText });
+
+      } catch (geminiError) {
+        console.error("Gemini failed too:", geminiError);
+        return res.status(500).json({ error: 'فشل الاتصال: ' + geminiError.message });
+      }
     }
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(fullContext);
-    const response = result.response.text();
-
-    return res.status(200).json({ result: response });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'فشل الاتصال: ' + error.message });
