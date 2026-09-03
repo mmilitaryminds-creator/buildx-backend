@@ -109,7 +109,7 @@ function checkCompatibility() {
     );
 
     if (isIncompatible) {
-        document.getElementById('cityError').innerText = "يبدو أن المدينة المختارة لا تتبع الدولة المحددة.";
+        document.getElementById('cityError').innerText = "يبدو أن المدينة المختارة لا تتبع الدولة المحددة. يرجى التحقق من اختيار الدولة والمدينة.";
         document.getElementById('cityError').style.display = 'block';
     } else {
         document.getElementById('cityError').style.display = 'none';
@@ -168,20 +168,28 @@ async function handleAnalysis() {
         return;
     }
 
-    // حفظ البيانات في localStorage
-const projectData = {
-    country: country,
-    city: city,
-    businessType: businessType,
-    project: project,
-    audience: audience,
-    budget: budget,
-    area: area,
-    description: description
-};
+    // إظهار شاشة التحميل
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'analysisLoading';
+    loadingDiv.style.cssText = 'display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,8,16,0.95); z-index:9999; align-items:center; justify-content:center; flex-direction:column; text-align:center;';
+    loadingDiv.innerHTML = '<div style="width:80px; height:80px; border:6px solid #1e3a8a; border-top-color:#00a8ff; border-radius:50%; animation:aiLoaderSpin 1s linear infinite; margin-bottom:20px;"></div><h3 style="color:#fff; font-size:20px;">جاري تحليل المشروع...</h3><p style="color:#94a3b8; font-size:14px; margin-top:10px;">نقوم بجمع البيانات من مصادر متعددة...</p>';
+    document.body.appendChild(loadingDiv);
 
-// تخزين البيانات
-localStorage.setItem('projectData', JSON.stringify(projectData));
+    // ✅ حفظ البيانات في localStorage
+    const projectData = {
+        country: country,
+        city: city,
+        businessType: businessType,
+        projectType: project,
+        audience: audience,
+        budget: budget,
+        area: area,
+        description: description
+    };
 
-// الانتقال لصفحة النتائج
-window.location.href = 'result.html';
+    // تخزين البيانات
+    localStorage.setItem('projectData', JSON.stringify(projectData));
+
+    // الانتقال لصفحة النتائج
+    window.location.href = 'result.html';
+}
