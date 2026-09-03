@@ -168,19 +168,20 @@ async function handleAnalysis() {
         return;
     }
 
-    const params = new URLSearchParams({
-        country: country,
-        city: city,
-        businessType: businessType,
-        projectType: project,
-        audience: audience,
-        budget: budget,
-        area: area,
-        description: description
-    });
+    // حفظ البيانات في localStorage
+const projectData = {
+    country: country,
+    city: city,
+    businessType: businessType,
+    project: project,
+    audience: audience,
+    budget: budget,
+    area: area,
+    description: description
+};
 
-    try {
-        window.location.href = `result.html?${params.toString()}`;
-    } catch (error) {
-        alert("خطأ: " + error.message);
-    }
+// تخزين البيانات
+localStorage.setItem('projectData', JSON.stringify(projectData));
+
+// الانتقال لصفحة النتائج
+window.location.href = 'result.html';
