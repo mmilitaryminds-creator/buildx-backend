@@ -176,24 +176,26 @@ async function handleAnalysis() {
     loadingDiv.innerHTML = '<div style="width:80px; height:80px; border:6px solid #1e3a8a; border-top-color:#00a8ff; border-radius:50%; animation:aiLoaderSpin 1s linear infinite; margin-bottom:20px;"></div><h3 style="color:#fff; font-size:20px;">جاري تحليل المشروع...</h3><p style="color:#94a3b8; font-size:14px; margin-top:10px;">نقوم بجمع البيانات من مصادر متعددة...</p>';
     document.body.appendChild(loadingDiv);
 
-    // إرسال البيانات عبر URL (الانتقال إلى صفحة النتائج)
-    const projectData = {
+    // بناء URL مع البيانات باستخدام URLSearchParams
+    const params = new URLSearchParams({
         country: country,
         city: city,
         businessType: businessType,
         projectType: project,
         audience: audience,
         budget: budget,
-        area: area
-    };
+        area: area,
+        description: description
+    });
 
-    const url = `/result.html?country=${country}&city=${city}&businessType=${businessType}&projectType=${project}&audience=${audience}&budget=${budget}&area=${area}&description=${encodeURIComponent(description)}`;
-    
     try {
         // الانتقال إلى صفحة النتائج
-        window.location.href = url;
+        window.location.href = `result.html?${params.toString()}`;
     } catch (error) {
-        // إذا فشل الانتقال، إعادة المحاولة
+        // إذا فشل الانتقال
+        if (loadingDiv.parentNode) {
+            document.body.removeChild(loadingDiv);
+        }
         document.getElementById('analysisResult').innerHTML = "خطأ في الاتصال: " + error;
     }
 }
