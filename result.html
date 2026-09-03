@@ -28,40 +28,36 @@
     </footer>
 
     <script>
-        // 1. قراءة البيانات من الرابط (URL Params)
-        const params = new URLSearchParams(window.location.search);
-        const country = params.get('country');
-        const city = params.get('city');
-        const businessType = params.get('businessType');
-        const project = params.get('projectType');
-        const audience = params.get('audience');
-        const budget = params.get('budget');
-        const area = params.get('area');
-        const description = params.get('description');
+        // ✅ 1. قراءة البيانات من Local Storage
+        const storedData = localStorage.getItem('projectData');
         
         // التحقق من وجود البيانات
-        if (!country || !city) {
+        if (!storedData) {
             document.getElementById('analysisResult').innerHTML = `
                 <div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
                     <h3>⚠️ تعذر إجراء التحليل</h3>
-                    <p>البيانات غير موجودة في الرابط. يرجى العودة إلى نموذج التحليل وإعادة المحاولة.</p>
+                    <p>البيانات غير موجودة. يرجى العودة إلى نموذج التحليل وإعادة المحاولة.</p>
                 </div>`;
         } else {
-            // 2. إرسال البيانات إلى الخادم (api/chat.js)
-            const projectData = {
-                country: country,
-                city: city,
-                businessType: businessType,
-                projectType: project,
-                audience: audience,
-                budget: budget,
-                area: area
-            };
+            // تحويل البيانات من نص إلى كائن
+            const projectData = JSON.parse(storedData);
             
+            // ✅ 2. إرسال البيانات إلى الخادم
             fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: description, projectData: projectData })
+                body: JSON.stringify({ 
+                    prompt: projectData.description, 
+                    projectData: {
+                        country: projectData.country,
+                        city: projectData.city,
+                        businessType: projectData.businessType,
+                        projectType: projectData.project,
+                        audience: projectData.audience,
+                        budget: projectData.budget,
+                        area: projectData.area
+                    }
+                })
             })
             .then(response => response.json())
             .then(data => {
