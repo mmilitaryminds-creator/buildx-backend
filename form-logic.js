@@ -109,7 +109,7 @@ function checkCompatibility() {
     );
 
     if (isIncompatible) {
-        document.getElementById('cityError').innerText = "يبدو أن المدينة المختارة لا تتبع الدولة المحددة. يرجى التحقق من اختيار الدولة والمدينة.";
+        document.getElementById('cityError').innerText = "يبدو أن المدينة المختارة لا تتبع الدولة المحددة.";
         document.getElementById('cityError').style.display = 'block';
     } else {
         document.getElementById('cityError').style.display = 'none';
@@ -131,14 +131,13 @@ async function handleAnalysis() {
     const description = textarea.value;
     const area = document.getElementById('area').value;
     
-    // التحقق من البيانات
     if (country === "") {
         document.getElementById('countryError').innerText = "يرجى اختيار الدولة أولًا.";
         document.getElementById('countryError').style.display = 'block';
         return;
     }
     if (city === "") {
-        document.getElementById('cityError').innerText = "يرجى اختيار مدينة ضمن الدولة المحددة.";
+        document.getElementById('cityError').innerText = "يرجى اختيار مدينة.";
         document.getElementById('cityError').style.display = 'block';
         return;
     }
@@ -152,7 +151,7 @@ async function handleAnalysis() {
     }
     const project = selectedProjectCard.dataset.value || customProject;
     if (project === "") {
-        alert("الرجاء إدخال اسم المشروع الخاص بك");
+        alert("الرجاء إدخال اسم المشروع");
         return;
     }
     if (!selectedAudienceCard) {
@@ -161,7 +160,7 @@ async function handleAnalysis() {
     }
     const audience = selectedAudienceCard.innerText === 'فئة أخرى' ? customAudience : selectedAudienceCard.innerText;
     if (audience === "") {
-        alert("الرجاء إدخال الفئة المستهدفة الخاصة بك");
+        alert("الرجاء إدخال الفئة المستهدفة");
         return;
     }
     if (budget === "" || isNaN(budget) || Number(budget) <= 0) {
@@ -169,14 +168,6 @@ async function handleAnalysis() {
         return;
     }
 
-    // إظهار شاشة التحميل
-    const loadingDiv = document.createElement('div');
-    loadingDiv.id = 'analysisLoading';
-    loadingDiv.style.cssText = 'display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,8,16,0.95); z-index:9999; align-items:center; justify-content:center; flex-direction:column; text-align:center;';
-    loadingDiv.innerHTML = '<div style="width:80px; height:80px; border:6px solid #1e3a8a; border-top-color:#00a8ff; border-radius:50%; animation:aiLoaderSpin 1s linear infinite; margin-bottom:20px;"></div><h3 style="color:#fff; font-size:20px;">جاري تحليل المشروع...</h3><p style="color:#94a3b8; font-size:14px; margin-top:10px;">نقوم بجمع البيانات من مصادر متعددة...</p>';
-    document.body.appendChild(loadingDiv);
-
-    // بناء URL مع البيانات باستخدام URLSearchParams
     const params = new URLSearchParams({
         country: country,
         city: city,
@@ -189,13 +180,7 @@ async function handleAnalysis() {
     });
 
     try {
-        // الانتقال إلى صفحة النتائج
         window.location.href = `result.html?${params.toString()}`;
     } catch (error) {
-        // إذا فشل الانتقال
-        if (loadingDiv.parentNode) {
-            document.body.removeChild(loadingDiv);
-        }
-        document.getElementById('analysisResult').innerHTML = "خطأ في الاتصال: " + error;
+        alert("خطأ: " + error.message);
     }
-}
