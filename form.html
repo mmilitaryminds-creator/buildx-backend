@@ -3,155 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildX - حلّل مشروعك</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- استدعاء ملف التصميم -->
-    <link rel="stylesheet" href="form-style.css">
+    <title>BuildX - محلل المشاريع</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Cairo', Arial; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .container { background: white; border-radius: 20px; padding: 40px; max-width: 600px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        h1 { text-align: center; color: #1e3a8a; margin-bottom: 10px; font-size: 32px; }
+        .subtitle { text-align: center; color: #64748b; margin-bottom: 40px; }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; color: #1e3a8a; font-weight: 600; margin-bottom: 8px; }
+        input, select { width: 100%; padding: 12px 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; font-family: inherit; text-align: right; }
+        input:focus, select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        button { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>🚀 BuildX</h1>
+        <p class="subtitle">محلل فرص المشاريع الذكي</p>
 
-    <header>
-        <a href="index.html" class="logo">Build<span class="x">X</span></a>
-    </header>
+        <form id="projectForm" onsubmit="handleAnalyze(event)">
+            <div class="form-group">
+                <label>🌍 الدولة</label>
+                <select id="countrySelect">
+                    <option value="USA">الولايات المتحدة</option>
+                    <option value="UAE">الإمارات</option>
+                    <option value="Saudi">السعودية</option>
+                    <option value="Egypt">مصر</option>
+                </select>
+            </div>
 
-    <div class="page-title">
-        <h1>حلّل مشروعك</h1>
-        <p>أخبرنا عن مشروعك، وسنستخدم البيانات والذكاء الاصطناعي لمساعدتك على فهم فرصته في السوق.</p>
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
-        </div>
-        <span style="color: var(--gray-light); font-size: 14px; display: block; margin-top: 10px;">معلومات المشروع</span>
+            <div class="form-group">
+                <label>🏙️ المدينة</label>
+                <input type="text" id="cityInput" placeholder="مثال: New York" required>
+            </div>
+
+            <div class="form-group">
+                <label>💼 نوع المشروع</label>
+                <select id="businessTypeSelect" required>
+                    <option value="">-- اختر --</option>
+                    <option value="مطعم">مطعم</option>
+                    <option value="كافيه">كافيه</option>
+                    <option value="متجر ملابس">متجر ملابس</option>
+                    <option value="صالون تجميل">صالون تجميل</option>
+                    <option value="جيم">جيم</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>💰 الميزانية ($)</label>
+                <input type="number" id="budgetInput" placeholder="مثال: 50000" min="1000" required>
+            </div>
+
+            <button type="submit">ابدأ تحليل مشروعك</button>
+        </form>
     </div>
 
-    <div class="form-container">
+    <script>
+        function handleAnalyze(event) {
+            event.preventDefault();
 
-        <!-- الدولة -->
-        <div class="card">
-            <div class="card-title">🌍 الدولة</div>
-            <label>اختر الدولة التي تريد دراسة مشروعك فيها.</label>
-            <input type="text" id="country" placeholder="اكتب اسم الدولة... مثال: الجزائر، الولايات المتحدة" oninput="checkCompatibility()">
-            <div class="error-msg" id="countryError"></div>
-        </div>
+            const country = document.getElementById('countrySelect').value;
+            const city = document.getElementById('cityInput').value.trim();
+            const businessType = document.getElementById('businessTypeSelect').value;
+            const budget = document.getElementById('budgetInput').value;
 
-        <!-- المدينة -->
-        <div class="card">
-            <div class="card-title">📍 المدينة</div>
-            <label>اختر المدينة التي يقع فيها مشروعك ضمن الدولة المختارة.</label>
-            <input type="text" id="city" placeholder="اكتب اسم المدينة... مثال: دبي، نيويورك" oninput="checkCompatibility()">
-            <div class="error-msg" id="cityError"></div>
-        </div>
+            if (!city || !businessType || !budget) {
+                alert('الرجاء ملء جميع الحقول');
+                return;
+            }
 
-        <!-- نوع النشاط -->
-        <div class="card">
-            <div class="card-title">🏢 نوع النشاط</div>
-            <select id="businessType">
-                <option value="">اختر نوع النشاط</option>
-                <option value="تجاري">تجاري</option>
-                <option value="صناعي">صناعي</option>
-                <option value="خدمي">خدمي</option>
-                <option value="زراعي">زراعي</option>
-            </select>
-        </div>
+            const params = new URLSearchParams({
+                country: country,
+                city: city,
+                businessType: businessType,
+                budget: budget
+            });
 
-        <!-- المشروع -->
-        <div class="card">
-            <div class="card-title">🏗️ ما المشروع الذي تريد دراسته؟</div>
-            <label>اختر المشروع الذي تحبه، أو أضف مشروعًا خاصًا بك.</label>
-            <div class="project-grid" id="projectGrid">
-                <div class="project-card" onclick="selectProject(this)" data-value="مقهى">☕ مقهى</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مطعم">🍽️ مطعم</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="متجر">🛍️ متجر</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="فندق">🏨 فندق</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="صالة رياضية">🏋️ صالة رياضية</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مكتب">🏢 مكتب</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مصنع">🏭 مصنع</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مشروع تجاري">🏪 مشروع تجاري</div>
-                <div class="project-card" id="otherProjectCard" onclick="openModal()">➕ اختر مشروعًا آخر</div>
-            </div>
-            <div class="error-msg" id="projectError"></div>
-        </div>
-
-        <!-- الفئة المستهدفة -->
-        <div class="card">
-            <div class="card-title">👥 الفئة المستهدفة</div>
-            <label>من هم الأشخاص الذين يستهدفهم مشروعك؟</label>
-            <div class="audience-grid" id="audienceGrid">
-                <div class="audience-option" onclick="selectAudience(this)">الجميع</div>
-                <div class="audience-option" onclick="selectAudience(this)">الشباب</div>
-                <div class="audience-option" onclick="selectAudience(this)">العائلات</div>
-                <div class="audience-option" onclick="selectAudience(this)">الأطفال</div>
-                <div class="audience-option" onclick="selectAudience(this)">الطلاب</div>
-                <div class="audience-option" onclick="selectAudience(this)">الموظفون</div>
-                <div class="audience-option" onclick="selectAudience(this)">السياح</div>
-                <div class="audience-option" onclick="selectAudience(this)">الشركات</div>
-                <div class="audience-option" onclick="selectAudience(this)">فئة أخرى</div>
-            </div>
-            <input type="text" id="customAudience" placeholder="أدخل الفئة المستهدفة هنا..." style="display: none; margin-top: 15px;">
-        </div>
-
-        <!-- الميزانية -->
-        <div class="card">
-            <div class="card-title">💰 ميزانية المشروع</div>
-            <label>أدخل ميزانية مشروعك بالدولار الأمريكي (USD).</label>
-            <div class="budget-wrap">
-                <input type="number" id="budget" placeholder="$50,000" min="0">
-                <div class="budget-unit">USD — US Dollar</div>
-            </div>
-        </div>
-
-        <!-- وصف المشروع -->
-        <div class="card">
-            <div class="card-title">📝 صف مشروعك بالتفصيل</div>
-            <textarea id="projectDescription" maxlength="60000" placeholder="اكتب تفاصيل مشروعك هنا..." style="min-height: 200px;"></textarea>
-            <p style="color: var(--gray-light); font-size: 14px; margin-top: 10px;">
-                يمكنك ذكر فكرة المشروع، موقعه، المساحة، المنتجات أو الخدمات التي يقدمها، العملاء المستهدفين، عدد الموظفين، مستوى المشروع، وأي تفاصيل أخرى تعتقد أنها مهمة للتحليل.
-            </p>
-            <div class="char-counter" id="charCount">0 / 60,000</div>
-        </div>
-
-        <!-- زر التحليل -->
-        <button class="submit-btn" id="submitButton" onclick="handleAnalysis()">🚀 ابدأ تحليل المشروع</button>
-
-        <!-- مكان عرض النتيجة -->
-        <div class="analysis-result" id="analysisResult"></div>
-
-    </div>
-
-    <!-- نافذة اختيار مشروع آخر -->
-    <div class="modal" id="customProjectModal">
-        <div class="modal-content">
-            <h2>اختر مشروعك</h2>
-            <input type="text" id="customProjectInput" placeholder="اكتب اسم مشروعك... مثال: مركز ألعاب VR">
-            <button onclick="confirmCustomProject()">تأكيد</button>
-            <button onclick="closeModal()" style="background: transparent; border: 1px solid var(--gray-light); color: var(--gray-light); margin-left: 10px;">إلغاء</button>
-        </div>
-    </div>
-
-    <!-- زر كتم الصوت -->
-    <div class="mute-btn" onclick="toggleMute()" id="muteBtn">🔊</div>
-
-    <!-- استدعاء ملف المنطق والوظائف -->
-    <script src="form-logic.js"></script>
-    <!-- شاشة التحميل (تحليل البيانات) -->
-<div id="analysisLoading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 8, 16, 0.95); z-index: 9999; align-items: center; justify-content: center; flex-direction: column; text-align: center;">
-    <div class="ai-loader-circle" style="width: 80px; height: 80px; border: 6px solid #1e3a8a; border-top-color: #00a8ff; border-radius: 50%; animation: aiLoaderSpin 1s linear infinite; margin-bottom: 20px;"></div>
-    <h3 style="color: #ffffff; font-size: 20px;">جاري تحليل المشروع...</h3>
-    <p style="color: #94a3b8; font-size: 14px; margin-top: 10px; max-width: 300px;">نقوم بجمع البيانات من مصادر متعددة، وتحليل السوق والمنافسين، وتقييم فرص نجاح المشروع.</p>
-</div>
-
-<!-- طلب إغلاق شاشة التحميل عند اكتمال البيانات -->
-<script>
-    function showLoading() {
-        const loading = document.getElementById('analysisLoading');
-        loading.style.display = 'flex';
-    }
-
-    function hideLoading() {
-        const loading = document.getElementById('analysisLoading');
-        loading.style.display = 'none';
-    }
-</script>
-    
+            window.location.href = `result.html?${params.toString()}`;
+        }
+    </script>
 </body>
-                    </html>
+</html>
