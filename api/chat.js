@@ -1,35 +1,65 @@
-export default async function handler(req, res) {
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const Groq = require("groq-sdk");
+
+module.exports = async (req, res) => {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'POST only' });
-  }
-
-  const groqKey = process.env.GROQ_API_KEY;
-  if (!groqKey) return res.status(500).json({ error: 'No API key' });
-
-  const { city, businessType, budget } = req.body;
-  if (!city || !businessType || !budget) {
-    return res.status(400).json({ error: 'Missing fields' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${groqKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-oss-120b',
-        messages: [{ role: 'user', content: `تحليل: ${businessType} في ${city} بـ $${budget}` }],
-        max_tokens: 300
-      })
-    });
+    const { prompt, projectData } = req.body;
 
-    const data = await response.json();
-    const text = data?.choices?.[0]?.message?.content || 'No response';
+    const fullContext = `
+    أنت "خبير BuildX" (BuildX Expert). أنت محلل مشاريع واستثمار عالمي.
 
-    res.json({ success: true, score: 70, explanation: text });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+    ### البيانات المدخلة من المستخدم:
+    ${JSON.stringify(projectData, null, 2)}
+
+    ### وصف المشروع:
+    ${prompt}
+
+    ### تعليمات صارمة:
+    1. لا تخترع أرقاماً.
+    2. اعرض سنة البيانات (مؤكد / تقديري).
+    3. أجب باللغة العربية.
+    `;
+
+    // 1. المحاولة مع Groq
+    try {
+      const groqApiKey = process.env.GROQ_API_KEY;
+      if (!groqApiKey) throw new Error("No Groq Key");
+
+      const groq = new Groq({ apiKey: groqApiKey });
+      const completion = await groq.chat.completions.create({
+        messages: [{ role: "user", content: fullContext }],
+        model: "openai/gpt-oss-120b"
+      });
+
+      const responseText = completion.choices[0].message.content;
+      return res.status(200).json({ result: responseText });
+
+    } catch (groqError) {
+      console.error("Groq failed, switching to Gemini:", groqError);
+
+      // 2. المحاولة مع Gemini
+      try {
+        const geminiApiKey = process.env.GEMINI_API_KEY;
+        if (!geminiApiKey) throw new Error("No Gemini Key");
+
+        const genAI = new GoogleGenerativeAI(geminiApiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const result = await model.generateContent(fullContext);
+        const responseText = result.response.text();
+
+        return res.status(200).json({ result: responseText });
+
+      } catch (geminiError) {
+        console.error("Gemini failed too:", geminiError);
+        return res.status(500).json({ error: 'فشل الاتصال: ' + geminiError.message });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'فشل الاتصال: ' + error.message });
   }
-}
+};
