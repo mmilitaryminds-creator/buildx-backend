@@ -120,7 +120,7 @@ async function handleAnalysis() {
     const submitButton = document.getElementById('submitButton');
     const resultDiv = document.getElementById('analysisResult');
 
-    // إظهار شاشة التحميل (داخل نفس الدالة)
+    // إظهار شاشة التحميل
     const loadingDiv = document.createElement('div');
     loadingDiv.id = 'analysisLoading';
     loadingDiv.style.cssText = 'display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,8,16,0.95); z-index:9999; align-items:center; justify-content:center; flex-direction:column; text-align:center;';
@@ -222,7 +222,6 @@ async function handleAnalysis() {
     } catch (error) {
         resultDiv.innerHTML = "خطأ في الاتصال: " + error;
     } finally {
-        // إغلاق شاشة التحميل
         const loadingElement = document.getElementById('analysisLoading');
         if (loadingElement) {
             loadingElement.style.display = 'none';
@@ -230,86 +229,4 @@ async function handleAnalysis() {
         submitButton.disabled = false;
         submitButton.innerText = "🚀 ابدأ تحليل المشروع";
     }
-}
-
-// دالة عرض النتائج (قد لا تعمل إذا لم يرد AI بـ JSON منظم)
-function displayResult(data) {
-    const resultDiv = document.getElementById('analysisResult');
-    resultDiv.style.display = 'block';
-
-    const getColor = (score) => {
-        if (score >= 70) return '#22c55e';
-        if (score >= 40) return '#eab308';
-        return '#ef4444';
-    };
-
-    const score = data.final_score;
-    const indicators = data.indicators;
-
-    const html = `
-        <div class="dashboard-result">
-            <div class="score-section">
-                <h2 style="text-align: center; margin: 0;">🎯 التقييم النهائي</h2>
-                <div class="score-circle" style="background: ${getColor(score)}">
-                    <span class="score-number">${score}</span>
-                    <span>/100</span>
-                </div>
-                <p style="text-align: center; font-weight: bold;">${data.final_label}</p>
-                <p style="text-align: center; color: #666; font-size: 14px;">${data.final_verdict}</p>
-            </div>
-            
-            <h3 style="margin-top: 30px;">📊 المؤشرات</h3>
-            <div class="indicators-grid">
-                ${Object.entries(indicators).map(([key, val]) => `
-                    <div class="indicator-card">
-                        <div class="indicator-title">${key}</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width: ${val.score}%; background: ${getColor(val.score)}"></div>
-                        </div>
-                        <div class="indicator-label">${val.label} (${val.score}/100)</div>
-                        <div class="indicator-note">${val.note}</div>
-                    </div>
-                `).join('')}
-            </div>
-
-            <h3 style="margin-top: 30px;">📊 الإحصائيات الرئيسية</h3>
-            <div class="stats-grid">
-                ${Object.entries(data.key_metrics).map(([key, value]) => `
-                    <div class="stat-card">
-                        <div class="stat-title">${key}</div>
-                        <div class="stat-value">${value}</div>
-                    </div>
-                `).join('')}
-            </div>
-
-            <h3 style="margin-top: 30px;">✅ نقاط القوة</h3>
-            <ul class="pros-list">${data.pros.map(item => `<li>${item}</li>`).join('')}</ul>
-
-            <h3 style="margin-top: 30px;">⚠️ نقاط الضعف والمخاطر</h3>
-            <ul class="cons-list">${data.cons.map(item => `<li>${item}</li>`).join('')}</ul>
-
-            <h3 style="margin-top: 30px;">💡 التوصيات</h3>
-            <div class="recommendations">
-                ${data.recommendations.map(rec => `<div class="rec-item">${rec}</div>`).join('')}
-            </div>
-
-            <h3 style="margin-top: 30px;">🏆 أفضل المدن البديلة</h3>
-            <div class="cities-grid">
-                ${data.alternative_cities.map(city => `
-                    <div class="city-card">
-                        <strong>${city.city}</strong>
-                        <div class="city-score">${city.score}/100</div>
-                        <div class="city-reason">${city.reason}</div>
-                    </div>
-                `).join('')}
-            </div>
-            
-            <div class="sources-section">
-                <h4>📚 المصادر</h4>
-                <p style="font-size: 13px; color: #888;">بيانات تقديرية بناءً على مؤشرات عامة. مصادر رسمية قد تختلف.</p>
-            </div>
-        </div>
-    `;
-
-    resultDiv.innerHTML = html;
-}
+}                        
