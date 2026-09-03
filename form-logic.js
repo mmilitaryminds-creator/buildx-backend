@@ -229,4 +229,4 @@ async function handleAnalysis() {
         submitButton.disabled = false;
         submitButton.innerText = "🚀 ابدأ تحليل المشروع";
     }
-}                        
+            }
