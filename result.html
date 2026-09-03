@@ -3,106 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النتائج - BuildX</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Cairo', Arial; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        h1 { text-align: center; color: #1e3a8a; margin-bottom: 30px; }
-        #scoreBox { text-align: center; padding: 50px; border-radius: 16px; margin-bottom: 40px; font-size: 60px; font-weight: bold; color: white; }
-        #scoreBox.excellent { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
-        #scoreBox.good { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-        #scoreBox.poor { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-        .section { margin: 30px 0; padding: 25px; background: #f8fafc; border-radius: 12px; border-right: 4px solid #667eea; }
-        .section h3 { color: #1e3a8a; margin-bottom: 15px; font-size: 20px; }
-        .section p, .section li { color: #334155; line-height: 1.8; margin-bottom: 10px; }
-        .section ul { margin-right: 20px; }
-        button { padding: 12px 30px; margin: 10px 5px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        .btn-primary { background: #667eea; color: white; }
-        .btn-secondary { background: #e2e8f0; color: #1e3a8a; }
-        #loading { text-align: center; padding: 50px; }
-        .spinner { border: 4px solid #e2e8f0; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+    <title>BuildX - نتيجة التحليل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="form-style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>📊 نتائج التحليل</h1>
-        
-        <div id="loading">
-            <div class="spinner"></div>
-            <p>جاري تحميل النتائج...</p>
-        </div>
+    <header>
+        <a href="index.html" class="logo">Build<span class="x">X</span></a>
+    </header>
 
-        <div id="content" style="display: none;">
-            <div id="scoreBox" class="good">
-                <div id="scoreValue">70</div>
-                <div style="font-size: 24px; margin-top: 10px;" id="scoreLabel">جيد</div>
-            </div>
+    <div class="page-title">
+        <h1>نتيجة التحليل</h1>
+        <p>هذه هي النتائج بناءً على بيانات مشروعك.</p>
+    </div>
 
-            <div class="section">
-                <h3>📖 التحليل الكامل</h3>
-                <p id="explanation"></p>
-            </div>
-
-            <div style="text-align: center;">
-                <button class="btn-primary" onclick="location.href='form.html'">تحليل مشروع آخر</button>
-                <button class="btn-secondary" onclick="window.print()">طباعة</button>
-            </div>
+    <div class="form-container">
+        <div class="analysis-result" id="analysisResult" style="display: block;">
+            <h3 style="text-align: center; margin-bottom: 20px;">جاري تحليل البيانات...</h3>
         </div>
     </div>
 
+    <footer style="text-align: center; padding: 20px; color: var(--gray-light); font-size: 14px;">
+        <span>&copy; 2026 BuildX Data Engine. All rights reserved.</span>
+    </footer>
+
     <script>
-        async function loadResults() {
-            const params = new URLSearchParams(window.location.search);
-            const city = params.get('city');
-            const businessType = params.get('businessType');
-            const budget = params.get('budget');
-
-            if (!city || !businessType || !budget) {
-                document.getElementById('loading').innerHTML = '<p style="color: red;">خطأ: بيانات ناقصة</p>';
-                return;
-            }
-
-            try {
-                const response = await fetch('https://buildx-backend.vercel.app/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        city: city,
-                        businessType: businessType,
-                        budget: parseInt(budget)
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Display results
-                    document.getElementById('scoreValue').textContent = data.score || 70;
-                    document.getElementById('scoreLabel').textContent = data.scoreLabel || 'جيد';
-                    document.getElementById('explanation').textContent = data.explanation || 'لا يوجد شرح';
-
-                    // Color by score
-                    const scoreBox = document.getElementById('scoreBox');
-                    scoreBox.classList.remove('poor', 'good', 'excellent');
-                    if (data.score >= 70) scoreBox.classList.add('excellent');
-                    else if (data.score >= 30) scoreBox.classList.add('good');
-                    else scoreBox.classList.add('poor');
-
-                    // Hide loading, show content
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('content').style.display = 'block';
+        // 1. قراءة البيانات من الرابط (URL Params)
+        const params = new URLSearchParams(window.location.search);
+        const country = params.get('country');
+        const city = params.get('city');
+        const businessType = params.get('businessType');
+        const project = params.get('projectType');
+        const audience = params.get('audience');
+        const budget = params.get('budget');
+        const area = params.get('area');
+        const description = params.get('description');
+        
+        // التحقق من وجود البيانات
+        if (!country || !city) {
+            document.getElementById('analysisResult').innerHTML = `
+                <div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
+                    <h3>⚠️ تعذر إجراء التحليل</h3>
+                    <p>البيانات غير موجودة في الرابط. يرجى العودة إلى نموذج التحليل وإعادة المحاولة.</p>
+                </div>`;
+        } else {
+            // 2. إرسال البيانات إلى الخادم (api/chat.js)
+            const projectData = {
+                country: country,
+                city: city,
+                businessType: businessType,
+                projectType: project,
+                audience: audience,
+                budget: budget,
+                area: area
+            };
+            
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: description, projectData: projectData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('analysisResult');
+                if (data.result) {
+                    resultDiv.innerHTML = `<div style="border: 1px solid var(--card-border); border-radius: 20px; padding: 30px; line-height: 1.8;">
+                        <h2 style="text-align: center; margin-bottom: 30px;">📊 تقرير BuildX</h2>
+                        ${data.result}
+                    </div>`;
                 } else {
-                    throw new Error(data.error || 'خطأ غير معروف');
+                    resultDiv.innerHTML = `<div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
+                        <h3>⚠️ خطأ</h3>
+                        <p>${data.error || "حدث خطأ ما"}</p>
+                    </div>`;
                 }
-            } catch (error) {
-                document.getElementById('loading').innerHTML = `<p style="color: red;">خطأ: ${error.message}</p>`;
-            }
+            })
+            .catch(error => {
+                document.getElementById('analysisResult').innerHTML = `<div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
+                    <h3>⚠️ خطأ في الاتصال</h3>
+                    <p>${error}</p>
+                </div>`;
+            });
         }
-
-        // Load results on page load
-        window.addEventListener('DOMContentLoaded', loadResults);
     </script>
 </body>
 </html>
