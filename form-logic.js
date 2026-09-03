@@ -120,13 +120,6 @@ async function handleAnalysis() {
     const submitButton = document.getElementById('submitButton');
     const resultDiv = document.getElementById('analysisResult');
 
-    // إظهار شاشة التحميل
-    const loadingDiv = document.createElement('div');
-    loadingDiv.id = 'analysisLoading';
-    loadingDiv.style.cssText = 'display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,8,16,0.95); z-index:9999; align-items:center; justify-content:center; flex-direction:column; text-align:center;';
-    loadingDiv.innerHTML = '<div style="width:80px; height:80px; border:6px solid #1e3a8a; border-top-color:#00a8ff; border-radius:50%; animation:aiLoaderSpin 1s linear infinite; margin-bottom:20px;"></div><h3 style="color:#fff; font-size:20px;">جاري تحليل المشروع...</h3><p style="color:#94a3b8; font-size:14px; margin-top:10px;">نقوم بجمع البيانات من مصادر متعددة...</p>';
-    document.body.appendChild(loadingDiv);
-
     const country = document.getElementById('country').value.trim();
     const city = document.getElementById('city').value.trim();
     const businessType = document.getElementById('businessType').value;
@@ -136,7 +129,9 @@ async function handleAnalysis() {
     const customAudience = document.getElementById('customAudience').value.trim();
     const budget = document.getElementById('budget').value;
     const description = textarea.value;
-
+    const area = document.getElementById('area').value;
+    
+    // التحقق من البيانات
     if (country === "") {
         document.getElementById('countryError').innerText = "يرجى اختيار الدولة أولًا.";
         document.getElementById('countryError').style.display = 'block';
@@ -174,11 +169,14 @@ async function handleAnalysis() {
         return;
     }
 
-    submitButton.disabled = true;
-    submitButton.innerText = "جاري تجهيز التحليل...";
-    resultDiv.style.display = 'block';
-    resultDiv.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>جاري تحليل البيانات...</p></div>';
+    // إظهار شاشة التحميل
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'analysisLoading';
+    loadingDiv.style.cssText = 'display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,8,16,0.95); z-index:9999; align-items:center; justify-content:center; flex-direction:column; text-align:center;';
+    loadingDiv.innerHTML = '<div style="width:80px; height:80px; border:6px solid #1e3a8a; border-top-color:#00a8ff; border-radius:50%; animation:aiLoaderSpin 1s linear infinite; margin-bottom:20px;"></div><h3 style="color:#fff; font-size:20px;">جاري تحليل المشروع...</h3><p style="color:#94a3b8; font-size:14px; margin-top:10px;">نقوم بجمع البيانات من مصادر متعددة...</p>';
+    document.body.appendChild(loadingDiv);
 
+    // إرسال البيانات عبر URL (الانتقال إلى صفحة النتائج)
     const projectData = {
         country: country,
         city: city,
@@ -186,47 +184,16 @@ async function handleAnalysis() {
         projectType: project,
         audience: audience,
         budget: budget,
-        area: document.getElementById('area').value
+        area: area
     };
 
+    const url = `/result.html?country=${country}&city=${city}&businessType=${businessType}&projectType=${project}&audience=${audience}&budget=${budget}&area=${area}&description=${encodeURIComponent(description)}`;
+    
     try {
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: description, projectData: projectData })
-        });
-
-        const data = await response.json();
-
-        if (data.error === "geo_mismatch") {
-            resultDiv.innerHTML = `<div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
-                <h3>⚠️ تعذر إجراء التحليل</h3>
-                <p>${data.message}</p>
-            </div>`;
-            const loadingElement = document.getElementById('analysisLoading');
-            if (loadingElement) {
-                loadingElement.style.display = 'none';
-            }
-            submitButton.disabled = false;
-            submitButton.innerText = "🚀 ابدأ تحليل المشروع";
-            return;
-        }
-
-        if (data.result && typeof data.result === 'object') {
-            displayResult(data.result);
-        } else if (data.result) {
-            resultDiv.innerHTML = data.result;
-        } else {
-            resultDiv.innerHTML = "خطأ: " + (data.error || "حدث خطأ ما");
-        }
+        // الانتقال إلى صفحة النتائج
+        window.location.href = url;
     } catch (error) {
-        resultDiv.innerHTML = "خطأ في الاتصال: " + error;
-    } finally {
-        const loadingElement = document.getElementById('analysisLoading');
-        if (loadingElement) {
-            loadingElement.style.display = 'none';
-        }
-        submitButton.disabled = false;
-        submitButton.innerText = "🚀 ابدأ تحليل المشروع";
+        // إذا فشل الانتقال، إعادة المحاولة
+        document.getElementById('analysisResult').innerHTML = "خطأ في الاتصال: " + error;
     }
-            }
+}
