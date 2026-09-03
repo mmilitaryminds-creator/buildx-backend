@@ -30,59 +30,99 @@
     <script>
         // 1. قراءة البيانات من الرابط (URL Params)
         const params = new URLSearchParams(window.location.search);
-        const country = params.get('country');
+        const country = params.get('country') || 'USA';
         const city = params.get('city');
         const businessType = params.get('businessType');
-        const project = params.get('projectType');
-        const audience = params.get('audience');
         const budget = params.get('budget');
+        const audience = params.get('audience');
         const area = params.get('area');
-        const description = params.get('description');
         
-        // التحقق من وجود البيانات
-        if (!country || !city) {
+        // التحقق من وجود البيانات المطلوبة
+        if (!city || !businessType || !budget) {
             document.getElementById('analysisResult').innerHTML = `
                 <div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
                     <h3>⚠️ تعذر إجراء التحليل</h3>
-                    <p>البيانات غير موجودة في الرابط. يرجى العودة إلى نموذج التحليل وإعادة المحاولة.</p>
+                    <p>البيانات غير موجودة. يرجى العودة إلى نموذج التحليل وإعادة المحاولة.</p>
                 </div>`;
         } else {
             // 2. إرسال البيانات إلى الخادم (api/chat.js)
-            const projectData = {
-                country: country,
-                city: city,
-                businessType: businessType,
-                projectType: project,
-                audience: audience,
-                budget: budget,
-                area: area
-            };
-            
-            fetch('/api/chat', {
+            fetch('https://buildx-backend.vercel.app/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: description, projectData: projectData })
+                body: JSON.stringify({
+                    country: country,
+                    city: city,
+                    businessType: businessType,
+                    budget: parseInt(budget),
+                    targetAudience: audience || null,
+                    area: area || null
+                })
             })
             .then(response => response.json())
             .then(data => {
                 const resultDiv = document.getElementById('analysisResult');
-                if (data.result) {
-                    resultDiv.innerHTML = `<div style="border: 1px solid var(--card-border); border-radius: 20px; padding: 30px; line-height: 1.8;">
-                        <h2 style="text-align: center; margin-bottom: 30px;">📊 تقرير BuildX</h2>
-                        ${data.result}
-                    </div>`;
+                
+                if (data.success) {
+                    const scoreColor = data.score >= 70 ? '#22c55e' : data.score >= 40 ? '#3b82f6' : '#ef4444';
+                    
+                    resultDiv.innerHTML = `
+                        <div style="border: 1px solid var(--card-border); border-radius: 20px; padding: 30px; line-height: 1.8;">
+                            <h2 style="text-align: center; margin-bottom: 30px;">📊 تقرير BuildX</h2>
+                            
+                            <div style="background: ${scoreColor}; color: white; padding: 40px; border-radius: 15px; text-align: center; margin-bottom: 30px;">
+                                <div style="font-size: 60px; font-weight: bold;">${data.score}</div>
+                                <div style="font-size: 24px; margin-top: 10px;">${data.scoreLabel}</div>
+                            </div>
+                            
+                            <div style="margin-bottom: 30px;">
+                                <h3>📖 التحليل الكامل</h3>
+                                <p>${data.explanation}</p>
+                            </div>
+                            
+                            ${data.positivePoints && data.positivePoints.length > 0 ? `
+                                <div style="margin-bottom: 30px; padding: 20px; background: #f0fdf4; border-radius: 10px; border-right: 4px solid #22c55e;">
+                                    <h3 style="color: #16a34a;">✅ النقاط الإيجابية</h3>
+                                    <ul style="margin-right: 20px;">
+                                        ${data.positivePoints.map(p => `<li>${p}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                            
+                            ${data.negativePoints && data.negativePoints.length > 0 ? `
+                                <div style="margin-bottom: 30px; padding: 20px; background: #fef2f2; border-radius: 10px; border-right: 4px solid #ef4444;">
+                                    <h3 style="color: #dc2626;">⚠️ النقاط التي تحتاج انتباه</h3>
+                                    <ul style="margin-right: 20px;">
+                                        ${data.negativePoints.map(n => `<li>${n}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                            
+                            <div style="text-align: center; margin-top: 30px;">
+                                <a href="form.html" style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 10px; margin: 10px; font-weight: bold;">
+                                    🔄 تحليل مشروع آخر
+                                </a>
+                                <button onclick="window.print()" style="padding: 12px 30px; background: #e2e8f0; color: #1e3a8a; border: none; border-radius: 10px; margin: 10px; cursor: pointer; font-weight: bold;">
+                                    🖨️ طباعة التقرير
+                                </button>
+                            </div>
+                        </div>
+                    `;
                 } else {
-                    resultDiv.innerHTML = `<div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
-                        <h3>⚠️ خطأ</h3>
-                        <p>${data.error || "حدث خطأ ما"}</p>
-                    </div>`;
+                    resultDiv.innerHTML = `
+                        <div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h3>⚠️ خطأ</h3>
+                            <p>${data.error || "حدث خطأ ما"}</p>
+                        </div>
+                    `;
                 }
             })
             .catch(error => {
-                document.getElementById('analysisResult').innerHTML = `<div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
-                    <h3>⚠️ خطأ في الاتصال</h3>
-                    <p>${error}</p>
-                </div>`;
+                document.getElementById('analysisResult').innerHTML = `
+                    <div style="background: #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
+                        <h3>⚠️ خطأ في الاتصال</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
             });
         }
     </script>
