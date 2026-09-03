@@ -47,15 +47,16 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    prompt: projectData.description, 
-                    projectData: {
-                        country: projectData.country,
-                        city: projectData.city,
-                        businessType: projectData.businessType,
-                        projectType: projectData.project,
-                        audience: projectData.audience,
-                        budget: projectData.budget,
-                        area: projectData.area
+                    prompt: projectData.description,
+projectData: {
+    country: projectData.country,
+    city: projectData.city,
+    businessType: projectData.businessType,
+    projectType: projectData.project, // ✏️ هذا هو السطر الذي يجب تغييره
+    audience: projectData.audience,
+    budget: projectData.budget,
+    area: projectData.area
+}
                     }
                 })
             })
