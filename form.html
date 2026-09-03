@@ -3,334 +3,638 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildX - حلّل مشروعك</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- ربط ملف التصميم -->
-    <link rel="stylesheet" href="form-style.css">
+    <title>BuildX - تحليل المشاريع</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2d3561 0%, #1e5a96 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .logo .x {
+            color: #00a8ff;
+        }
+
+        .page-header {
+            margin-top: 30px;
+        }
+
+        .page-header h1 {
+            color: #2d3561;
+            font-size: 32px;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Form Container */
+        .form-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            margin-bottom: 50px;
+        }
+
+        /* Section */
+        .form-section {
+            margin-bottom: 50px;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3561;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title-icon {
+            font-size: 24px;
+        }
+
+        /* Grid Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-grid.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3561;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .label-hint {
+            font-size: 12px;
+            font-weight: 500;
+            color: #94a3b8;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input, select, textarea {
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: 'Cairo', 'Inter', sans-serif;
+            font-size: 16px;
+            text-align: right;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #1e5a96;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(30, 90, 150, 0.1);
+        }
+
+        /* Select */
+        select {
+            cursor: pointer;
+        }
+
+        /* Textarea */
+        textarea {
+            resize: vertical;
+            min-height: 140px;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .char-counter {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 8px;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .char-counter.warning {
+            color: #f97316;
+        }
+
+        /* Cards Selection */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        card-option {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .card-option:hover {
+            border-color: #1e5a96;
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .card-option.selected {
+            background: #1e5a96;
+            border-color: #1e5a96;
+            color: white;
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Buttons Grid */
+        .buttons-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .btn-option {
+            padding: 11px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: white;
+            color: #2d3561;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .btn-option:hover {
+            border-color: #1e5a96;
+            color: #1e5a96;
+        }
+
+        .btn-option.selected {
+            background: #1e5a96;
+            border-color: #1e5a96;
+            color: white;
+        }
+
+        /* Submit Button */
+        .submit-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px 30px;
+            background: linear-gradient(135deg, #1e5a96 0%, #2d3561 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(30, 90, 150, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 15, 30, 0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #00a8ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .loading-subtext {
+            color: #94a3b8;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border-left: 4px solid #dc2626;
+            font-size: 14px;
+            display: none;
+            margin-top: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 60px;
+            padding-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-wrapper {
+                padding: 30px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .page-header h1 {
+                font-size: 28px;
+            }
+
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="wrapper">
+        <header>
+            <a href="index.html" class="logo">Build<span class="x">X</span></a>
+            <div class="page-header">
+                <h1>تحليل المشروع</h1>
+                <p>استكشف إمكانيات نجاح مشروعك مع تحليل ذكي شامل</p>
+            </div>
+        </header>
 
-    <header>
-        <a href="index.html" class="logo">Build<span class="x">X</span></a>
-    </header>
+        <div class="form-wrapper">
+            <form id="projectForm">
+                <!-- الموقع الجغرافي -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-title-icon">🌍</span>
+                        <span>الموقع الجغرافي</span>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>الدولة</label>
+                            <select id="country" required>
+                                <option value="">-- اختر الدولة --</option>
+                                <option value="USA">الولايات المتحدة</option>
+                                <option value="UAE">الإمارات العربية</option>
+                                <option value="Saudi">المملكة العربية السعودية</option>
+                                <option value="Egypt">مصر</option>
+                                <option value="Algeria">الجزائر</option>
+                                <option value="Morocco">المغرب</option>
+                                <option value="Qatar">قطر</option>
+                                <option value="Kuwait">الكويت</option>
+                            </select>
+                            <div class="error-message" id="countryError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>المدينة</label>
+                            <input type="text" id="city" placeholder="مثال: دبي، نيويورك، الرياض" required>
+                            <div class="error-message" id="cityError"></div>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="page-title">
-        <h1>حلّل مشروعك</h1>
-        <p>أخبرنا عن مشروعك، وسنستخدم البيانات والذكاء الاصطناعي لمساعدتك على فهم فرصته في السوق.</p>
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
+                <!-- تفاصيل المشروع -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-title-icon">📦</span>
+                        <span>تفاصيل المشروع</span>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>نوع النشاط التجاري</label>
+                            <select id="businessType" required>
+                                <option value="">-- اختر نوع النشاط --</option>
+                                <option value="مطعم">مطعم</option>
+                                <option value="كافيه">كافيه</option>
+                                <option value="متجر ملابس">متجر ملابس</option>
+                                <option value="صالون تجميل">صالون تجميل</option>
+                                <option value="جيم">جيم</option>
+                                <option value="فندق">فندق</option>
+                                <option value="متجر إلكترونيات">متجر إلكترونيات</option>
+                                <option value="مكتبة">مكتبة</option>
+                                <option value="صيدلية">صيدلية</option>
+                            </select>
+                            <div class="error-message" id="businessError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>نوع المشروع</label>
+                            <div class="cards-grid">
+                                <div class="card-option" data-value="مشروع جديد" onclick="selectCard(this)">
+                                    <div class="card-icon">🆕</div>
+                                    <div class="card-text">جديد</div>
+                                </div>
+                                <div class="card-option" data-value="توسعة" onclick="selectCard(this)">
+                                    <div class="card-icon">📈</div>
+                                    <div class="card-text">توسعة</div>
+                                </div>
+                                <div class="card-option" data-value="شراكة" onclick="selectCard(this)">
+                                    <div class="card-icon">🤝</div>
+                                    <div class="card-text">شراكة</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الجمهور والميزانية -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-title-icon">👥</span>
+                        <span>الجمهور والميزانية</span>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label>الفئة المستهدفة</label>
+                        <div class="buttons-grid">
+                            <button type="button" class="btn-option" onclick="selectAudience(this)">الشباب (18-30)</button>
+                            <button type="button" class="btn-option" onclick="selectAudience(this)">العائلات</button>
+                            <button type="button" class="btn-option" onclick="selectAudience(this)">رجال الأعمال</button>
+                            <button type="button" class="btn-option" onclick="selectAudience(this)">كبار السن</button>
+                        </div>
+                        <div class="error-message" id="audienceError"></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>الميزانية <span class="label-hint">(USD)</span></label>
+                            <input type="number" id="budget" placeholder="50000" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>المساحة <span class="label-hint">(متر مربع)</span></label>
+                            <input type="number" id="area" placeholder="300" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- وصف المشروع -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <span class="section-title-icon">📝</span>
+                        <span>وصف المشروع</span>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            صف مشروعك بالتفصيل
+                            <span class="label-hint" id="charCount">0 / 60,000</span>
+                        </label>
+                        <textarea id="projectDescription" placeholder="اكتب تفاصيل مشروعك، رؤيتك، أهدافك، وكيف ستختلف عن المنافسين..."></textarea>
+                        <div class="char-counter" id="charWarning"></div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="submit-section">
+                    <button type="button" class="submit-btn" onclick="handleAnalysis()">
+                        <span>ابدأ التحليل الآن</span>
+                        <span>→</span>
+                    </button>
+                </div>
+            </form>
         </div>
-        <span style="color: var(--gray-light); font-size: 14px; display: block; margin-top: 10px;">معلومات المشروع</span>
     </div>
 
-    <div class="form-container">
-
-        <!-- الدولة -->
-        <div class="card">
-            <div class="card-title">🌍 الدولة</div>
-            <label>اختر الدولة التي تريد دراسة مشروعك فيها.</label>
-            <input type="text" id="country" placeholder="اكتب اسم الدولة... مثال: الجزائر، الولايات المتحدة" oninput="checkCompatibility()">
-            <div class="error-msg" id="countryError"></div>
-        </div>
-
-        <!-- المدينة -->
-        <div class="card">
-            <div class="card-title">📍 المدينة</div>
-            <label>اختر المدينة التي يقع فيها مشروعك ضمن الدولة المختارة.</label>
-            <input type="text" id="city" placeholder="اكتب اسم المدينة... مثال: دبي، نيويورك" oninput="checkCompatibility()">
-            <div class="error-msg" id="cityError"></div>
-        </div>
-
-        <!-- نوع النشاط -->
-        <div class="card">
-            <div class="card-title">🏢 نوع النشاط</div>
-            <select id="businessType">
-                <option value="">اختر نوع النشاط</option>
-                <option value="تجاري">تجاري</option>
-                <option value="صناعي">صناعي</option>
-                <option value="خدمي">خدمي</option>
-                <option value="زراعي">زراعي</option>
-            </select>
-        </div>
-
-        <!-- المشروع -->
-        <div class="card">
-            <div class="card-title">🏗️ ما المشروع الذي تريد دراسته؟</div>
-            <label>اختر المشروع الذي تحبه، أو أضف مشروعًا خاصًا بك.</label>
-            <div class="project-grid" id="projectGrid">
-                <div class="project-card" onclick="selectProject(this)" data-value="مقهى">☕ مقهى</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مطعم">🍽️ مطعم</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="متجر">🛍️ متجر</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="فندق">🏨 فندق</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="صالة رياضية">🏋️ صالة رياضية</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مكتب">🏢 مكتب</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مصنع">🏭 مصنع</div>
-                <div class="project-card" onclick="selectProject(this)" data-value="مشروع تجاري">🏪 مشروع تجاري</div>
-                <div class="project-card" id="otherProjectCard" onclick="openModal()">➕ اختر مشروعًا آخر</div>
-            </div>
-            <div class="error-msg" id="projectError"></div>
-        </div>
-
-        <!-- الفئة المستهدفة -->
-        <div class="card">
-            <div class="card-title">👥 الفئة المستهدفة</div>
-            <label>من هم الأشخاص الذين يستهدفهم مشروعك؟</label>
-            <div class="audience-grid" id="audienceGrid">
-                <div class="audience-option" onclick="selectAudience(this)">الجميع</div>
-                <div class="audience-option" onclick="selectAudience(this)">الشباب</div>
-                <div class="audience-option" onclick="selectAudience(this)">العائلات</div>
-                <div class="audience-option" onclick="selectAudience(this)">الأطفال</div>
-                <div class="audience-option" onclick="selectAudience(this)">الطلاب</div>
-                <div class="audience-option" onclick="selectAudience(this)">الموظفون</div>
-                <div class="audience-option" onclick="selectAudience(this)">السياح</div>
-                <div class="audience-option" onclick="selectAudience(this)">الشركات</div>
-                <div class="audience-option" onclick="selectAudience(this)">فئة أخرى</div>
-            </div>
-            <input type="text" id="customAudience" placeholder="أدخل الفئة المستهدفة هنا..." style="display: none; margin-top: 15px;">
-        </div>
-
-        <!-- الميزانية -->
-        <div class="card">
-            <div class="card-title">💰 ميزانية المشروع</div>
-            <label>أدخل ميزانية مشروعك بالدولار الأمريكي (USD).</label>
-            <div class="budget-wrap">
-                <input type="number" id="budget" placeholder="$50,000" min="0">
-                <div class="budget-unit">USD — US Dollar</div>
-            </div>
-        </div>
-
-        <!-- وصف المشروع -->
-        <div class="card">
-            <div class="card-title">📝 صف مشروعك بالتفصيل</div>
-            <textarea id="projectDescription" maxlength="60000" placeholder="اكتب تفاصيل مشروعك هنا..." style="min-height: 200px;"></textarea>
-            <p style="color: var(--gray-light); font-size: 14px; margin-top: 10px;">
-                يمكنك ذكر فكرة المشروع، موقعه، المساحة، المنتجات أو الخدمات التي يقدمها، العملاء المستهدفين، عدد الموظفين، مستوى المشروع، وأي تفاصيل أخرى تعتقد أنها مهمة للتحليل.
-            </p>
-            <div class="char-counter" id="charCount">0 / 60,000</div>
-        </div>
-
-        <!-- زر التحليل -->
-        <button class="submit-btn" id="submitButton" onclick="handleAnalysis()">🚀 ابدأ تحليل المشروع</button>
-
-        <!-- مكان عرض النتيجة -->
-        <div class="analysis-result" id="analysisResult"></div>
-
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">🔍 جاري تحليل المشروع</div>
+        <div class="loading-subtext">يقوم BuildX بجمع البيانات من مصادر متعددة وتحليلها...</div>
     </div>
 
-    <!-- نافذة اختيار مشروع آخر -->
-    <div class="modal" id="customProjectModal">
-        <div class="modal-content">
-            <h2>اختر مشروعك</h2>
-            <input type="text" id="customProjectInput" placeholder="اكتب اسم مشروعك... مثال: مركز ألعاب VR">
-            <button onclick="confirmCustomProject()">تأكيد</button>
-            <button onclick="closeModal()" style="background: transparent; border: 1px solid var(--gray-light); color: var(--gray-light); margin-left: 10px;">إلغاء</button>
-        </div>
-    </div>
+    <footer>
+        <p>&copy; 2026 BuildX - Data-Driven Business Analysis Platform</p>
+    </footer>
 
-    <!-- زر كتم الصوت -->
-    <div class="mute-btn" onclick="toggleMute()" id="muteBtn">🔊</div>
+    <script>
+        let audioCtx = null;
 
-    <!-- ربط ملف الوظائف -->
-    <script src="form-logic.js"></script>
-    </form>
-
-<script>
-let audioCtx = null;
-let isMuted = false;
-
-document.addEventListener('click', function initAudio() {
-    if (audioCtx === null && !isMuted) {
-        try {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        } catch (e) {}
-    }
-    document.removeEventListener('click', initAudio);
-});
-
-function playClickSound() {
-    if (isMuted) return;
-    try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = 800;
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch (e) {}
         }
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        oscillator.type = 'sine';
-        oscillator.frequency.value = 800;
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.1);
-    } catch (error) {}
-}
 
-function toggleMute() {
-    isMuted = !isMuted;
-    document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊';
-}
+        // عداد الأحرف
+        document.getElementById('projectDescription').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('charCount').textContent = count + ' / 60,000';
+            
+            if (count > 60000) {
+                this.value = this.value.substring(0, 60000);
+            }
+            
+            if (count > 50000) {
+                document.getElementById('charWarning').textContent = '⚠️ اقتراب الحد الأقصى';
+                document.getElementById('charWarning').style.display = 'block';
+            } else {
+                document.getElementById('charWarning').style.display = 'none';
+            }
+        });
 
-const textarea = document.getElementById('projectDescription');
-const charCount = document.getElementById('charCount');
-
-textarea.addEventListener('input', function () {
-    charCount.innerText = this.value.length + " / 60,000";
-    if (this.value.length > 60000) {
-        this.value = this.value.substring(0, 60000);
-    }
-});
-
-function selectProject(element) {
-    document.querySelectorAll('.project-card').forEach(card => {
-        card.classList.remove('selected');
-    });
-    element.classList.add('selected');
-    document.getElementById('customProjectInput').value = '';
-    playClickSound();
-}
-
-function openModal() {
-    document.querySelectorAll('.project-card').forEach(card => {
-        card.classList.remove('selected');
-    });
-    document.getElementById('otherProjectCard').classList.add('selected');
-    document.getElementById('customProjectModal').classList.add('show');
-    document.getElementById('customProjectInput').focus();
-    playClickSound();
-}
-
-function confirmCustomProject() {
-    const customProject = document.getElementById('customProjectInput').value.trim();
-    if (customProject === "") {
-        alert("الرجاء إدخال اسم المشروع");
-        return;
-    }
-    document.getElementById('customProjectInput').value = customProject;
-    document.getElementById('customProjectModal').classList.remove('show');
-    playClickSound();
-}
-
-function closeModal() {
-    document.getElementById('customProjectModal').classList.remove('show');
-    playClickSound();
-}
-
-function selectAudience(element) {
-    document.querySelectorAll('.audience-option').forEach(option => {
-        option.classList.remove('selected');
-    });
-    element.classList.add('selected');
-    if (element.innerText === 'فئة أخرى') {
-        document.getElementById('customAudience').style.display = 'block';
-        document.getElementById('customAudience').focus();
-    } else {
-        document.getElementById('customAudience').style.display = 'none';
-    }
-    playClickSound();
-}
-
-function checkCompatibility() {
-    const country = document.getElementById('country').value.trim().toLowerCase();
-    const city = document.getElementById('city').value.trim().toLowerCase();
-
-    const incompatibility = [
-        { country: 'الجزائر', city: 'نيويورك' },
-        { country: 'algeria', city: 'new york' },
-        { country: 'الجزائر', city: 'باريس' },
-        { country: 'algeria', city: 'paris' }
-    ];
-
-    const isIncompatible = incompatibility.some(item => 
-        item.country === country && item.city === city
-    );
-
-    if (isIncompatible) {
-        document.getElementById('cityError').innerText = "يبدو أن المدينة المختارة لا تتبع الدولة المحددة. يرجى التحقق من اختيار الدولة والمدينة.";
-        document.getElementById('cityError').style.display = 'block';
-    } else {
-        document.getElementById('cityError').style.display = 'none';
-    }
-}
-
-async function handleAnalysis() {
-    const country = document.getElementById('country').value.trim();
-    const city = document.getElementById('city').value.trim();
-    const businessType = document.getElementById('businessType').value;
-    const selectedProjectCard = document.querySelector('.project-card.selected');
-    const customProject = document.getElementById('customProjectInput').value.trim();
-    const selectedAudienceCard = document.querySelector('.audience-option.selected');
-    const customAudience = document.getElementById('customAudience').value.trim();
-    const budget = document.getElementById('budget').value;
-    const description = textarea.value;
-    const area = document.getElementById('area').value;
-    
-    if (country === "") {
-        document.getElementById('countryError').innerText = "يرجى اختيار الدولة أولًا.";
-        document.getElementById('countryError').style.display = 'block';
-        return;
-    }
-    if (city === "") {
-        document.getElementById('cityError').innerText = "يرجى اختيار مدينة ضمن الدولة المحددة.";
-        document.getElementById('cityError').style.display = 'block';
-        return;
-    }
-    if (businessType === "") {
-        alert("يرجى اختيار نوع النشاط");
-        return;
-    }
-    if (!selectedProjectCard) {
-        alert("الرجاء اختيار نوع المشروع");
-        return;
-    }
-    const project = selectedProjectCard.dataset.value || customProject;
-    if (project === "") {
-        alert("الرجاء إدخال اسم المشروع الخاص بك");
-        return;
-    }
-    if (!selectedAudienceCard) {
-        alert("الرجاء اختيار الفئة المستهدفة");
-        return;
-    }
-    const audience = selectedAudienceCard.innerText === 'فئة أخرى' ? customAudience : selectedAudienceCard.innerText;
-    if (audience === "") {
-        alert("الرجاء إدخال الفئة المستهدفة الخاصة بك");
-        return;
-    }
-    if (budget === "" || isNaN(budget) || Number(budget) <= 0) {
-        alert("الرجاء إدخال ميزانية صحيحة بالدولار الأمريكي");
-        return;
-    }
-
-    const loadingDiv = document.createElement('div');
-    loadingDiv.id = 'analysisLoading';
-    loadingDiv.style.cssText = 'display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,8,16,0.95); z-index:9999; align-items:center; justify-content:center; flex-direction:column; text-align:center;';
-    loadingDiv.innerHTML = '<div style="width:80px; height:80px; border:6px solid #1e3a8a; border-top-color:#00a8ff; border-radius:50%; animation:aiLoaderSpin 1s linear infinite; margin-bottom:20px;"></div><h3 style="color:#fff; font-size:20px;">جاري تحليل المشروع...</h3><p style="color:#94a3b8; font-size:14px; margin-top:10px;">نقوم بجمع البيانات من مصادر متعددة...</p>';
-    document.body.appendChild(loadingDiv);
-
-    const params = new URLSearchParams({
-        country: country,
-        city: city,
-        businessType: businessType,
-        projectType: project,
-        audience: audience,
-        budget: budget,
-        area: area,
-        description: description
-    });
-
-    try {
-        window.location.href = `result.html?${params.toString()}`;
-    } catch (error) {
-        if (loadingDiv.parentNode) {
-            document.body.removeChild(loadingDiv);
+        // اختيار البطاقات
+        function selectCard(element) {
+            element.parentElement.querySelectorAll('.card-option').forEach(e => {
+                e.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            playSound();
         }
-        document.getElementById('analysisResult').innerHTML = "خطأ في الاتصال: " + error;
-    }
-}
-</script>
 
-</body>
+        // اختيار الجمهور
+        function selectAudience(element) {
+            element.parentElement.querySelectorAll('.btn-option').forEach(e => {
+                e.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            playSound();
+        }
+
+        // معالج التحليل
+        function handleAnalysis() {
+            playSound();
+
+            const country = document.getElementById('country').value;
+            const city = document.getElementById('city').value;
+            const businessType = document.getElementById('businessType').value;
+            const selectedType = document.querySelector('.card-option.selected');
+            const selectedAudience = document.querySelector('.btn-option.selected');
+            const budget = document.getElementById('budget').value;
+            const area = document.getElementById('area').value;
+            const description = document.getElementById('projectDescription').value;
+
+            // التحقق
+            if (!country) {
+                document.getElementById('countryError').textContent = '⚠️ اختر الدولة';
+                document.getElementById('countryError').style.display = 'block';
+                return;
+            }
+            if (!city) {
+                document.getElementById('cityError').textContent = '⚠️ أدخل اسم المدينة';
+                document.getElementById('cityError').style.display = 'block';
+                return;
+            }
+            if (!businessType) {
+                document.getElementById('businessError').textContent = '⚠️ اختر نوع النشاط';
+                document.getElementById('businessError').style.display = 'block';
+                return;
+            }
+            if (!selectedType) {
+                alert('⚠️ اختر نوع المشروع');
+                return;
+            }
+            if (!selectedAudience) {
+                document.getElementById('audienceError').textContent = '⚠️ اختر الفئة المستهدفة';
+                document.getElementById('audienceError').style.display = 'block';
+                return;
+            }
+            if (!budget || budget <= 0) {
+                alert('⚠️ أدخل ميزانية صحيحة');
+                return;
+            }
+
+            // إظهار التحميل
+            document.getElementById('loadingOverlay').classList.add('active');
+
+            // بناء الرابط
+            const params = new URLSearchParams({
+                country: country,
+                city: city,
+                businessType: businessType,
+                projectType: selectedType.dataset.value,
+                audience: selectedAudience.textContent,
+                budget: budget,
+                area: area,
+                description: description
+            });
+
+            // الانتقال
+            setTimeout(() => {
+                window.location.href = `result.html?${params.toString()}`;
+            }, 500);
+        }
+    </script>
+
 </body>
 </html>
