@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuildX - تحليل المشاريع</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
+    <title>BuildX - محلل المشاريع الذكي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,64 +14,121 @@
 
         body {
             font-family: 'Cairo', 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            background: linear-gradient(135deg, #0f1729 0%, #1a2f5a 50%, #1e1f4d 100%);
             min-height: 100vh;
-            padding: 30px 20px;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 168, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -20%;
+            left: -5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 25s ease-in-out infinite reverse;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
         }
 
         .wrapper {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         /* Header */
         header {
             text-align: center;
             margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
         }
 
         .logo {
-            font-size: 36px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #2d3561 0%, #1e5a96 100%);
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00a8ff 0%, #9333ea 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .logo .x {
-            color: #00a8ff;
-        }
-
-        .page-header {
-            margin-top: 30px;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
         }
 
         .page-header h1 {
-            color: #2d3561;
-            font-size: 32px;
-            margin-bottom: 8px;
+            color: #ffffff;
+            font-size: 40px;
             font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
         }
 
         .page-header p {
-            color: #64748b;
+            color: #a0aec0;
             font-size: 16px;
             font-weight: 500;
         }
 
-        /* Form Container */
-        .form-wrapper {
-            background: white;
-            border-radius: 20px;
-            padding: 50px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            margin-bottom: 50px;
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* Section */
+        /* Form Container */
+        .form-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 60px 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Section */
         .form-section {
             margin-bottom: 50px;
         }
@@ -80,26 +137,37 @@
             margin-bottom: 0;
         }
 
+        .section-header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(0, 168, 255, 0.2);
+            padding-bottom: 15px;
+        }
+
         .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2d3561;
-            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            margin-bottom: 8px;
         }
 
-        .section-title-icon {
-            font-size: 24px;
+        .section-icon {
+            font-size: 28px;
         }
 
-        /* Grid Layout */
+        .section-desc {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        /* Form Grid */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 25px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .form-grid.full {
@@ -113,103 +181,111 @@
 
         label {
             font-size: 14px;
-            font-weight: 600;
-            color: #2d3561;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .label-hint {
-            font-size: 12px;
-            font-weight: 500;
-            color: #94a3b8;
-            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         input, select, textarea {
-            padding: 14px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
+            padding: 16px 18px;
+            border: 2px solid rgba(0, 168, 255, 0.3);
+            border-radius: 12px;
             font-family: 'Cairo', 'Inter', sans-serif;
             font-size: 16px;
             text-align: right;
             transition: all 0.3s ease;
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #64748b;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #1e5a96;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(30, 90, 150, 0.1);
+            border-color: #00a8ff;
+            background: rgba(0, 168, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.3);
         }
 
-        /* Select */
         select {
             cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 16px center;
+            background-size: 20px;
+            padding-left: 45px;
         }
-
-        /* Textarea */
         textarea {
             resize: vertical;
-            min-height: 140px;
+            min-height: 160px;
             font-family: 'Cairo', sans-serif;
         }
 
-        .char-counter {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 8px;
-            text-align: left;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .char-counter.warning {
-            color: #f97316;
-        }
-
-        /* Cards Selection */
+        /* Cards Grid */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
             margin-bottom: 25px;
         }
-        card-option {
-            padding: 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
+
+        .card-option {
+            padding: 24px 16px;
+            border: 2px solid rgba(0, 168, 255, 0.2);
+            border-radius: 16px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-option::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(0, 168, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .card-option:hover {
-            border-color: #1e5a96;
-            background: white;
-            transform: translateY(-2px);
+            border-color: #00a8ff;
+            transform: translateY(-4px);
+        }
+
+        .card-option:hover::before {
+            opacity: 1;
         }
 
         .card-option.selected {
-            background: #1e5a96;
-            border-color: #1e5a96;
-            color: white;
+            background: linear-gradient(135deg, rgba(0, 168, 255, 0.2), rgba(147, 51, 234, 0.2));
+            border-color: #00a8ff;
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.4), inset 0 0 20px rgba(0, 168, 255, 0.1);
         }
 
         .card-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
+            font-size: 36px;
+            margin-bottom: 12px;
+            display: block;
         }
 
         .card-text {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
+            color: #e2e8f0;
         }
 
-        /* Buttons Grid */
+        /* Button Options Grid */
         .buttons-grid {
             display: flex;
             gap: 12px;
@@ -218,45 +294,102 @@
         }
 
         .btn-option {
-            padding: 11px 18px;
-            border: 2px solid #e2e8f0;
+            padding: 12px 20px;
+            border: 2px solid rgba(0, 168, 255, 0.3);
             border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.3s ease;
-            background: white;
-            color: #2d3561;
+            background: rgba(255, 255, 255, 0.03);
+            color: #e2e8f0;
             font-family: 'Cairo', sans-serif;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-option::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 168, 255, 0.2), rgba(147, 51, 234, 0.2));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+            pointer-events: none;
         }
 
         .btn-option:hover {
-            border-color: #1e5a96;
-            color: #1e5a96;
+            border-color: #00a8ff;
+            transform: translateY(-2px);
+        }
+
+        .btn-option:hover::before {
+            transform: scaleX(1);
         }
 
         .btn-option.selected {
-            background: #1e5a96;
-            border-color: #1e5a96;
-            color: white;
+            background: linear-gradient(135deg, #00a8ff, #9333ea);
+            border-color: #00a8ff;
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.4);
         }
 
-        /* Submit Button */
+        /* Character Counter */
+        .char-counter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        .char-count {
+            color: #a0aec0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .char-count.warning {
+            color: #f97316;
+        }
+
+        .char-warning {
+            color: #f97316;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: none;
+            margin-top: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Submit Section */
         .submit-section {
-            margin-top: 40px;
+            margin-top: 50px;
             padding-top: 30px;
-            border-top: 2px solid #e2e8f0;
+            border-top: 2px solid rgba(0, 168, 255, 0.2);
         }
 
         .submit-btn {
             width: 100%;
-            padding: 16px 30px;
-            background: linear-gradient(135deg, #1e5a96 0%, #2d3561 100%);
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #00a8ff 0%, #9333ea 100%);
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 18px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: 'Cairo', sans-serif;
@@ -264,15 +397,33 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 30px rgba(0, 168, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(30, 90, 150, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 168, 255, 0.4);
         }
 
-        .submit-btn:active {
-            transform: translateY(0);
+        .submit-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
         /* Loading Overlay */
@@ -283,12 +434,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 15, 30, 0.95);
+            background: rgba(15, 23, 41, 0.95);
+            backdrop-filter: blur(10px);
             z-index: 9999;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            gap: 20px;
+            gap: 30px;
         }
 
         .loading-overlay.active {
@@ -296,12 +448,28 @@
         }
 
         .spinner {
-            width: 70px;
-            height: 70px;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top-color: #00a8ff;
+            width: 80px;
+            height: 80px;
+            position: relative;
+            }
+              .spinner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 3px solid rgba(0, 168, 255, 0.2);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 3s linear infinite;
+        }
+
+        .spinner::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 3px solid transparent;
+            border-top-color: #00a8ff;
+            border-right-color: #9333ea;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
         }
 
         @keyframes spin {
@@ -309,45 +477,68 @@
             100% { transform: rotate(360deg); }
         }
 
-        .loading-text {
-            color: white;
-            font-size: 20px;
-            font-weight: 700;
+        .loading-messages {
             text-align: center;
         }
 
-        .loading-subtext {
-            color: #94a3b8;
-            font-size: 14px;
-            text-align: center;
+        .loading-title {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 12px;
         }
 
-        /* Error Message */
-        .error-message {
-            background: #fef2f2;
-            color: #dc2626;
-            padding: 12px 14px;
-            border-radius: 8px;
-            border-left: 4px solid #dc2626;
+        .loading-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .loading-step {
+            color: #a0aec0;
             font-size: 14px;
-            display: none;
-            margin-top: 8px;
-            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-step:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-step:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .loading-step:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         /* Footer */
         footer {
             text-align: center;
-            color: #94a3b8;
-            font-size: 14px;
-            margin-top: 60px;
-            padding-bottom: 20px;
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 80px;
+            padding-bottom: 30px;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .form-wrapper {
-                padding: 30px 20px;
+            body {
+                padding: 25px 15px;
+            }
+
+            .form-container {
+                padding: 35px 20px;
             }
 
             .form-grid {
@@ -360,7 +551,25 @@
             }
 
             .cards-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                gap: 12px;
+            }
+
+            .card-option {
+                padding: 18px 12px;
+            }
+
+            .card-icon {
+                font-size: 28px;
+            }
+
+            .card-text {
+                font-size: 13px;
+            }
+
+            .submit-btn {
+                font-size: 16px;
+                padding: 16px 25px;
             }
         }
     </style>
@@ -368,111 +577,191 @@
 <body>
     <div class="wrapper">
         <header>
-            <a href="index.html" class="logo">Build<span class="x">X</span></a>
+            <div class="logo">BuildX</div>
             <div class="page-header">
-                <h1>تحليل المشروع</h1>
-                <p>استكشف إمكانيات نجاح مشروعك مع تحليل ذكي شامل</p>
+                <h1>تحليل مشروعك الآن</h1>
+                <p>اكتشف فرصة نجاح مشروعك مع ذكاء اصطناعي متقدم</p>
             </div>
         </header>
 
-        <div class="form-wrapper">
+        <div class="form-container">
             <form id="projectForm">
                 <!-- الموقع الجغرافي -->
                 <div class="form-section">
-                    <div class="section-title">
-                        <span class="section-title-icon">🌍</span>
-                        <span>الموقع الجغرافي</span>
+                    <div class="section-header">
+                        <div class="section-title">
+                            <span class="section-icon">🌍</span>
+                            <span>الموقع الجغرافي</span>
+                        </div>
+                        <div class="section-desc">اختر الدولة والمدينة المناسبة لمشروعك</div>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>الدولة</label>
+                            <label for="country">الدولة</label>
                             <select id="country" required>
                                 <option value="">-- اختر الدولة --</option>
-                                <option value="USA">الولايات المتحدة</option>
-                                <option value="UAE">الإمارات العربية</option>
+                                <option value="USA">الولايات المتحدة الأمريكية</option>
+                                <option value="UAE">الإمارات العربية المتحدة</option>
                                 <option value="Saudi">المملكة العربية السعودية</option>
                                 <option value="Egypt">مصر</option>
                                 <option value="Algeria">الجزائر</option>
                                 <option value="Morocco">المغرب</option>
                                 <option value="Qatar">قطر</option>
                                 <option value="Kuwait">الكويت</option>
+                                <option value="Bahrain">البحرين</option>
+                                <option value="Oman">عمان</option>
+                                <option value="Jordan">الأردن</option>
+                                <option value="Lebanon">لبنان</option>
+                                <option value="UK">المملكة المتحدة</option>
+                                <option value="Canada">كندا</option>
+                                <option value="Germany">ألمانيا</option>
+                                <option value="France">فرنسا</option>
+                                <option value="Australia">أستراليا</option>
+                                <option value="Singapore">سنغافورة</option>
+                                <option value="India">الهند</option>
                             </select>
                             <div class="error-message" id="countryError"></div>
                         </div>
                         <div class="form-group">
-                            <label>المدينة</label>
-                            <input type="text" id="city" placeholder="مثال: دبي، نيويورك، الرياض" required>
+                            <label for="city">المدينة</label>
+                            <input type="text" id="city" placeholder="أدخل اسم المدينة" required>
                             <div class="error-message" id="cityError"></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- تفاصيل المشروع -->
+                
                 <div class="form-section">
-                    <div class="section-title">
-                        <span class="section-title-icon">📦</span>
-                        <span>تفاصيل المشروع</span>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>نوع النشاط التجاري</label>
-                            <select id="businessType" required>
-                                <option value="">-- اختر نوع النشاط --</option>
-                                <option value="مطعم">مطعم</option>
-                                <option value="كافيه">كافيه</option>
-                                <option value="متجر ملابس">متجر ملابس</option>
-                                <option value="صالون تجميل">صالون تجميل</option>
-                                <option value="جيم">جيم</option>
-                                <option value="فندق">فندق</option>
-                                <option value="متجر إلكترونيات">متجر إلكترونيات</option>
-                                <option value="مكتبة">مكتبة</option>
-                                <option value="صيدلية">صيدلية</option>
-                            </select>
-                            <div class="error-message" id="businessError"></div>
+                    <div class="section-header">
+                        <div class="section-title">
+                            <span class="section-icon">💼</span>
+                            <span>نوع النشاط التجاري</span>
                         </div>
-                        <div class="form-group">
-                            <label>نوع المشروع</label>
-                            <div class="cards-grid">
-                                <div class="card-option" data-value="مشروع جديد" onclick="selectCard(this)">
-                                    <div class="card-icon">🆕</div>
-                                    <div class="card-text">جديد</div>
-                                </div>
-                                <div class="card-option" data-value="توسعة" onclick="selectCard(this)">
-                                    <div class="card-icon">📈</div>
-                                    <div class="card-text">توسعة</div>
-                                </div>
-                                <div class="card-option" data-value="شراكة" onclick="selectCard(this)">
-                                    <div class="card-icon">🤝</div>
-                                    <div class="card-text">شراكة</div>
-                                </div>
-                            </div>
+                        <div class="section-desc">اختر نوع النشاط أو أضف نشاطك الخاص</div>
+                    </div>
+                    <div class="cards-grid" id="businessGrid">
+                        <div class="card-option" data-value="مطعم" onclick="selectBusinessType(this)">
+                            <span class="card-icon">🍽️</span>
+                            <span class="card-text">مطعم</span>
+                        </div>
+                        <div class="card-option" data-value="كافيه" onclick="selectBusinessType(this)">
+                            <span class="card-icon">☕</span>
+                            <span class="card-text">كافيه</span>
+                        </div>
+                        <div class="card-option" data-value="متجر ملابس" onclick="selectBusinessType(this)">
+                            <span class="card-icon">👗</span>
+                            <span class="card-text">ملابس</span>
+                        </div>
+                        <div class="card-option" data-value="صالون تجميل" onclick="selectBusinessType(this)">
+                            <span class="card-icon">💇</span>
+                            <span class="card-text">تجميل</span>
+                        </div>
+                        <div class="card-option" data-value="جيم" onclick="selectBusinessType(this)">
+                            <span class="card-icon">💪</span>
+                            <span class="card-text">جيم</span>
+                        </div>
+                        <div class="card-option" data-value="فندق" onclick="selectBusinessType(this)">
+                            <span class="card-icon">🏨</span>
+                            <span class="card-text">فندق</span>
+                        </div>
+                        <div class="card-option" data-value="متجر إلكترونيات" onclick="selectBusinessType(this)">
+                            <span class="card-icon">📱</span>
+                            <span class="card-text">إلكترونيات</span>
+                        </div>
+                        <div class="card-option" onclick="openCustomBusinessModal()">
+                            <span class="card-icon">➕</span>
+                            <span class="card-text">نشاط آخر</span>
                         </div>
                     </div>
+                    <input type="hidden" id="customBusinessInput">
+                    <div class="error-message" id="businessError"></div>
                 </div>
 
-                <!-- الجمهور والميزانية -->
+                <!-- نوع المشروع -->
                 <div class="form-section">
-                    <div class="section-title">
-                        <span class="section-title-icon">👥</span>
-                        <span>الجمهور والميزانية</span>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 25px;">
-                        <label>الفئة المستهدفة</label>
-                        <div class="buttons-grid">
-                            <button type="button" class="btn-option" onclick="selectAudience(this)">الشباب (18-30)</button>
-                            <button type="button" class="btn-option" onclick="selectAudience(this)">العائلات</button>
-                            <button type="button" class="btn-option" onclick="selectAudience(this)">رجال الأعمال</button>
-                            <button type="button" class="btn-option" onclick="selectAudience(this)">كبار السن</button>
+                    <div class="section-header">
+                        <div class="section-title">
+                            <span class="section-icon">📦</span>
+                            <span>نوع المشروع</span>
                         </div>
-                        <div class="error-message" id="audienceError"></div>
+                        <div class="section-desc">اختر نوع المشروع المناسب</div>
+                    </div>
+                    <div class="cards-grid" id="projectTypeGrid">
+                        <div class="card-option" data-value="مشروع جديد" onclick="selectProjectType(this)">
+                            <span class="card-icon">🆕</span>
+                            <span class="card-text">جديد</span>
+                        </div>
+                        <div class="card-option" data-value="توسعة" onclick="selectProjectType(this)">
+                            <span class="card-icon">📈</span>
+                            <span class="card-text">توسعة</span>
+                        </div>
+                        <div class="card-option" data-value="شراكة" onclick="selectProjectType(this)">
+                            <span class="card-icon">🤝</span>
+                            <span class="card-text">شراكة</span>
+                        </div>
+                        <div class="card-option" data-value="استحواذ" onclick="selectProjectType(this)">
+                            <span class="card-icon">🎯</span>
+                            <span class="card-text">استحواذ</span>
+                        </div>
+                        <div class="card-option" data-value="تحويل رقمي" onclick="selectProjectType(this)">
+                            <span class="card-icon">🔄</span>
+                            <span class="card-text">رقمي</span>
+                        </div>
+                        <div class="card-option" data-value="فرع جديد" onclick="selectProjectType(this)">
+                            <span class="card-icon">🌱</span>
+                            <span class="card-text">فرع جديد</span>
+                        </div>
+                        <div class="card-option" data-value="إعادة هيكلة" onclick="selectProjectType(this)">
+                            <span class="card-icon">⚙️</span>
+                            <span class="card-text">إعادة هيكلة</span>
+                        </div>
+                        <div class="card-option" onclick="openCustomProjectModal()">
+                            <span class="card-icon">➕</span>
+                            <span class="card-text">آخر</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="customProjectInput">
+                    <div class="error-message" id="projectError"></div>
+                </div>
+
+                <!-- الفئة المستهدفة -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <span class="section-icon">👥</span>
+                            <span>الفئة المستهدفة</span>
+                        </div>
+                        <div class="section-desc">يمكنك اختيار أكثر من فئة</div>
+                    </div>
+                    <div class="buttons-grid" id="audienceGrid">
+                        <button type="button" class="btn-option" onclick="toggleAudience(this)">👨‍👩‍👧‍👦 العائلات</button>
+                        <button type="button" class="btn-option" onclick="toggleAudience(this)">🧑 الشباب</button>
+                        <button type="button" class="btn-option" onclick="toggleAudience(this)">🎓 الطلاب</button>
+                        <button type="button" class="btn-option" onclick="toggleAudience(this)">💼 المهنيون</button>
+                        <button type="button" class="btn-option" onclick="toggleAudience(this)">👨‍🦳 كبار السن</button>
+                        <button type="button" class="btn-option" onclick="toggleAudience(this)">✈️ السياح</button>
+                        <button type="button" class="btn-option" onclick="toggleAudience(this)">💎 ذوو الدخل العالي</button>
+                    </div>
+                    <input type="hidden" id="selectedAudienceInput">
+                    <div class="error-message" id="audienceError"></div>
+                </div>
+
+                <!-- الميزانية والمساحة -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <span class="section-icon">💰</span>
+                            <span>الموارد المالية والمادية</span>
+                        </div>
+                        <div class="section-desc">أدخل الميزانية والمساحة المتاحة</div>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>الميزانية <span class="label-hint">(USD)</span></label>
-                            <input type="number" id="budget" placeholder="50000" min="1" required>
+                            <label for="budget">الميزانية (USD)</label>
+                            <input type="number" id="budget" placeholder="50,000" min="1" required>
+                            <div class="error-message" id="budgetError"></div>
                         </div>
                         <div class="form-group">
-                            <label>المساحة <span class="label-hint">(متر مربع)</span></label>
+                            <label for="area">المساحة (m²)</label>
                             <input type="number" id="area" placeholder="300" min="0">
                         </div>
                     </div>
@@ -480,25 +769,28 @@
 
                 <!-- وصف المشروع -->
                 <div class="form-section">
-                    <div class="section-title">
-                        <span class="section-title-icon">📝</span>
-                        <span>وصف المشروع</span>
+                    <div class="section-header">
+                        <div class="section-title">
+                            <span class="section-icon">📝</span>
+                            <span>وصف المشروع</span>
+                        </div>
+                        <div class="section-desc">اكتب تفاصيل شاملة عن مشروعك</div>
                     </div>
                     <div class="form-group">
-                        <label>
-                            صف مشروعك بالتفصيل
-                            <span class="label-hint" id="charCount">0 / 60,000</span>
-                        </label>
-                        <textarea id="projectDescription" placeholder="اكتب تفاصيل مشروعك، رؤيتك، أهدافك، وكيف ستختلف عن المنافسين..."></textarea>
-                        <div class="char-counter" id="charWarning"></div>
+                        <label for="description">صف مشروعك بالتفصيل</label>
+                        <textarea id="description" placeholder="اكتب رؤيتك، أهدافك، كيفية اختلافك عن المنافسين..."></textarea>
+                        <div class="char-counter">
+                            <span class="char-count"><span id="charCount">0</span> / 60,000</span>
+                            <span class="char-warning" id="charWarning">⚠️ اقتراب الحد الأقصى</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Submit -->
+                <!-- Submit Button -->
                 <div class="submit-section">
                     <button type="button" class="submit-btn" onclick="handleAnalysis()">
-                        <span>ابدأ التحليل الآن</span>
-                        <span>→</span>
+                        <span>ابدأ تحليل المشروع</span>
+                        <span>🚀</span>
                     </button>
                 </div>
             </form>
@@ -508,26 +800,33 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <div class="loading-text">🔍 جاري تحليل المشروع</div>
-        <div class="loading-subtext">يقوم BuildX بجمع البيانات من مصادر متعددة وتحليلها...</div>
+        <div class="loading-messages">
+            <div class="loading-title">جاري تحليل مشروعك</div>
+            <div class="loading-steps">
+                <div class="loading-step">🌐 BuildX يجمع البيانات...</div>
+                <div class="loading-step">🔎 يحلل السوق والمنافسين...</div>
+                <div class="loading-step">🤖 الذكاء الاصطناعي يعالج المعلومات...</div>
+                <div class="loading-step">📊 يعد التقرير الشامل...</div>
+            </div>
+        </div>
     </div>
 
     <footer>
-        <p>&copy; 2026 BuildX - Data-Driven Business Analysis Platform</p>
+        <p>&copy; 2026 BuildX — منصة تحليل المشاريع الذكية العالمية</p>
     </footer>
 
     <script>
         let audioCtx = null;
+        let selectedAudiences = [];
 
+        // صوت النقرة
         function playSound() {
             try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.frequency.value = 800;
-                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
@@ -537,38 +836,62 @@
         }
 
         // عداد الأحرف
-        document.getElementById('projectDescription').addEventListener('input', function() {
+        document.getElementById('description').addEventListener('input', function() {
             const count = this.value.length;
-            document.getElementById('charCount').textContent = count + ' / 60,000';
-            
-            if (count > 60000) {
-                this.value = this.value.substring(0, 60000);
-            }
-            
-            if (count > 50000) {
-                document.getElementById('charWarning').textContent = '⚠️ اقتراب الحد الأقصى';
-                document.getElementById('charWarning').style.display = 'block';
-            } else {
-                document.getElementById('charWarning').style.display = 'none';
-            }
+            document.getElementById('charCount').textContent = count;
+            document.getElementById('charWarning').style.display = count > 50000 ? 'block' : 'none';
+            document.getElementById('charCount').classList.toggle('warning', count > 50000);
+            if (count > 60000) this.value = this.value.substring(0, 60000);
         });
 
-        // اختيار البطاقات
-        function selectCard(element) {
-            element.parentElement.querySelectorAll('.card-option').forEach(e => {
-                e.classList.remove('selected');
-            });
+        // اختيار النشاط التجاري
+        function selectBusinessType(element) {
+            document.querySelectorAll('#businessGrid .card-option.selected').forEach(e => e.classList.remove('selected'));
             element.classList.add('selected');
+            document.getElementById('customBusinessInput').value = element.dataset.value;
             playSound();
         }
 
-        // اختيار الجمهور
-        function selectAudience(element) {
-            element.parentElement.querySelectorAll('.btn-option').forEach(e => {
-                e.classList.remove('selected');
-            });
+        // نموذج النشاط المخصص
+        function openCustomBusinessModal() {
+            const value = prompt('أدخل اسم النشاط التجاري:');
+            if (value) {
+                document.getElementById('customBusinessInput').value = value;
+                document.querySelectorAll('#businessGrid .card-option').forEach(e => e.classList.remove('selected'));
+                document.querySelectorAll('#businessGrid .card-option')[document.querySelectorAll('#businessGrid .card-option').length - 1].classList.add('selected');
+                playSound();
+            }
+        }
+
+        // اختيار نوع المشروع
+        function selectProjectType(element) {
+            document.querySelectorAll('#projectTypeGrid .card-option.selected').forEach(e => e.classList.remove('selected'));
             element.classList.add('selected');
+            document.getElementById('customProjectInput').value = element.dataset.value;
             playSound();
+        }
+
+        // نموذج المشروع المخصص
+        function openCustomProjectModal() {
+            const value = prompt('أدخل نوع المشروع:');
+            if (value) {
+                document.getElementById('customProjectInput').value = value;
+                document.querySelectorAll('#projectTypeGrid .card-option').forEach(e => e.classList.remove('selected'));
+                document.querySelectorAll('#projectTypeGrid .card-option')[document.querySelectorAll('#projectTypeGrid .card-option').length - 1].classList.add('selected');
+                playSound();
+            }
+        }
+
+        // اختيار/إلغاء الفئة المستهدفة
+        function toggleAudience(button) {
+            button.classList.toggle('selected');
+            updateSelectedAudiences();
+            playSound();
+        }
+
+        function updateSelectedAudiences() {
+            selectedAudiences = Array.from(document.querySelectorAll('#audienceGrid .btn-option.selected')).map(b => b.textContent.trim());
+            document.getElementById('selectedAudienceInput').value = selectedAudiences.join(', ');
         }
 
         // معالج التحليل
@@ -577,40 +900,41 @@
 
             const country = document.getElementById('country').value;
             const city = document.getElementById('city').value;
-            const businessType = document.getElementById('businessType').value;
-            const selectedType = document.querySelector('.card-option.selected');
-            const selectedAudience = document.querySelector('.btn-option.selected');
+            const businessType = document.getElementById('customBusinessInput').value;
+            const projectType = document.getElementById('customProjectInput').value;
             const budget = document.getElementById('budget').value;
             const area = document.getElementById('area').value;
-            const description = document.getElementById('projectDescription').value;
+            const description = document.getElementById('description').value;
 
             // التحقق
             if (!country) {
-                document.getElementById('countryError').textContent = '⚠️ اختر الدولة';
                 document.getElementById('countryError').style.display = 'block';
+                document.getElementById('countryError').textContent = '⚠️ يرجى اختيار الدولة';
                 return;
             }
             if (!city) {
-                document.getElementById('cityError').textContent = '⚠️ أدخل اسم المدينة';
                 document.getElementById('cityError').style.display = 'block';
+                document.getElementById('cityError').textContent = '⚠️ يرجى إدخال المدينة';
                 return;
             }
             if (!businessType) {
-                document.getElementById('businessError').textContent = '⚠️ اختر نوع النشاط';
                 document.getElementById('businessError').style.display = 'block';
+                document.getElementById('businessError').textContent = '⚠️ يرجى اختيار نوع النشاط';
                 return;
             }
-            if (!selectedType) {
-                alert('⚠️ اختر نوع المشروع');
+            if (!projectType) {
+                document.getElementById('projectError').style.display = 'block';
+                document.getElementById('projectError').textContent = '⚠️ يرجى اختيار نوع المشروع';
                 return;
             }
-            if (!selectedAudience) {
-                document.getElementById('audienceError').textContent = '⚠️ اختر الفئة المستهدفة';
+            if (selectedAudiences.length === 0) {
                 document.getElementById('audienceError').style.display = 'block';
+                document.getElementById('audienceError').textContent = '⚠️ يرجى اختيار الفئة المستهدفة';
                 return;
             }
             if (!budget || budget <= 0) {
-                alert('⚠️ أدخل ميزانية صحيحة');
+                document.getElementById('budgetError').style.display = 'block';
+                document.getElementById('budgetError').textContent = '⚠️ يرجى إدخال ميزانية صحيحة';
                 return;
             }
 
@@ -622,8 +946,8 @@
                 country: country,
                 city: city,
                 businessType: businessType,
-                projectType: selectedType.dataset.value,
-                audience: selectedAudience.textContent,
+                projectType: projectType,
+                audience: selectedAudiences.join(', '),
                 budget: budget,
                 area: area,
                 description: description
@@ -632,8 +956,19 @@
             // الانتقال
             setTimeout(() => {
                 window.location.href = `result.html?${params.toString()}`;
-            }, 500);
+            }, 1500);
         }
+
+        // إخفاء رسائل الخطأ عند التركيز
+        document.getElementById('country').addEventListener('change', () => {
+            document.getElementById('countryError').style.display = 'none';
+        });
+        document.getElementById('city').addEventListener('input', () => {
+            document.getElementById('cityError').style.display = 'none';
+        });
+        document.getElementById('budget').addEventListener('input', () => {
+            document.getElementById('budgetError').style.display = 'none';
+        });
     </script>
 
 </body>
